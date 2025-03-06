@@ -51,17 +51,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # Ensures that the Material Icons font is included
   uses-material-design: true
 
-  # Add assets section for images
   assets:
-    - assets/images/logo.png
-    - assets/images/welcome_image.png
-    - assets/images/chatbot.png
-    - assets/images/chat_forum.png
-    - assets/images/mood_tracker.png
+    - assets/images/
+    - assets/gifs/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
