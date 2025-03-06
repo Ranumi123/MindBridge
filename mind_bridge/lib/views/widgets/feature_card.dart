@@ -5,7 +5,7 @@ class FeatureCard extends StatelessWidget {
   final String imagePath;
   final String route;
 
-  FeatureCard({required this.title, required this.imagePath, required this.route});
+  const FeatureCard({super.key, required this.title, required this.imagePath, required this.route});
 
   @override
   Widget build(BuildContext context) {

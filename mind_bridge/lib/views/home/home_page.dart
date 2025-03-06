@@ -3,6 +3,8 @@ import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
