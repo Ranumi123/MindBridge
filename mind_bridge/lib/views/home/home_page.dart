@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../widgets/bottom_navbar.dart';
-import '../../widgets/feature_card.dart';
+import '../widgets/bottom_navbar.dart';
+import '../widgets/feature_card.dart';
 
 class HomePage extends StatefulWidget {
   @override
