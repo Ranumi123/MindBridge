@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GifScreen extends StatefulWidget {
+  const GifScreen({super.key});
+
   @override
   _GifScreenState createState() => _GifScreenState();
 }
