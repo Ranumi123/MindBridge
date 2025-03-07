@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1bf048c6-08f5-4220-9ed8-38201b298d24" name="Changes" comment="">
+<<<<<<< Updated upstream
       <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/welcome_screen/welcome_page.dart" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/Project.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,8 +54,12 @@
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "welcome-screen-new",
     "kotlin-language-version-configured": "true",
+<<<<<<< Updated upstream
     "last_opened_file_path": "C:/Users/User/Downloads/chat/chat",
     "settings.editor.selected.configurable": "dart.settings",
+=======
+    "last_opened_file_path": "C:/Users/User/Documents/Project",
+>>>>>>> Stashed changes
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>

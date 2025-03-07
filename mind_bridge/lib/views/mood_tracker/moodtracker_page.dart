@@ -9,7 +9,8 @@ class MoodTrackerPage extends StatefulWidget {
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
 }
 
-class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProviderStateMixin {
+class _MoodTrackerPageState extends State<MoodTrackerPage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _textController = TextEditingController();
   String? selectedMood;
   final List<Map<String, String>> moodOptions = [
@@ -50,7 +51,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
       _animationController.reset();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Mood saved!")));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Mood saved!")));
 
     setState(() {
       selectedMood = null;
@@ -75,52 +77,62 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
         backgroundColor: Color(0xFF2DABCA),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.03),
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.05, vertical: screenHeight * 0.03),
         child: Column(
           children: [
-            Text("How are you feeling today?", style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold)),
+            Text("How are you feeling today?",
+                style: TextStyle(
+                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold)),
             SizedBox(height: screenHeight * 0.02),
             Wrap(
               spacing: screenWidth * 0.03,
               runSpacing: screenHeight * 0.015,
               alignment: WrapAlignment.center,
-              children: moodOptions.map((mood) =>
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => setState(() => selectedMood = mood['label']),
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size(70, 70),
-                        shape: CircleBorder(),
-                        backgroundColor: selectedMood == mood['label'] ? Color(0xFF3CDFCA) : Colors.white,
-                        side: BorderSide(color: selectedMood == mood['label'] ? Colors.blueAccent : Colors.transparent, width: 2),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        child: ClipOval(
-                          child: Image.asset(
-                            mood['image']!,
-                            fit: BoxFit.cover,
-                            width: 70,
-                            height: 70,
+              children: moodOptions
+                  .map((mood) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () =>
+                                setState(() => selectedMood = mood['label']),
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size(70, 70),
+                              shape: CircleBorder(),
+                              backgroundColor: selectedMood == mood['label']
+                                  ? Color(0xFF3CDFCA)
+                                  : Colors.white,
+                              side: BorderSide(
+                                  color: selectedMood == mood['label']
+                                      ? Colors.blueAccent
+                                      : Colors.transparent,
+                                  width: 2),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              child: ClipOval(
+                                child: Image.asset(
+                                  mood['image']!,
+                                  fit: BoxFit.cover,
+                                  width: 70,
+                                  height: 70,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      mood['label']!,
-                      style: TextStyle(fontSize: 12)
-                    ),
-                  ],
-                )
-              ).toList(),
+                          SizedBox(height: 4),
+                          Text(mood['label']!, style: TextStyle(fontSize: 12)),
+                        ],
+                      ))
+                  .toList(),
             ),
             SizedBox(height: screenHeight * 0.02),
-            Text("Express yourself in words ✨", style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold)),
+            Text("Express yourself in words ✨",
+                style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.bold)),
             SizedBox(height: screenHeight * 0.01),
             Container(
               width: screenWidth * 0.9,
@@ -139,8 +151,11 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
                 controller: _textController,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none),
                   hintText: "Type your feelings here...",
                 ),
                 maxLines: 1,
@@ -155,7 +170,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
                 child: Container(
                   width: screenWidth * 0.5,
                   height: screenWidth * 0.5,
-                  child: Image.asset('assets/gifs/thumbs_up.gif', fit: BoxFit.contain),
+                  child: Image.asset('assets/gifs/thumbs_up.gif',
+                      fit: BoxFit.contain),
                 ),
               ),
           ],
