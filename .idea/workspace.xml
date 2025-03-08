@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1bf048c6-08f5-4220-9ed8-38201b298d24" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/privacy_settings_page/privacy_setting_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/models/message_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/utils/constants.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/utils/theme.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/widgets/chat_bubble.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/widgets/loading_indicator.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +52,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "privacy-settings-page",
+    "git-widget-placeholder": "utilis",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/User/Downloads/chat/chat",
     "settings.editor.selected.configurable": "dart.settings",
