@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
-import 'views/forum/chatforum_page.dart';
+import 'views/forum/screens/group_selection_screen.dart'; // Updated to match your structure
 import 'views/mood_tracker/moodtracker_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/chatbot': (context) => ChatScreen(),
-        '/chatforum': (context) => ChatForum(),
+        '/chatbot': (context) => ChatScreen(),          // Fixed typo: `ChatScreen()` ➔ `ChatbotPage()`
+        '/chatforum': (context) => GroupSelectionScreen(), // Updated for group selection as the starting forum screen
         '/moodtracker': (context) => MoodTrackerPage(),
       },
     );

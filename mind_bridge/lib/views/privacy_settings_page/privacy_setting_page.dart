@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../chatbot/chatbot_page.dart';
 import '../profile_setup_page/profile_setup_screen.dart'; // Import the ProfilePage
-import '../forum/chatforum_page.dart'; // Import the ChatForum screen
+import '../forum/screens/chatforum_page.dart'; // Import the ChatForum screen
 
 class PrivacySettingsPage extends StatefulWidget {
   @override
