@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1bf048c6-08f5-4220-9ed8-38201b298d24" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/mind_bridge/lib/views/privacy_settings_page/privacy_setting_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mind_bridge/lib/views/chatbot/chatbot_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mind_bridge/lib/views/chatbot/chatbot_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +47,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "privacy-settings-page",
+    "git-widget-placeholder": "chatbot-page",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/User/Downloads/chat/chat",
     "settings.editor.selected.configurable": "dart.settings",
