@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/chatbot': (context) => ChatbotPage(),
-        '/chatforum': (context) => ChatForumPage(),
+        '/chatbot': (context) => ChatScreen(),
+        '/chatforum': (context) => ChatForum(),
         '/moodtracker': (context) => MoodTrackerPage(),
       },
     );

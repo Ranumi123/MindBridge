@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'dart:convert';
-import 'privacy_setting_page.dart'; // Ensure correct import
+import '../privacy_settings_page/privacy_setting_page.dart'; // Ensure correct import
 
 class LoginPage extends StatefulWidget {
   @override
@@ -109,7 +109,9 @@ class _LoginPageState extends State<LoginPage> {
                   prefixIcon: Icon(Icons.lock, color: Colors.blue.shade800),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Colors.blue.shade800,
                     ),
                     onPressed: () {

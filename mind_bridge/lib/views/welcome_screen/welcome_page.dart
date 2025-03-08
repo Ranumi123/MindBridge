@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import your LoginPage
-import 'signup_page.dart'; // Import your SignupPage
+import '../login_page/login_page.dart'; // Import your LoginPage
+import '../signup_page/signup_page.dart'; // Import your SignupPage
 
 class WelcomePage extends StatelessWidget {
   @override
@@ -73,7 +73,8 @@ class WelcomePage extends StatelessWidget {
                 width: 350, // Adjust the width as needed
                 height: 350, // Adjust the height as needed
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100), // Optional: Add rounded corners
+                  borderRadius: BorderRadius.circular(
+                      100), // Optional: Add rounded corners
                 ),
                 child: Image.asset(
                   'assets/imgbg2.png', // Path to your image
@@ -96,7 +97,8 @@ class WelcomePage extends StatelessWidget {
                     // Navigate to the SignupPage
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => SignupPage()), // Use SignupPage
+                      MaterialPageRoute(
+                          builder: (context) => SignupPage()), // Use SignupPage
                     );
                   },
                   style: ElevatedButton.styleFrom(
