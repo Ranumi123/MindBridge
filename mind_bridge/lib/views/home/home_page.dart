@@ -84,9 +84,18 @@ class _HomePageState extends State<HomePage> {
                 runSpacing: 20,
                 alignment: WrapAlignment.center,
                 children: [
-                  FeatureCard(title: "Chatbot", imagePath: "assets/images/chatbot.png", route: "/chatbot"),
-                  FeatureCard(title: "Chat Forum", imagePath: "assets/images/chat_forum.png", route: "/chatforum"),
-                  FeatureCard(title: "Mood Tracker", imagePath: "assets/images/mood_tracker.png", route: "/moodtracker"),
+                  FeatureCard(
+                      title: "Chatbot",
+                      imagePath: "assets/images/chatbot.png",
+                      route: "/chatbot"),
+                  FeatureCard(
+                      title: "Chat Forum",
+                      imagePath: "assets/images/chat_forum.png",
+                      route: "/chatforum"),
+                  FeatureCard(
+                      title: "Mood Tracker",
+                      imagePath: "assets/images/mood_tracker.png",
+                      route: "/moodtracker"),
                 ],
               ),
             ],

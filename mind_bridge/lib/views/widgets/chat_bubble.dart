@@ -24,7 +24,8 @@ class ChatBubble extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end, // Align timestamp to the end
+          crossAxisAlignment:
+              CrossAxisAlignment.end, // Align timestamp to the end
           children: [
             Text(
               message,

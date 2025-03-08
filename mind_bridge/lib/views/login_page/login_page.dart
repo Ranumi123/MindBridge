@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../../services/auth_service.dart';
 import 'dart:convert';
 import '../privacy_settings_page/privacy_setting_page.dart'; // Ensure correct import
 

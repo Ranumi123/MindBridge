@@ -60,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: ClipOval(
                       child: CachedNetworkImage(
                         imageUrl:
-                        'https://via.placeholder.com/150', // Replace with user's profile picture URL
+                            'https://via.placeholder.com/150', // Replace with user's profile picture URL
                         fit: BoxFit.cover,
                         width: 120,
                         height: 120,
@@ -97,12 +97,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 // Preferences Section
                 _buildSectionTitle('Preferences'),
-                _buildPreferenceSwitch('Enable Notifications', enableNotifications, (newValue) {
+                _buildPreferenceSwitch(
+                    'Enable Notifications', enableNotifications, (newValue) {
                   setState(() {
                     enableNotifications = newValue;
                   });
                 }),
-                _buildPreferenceSwitch('Anonymous Mode', anonymousMode, (newValue) {
+                _buildPreferenceSwitch('Anonymous Mode', anonymousMode,
+                    (newValue) {
                   setState(() {
                     anonymousMode = newValue;
                   });
@@ -112,12 +114,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 // Privacy Settings Section
                 _buildSectionTitle('Privacy Settings'),
-                _buildPreferenceSwitch('Allow Data Sharing', allowDataSharing, (newValue) {
+                _buildPreferenceSwitch('Allow Data Sharing', allowDataSharing,
+                    (newValue) {
                   setState(() {
                     allowDataSharing = newValue;
                   });
                 }),
-                _buildPreferenceSwitch('Enable Encryption', enableEncryption, (newValue) {
+                _buildPreferenceSwitch('Enable Encryption', enableEncryption,
+                    (newValue) {
                   setState(() {
                     enableEncryption = newValue;
                   });
@@ -171,7 +175,8 @@ class _ProfilePageState extends State<ProfilePage> {
     ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.5);
   }
 
-  Widget _buildPreferenceSwitch(String title, bool value, Function(bool) onChanged) {
+  Widget _buildPreferenceSwitch(
+      String title, bool value, Function(bool) onChanged) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),

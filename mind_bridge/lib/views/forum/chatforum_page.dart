@@ -8,7 +8,8 @@ class ChatForum extends StatefulWidget {
 
 class _ChatForumState extends State<ChatForum> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Map<String, dynamic>> _messages = []; // Use dynamic to include DateTime
+  final List<Map<String, dynamic>> _messages =
+      []; // Use dynamic to include DateTime
 
   void _sendMessage() {
     if (_messageController.text.trim().isNotEmpty) {
@@ -79,7 +80,8 @@ class _ChatForumState extends State<ChatForum> {
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
             ),
           ),
