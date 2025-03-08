@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/chat_bubble.dart'; // Ensure this path is correct
+import '../../widgets/chat_bubble.dart'; // Ensure this path is correct
 
 class ChatForum extends StatefulWidget {
   @override
