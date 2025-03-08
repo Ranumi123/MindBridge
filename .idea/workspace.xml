@@ -45,6 +45,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
+
     "kotlin-language-version-configured": "true",
     "show.migrate.to.gradle.popup": "false"
   }
