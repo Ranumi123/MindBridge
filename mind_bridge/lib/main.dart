@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Import screens
+// Import your screens correctly
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
 import 'views/forum/screens/group_selection_screen.dart';
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.blue,
-          foregroundColor: Color.fromARGB(255, 206, 189, 189),
+          foregroundColor: Colors.white,
           elevation: 0,
           titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
