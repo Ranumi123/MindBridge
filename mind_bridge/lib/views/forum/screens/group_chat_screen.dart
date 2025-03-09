@@ -1,29 +1,66 @@
 import 'package:flutter/material.dart';
-import '../../widgets/group_tile.dart'; // Ensure `group_tile.dart` exists
+import '../../widgets/chat_bubble_new.dart';
 
-class GroupSelectionScreen extends StatelessWidget {
-  const GroupSelectionScreen({super.key});
+class GroupChatScreen extends StatefulWidget {
+  final String groupName;
+  const GroupChatScreen({super.key, required this.groupName});
+
+  @override
+  State<GroupChatScreen> createState() => _GroupChatScreenState();
+}
+
+class _GroupChatScreenState extends State<GroupChatScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, dynamic>> _messages = [
+    {'text': 'Hey! How are you?', 'isMe': false, 'time': '10:47 PM'},
+    {'text': 'I’m good, how about you?', 'isMe': true, 'time': '10:48 PM'},
+  ];
+
+  void _sendMessage() {
+    if (_controller.text.trim().isEmpty) return;
+    setState(() {
+      _messages.add({'text': _controller.text, 'isMe': true, 'time': '10:49 PM'});
+      _controller.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final groups = [
-      {'name': 'Group 1 - Floyd', 'members': '5/10'},
-      {'name': 'Group 2 - Devon', 'members': '8/10'},
-      {'name': 'Group 3 - Jerome', 'members': '7/10'},
-      {'name': 'Group 4 - Eleanor', 'members': '9/10'},
-    ];
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Community Forum')),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(title: Text(widget.groupName)),
+      body: Column(
         children: [
-          const Text(
-            'Chat Groups',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(10.0),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) => ChatBubble(message: _messages[index]),
+            ),
           ),
-          const SizedBox(height: 10),
-          ...groups.map((group) => GroupTile(group: group)).toList(),
+          _buildMessageInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                hintText: 'Type a message...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send, color: Colors.blue),
+            onPressed: _sendMessage,
+          ),
         ],
       ),
     );
