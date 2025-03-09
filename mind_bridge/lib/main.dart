@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
+// Correctly import your files with proper paths
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
-import 'views/forum/screens/group_selection_screen.dart'; // Updated to match your structure
+import 'views/forum/screens/group_chat_screen.dart';
+import 'views/forum/screens/chat_list_screen.dart';
+
 import 'views/mood_tracker/moodtracker_page.dart';
 
 void main() {
@@ -19,10 +23,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(),
-        '/chatbot': (context) => ChatScreen(),          // Fixed typo: `ChatScreen()` ➔ `ChatbotPage()`
-        '/chatforum': (context) => GroupSelectionScreen(), // Updated for group selection as the starting forum screen
-        '/moodtracker': (context) => MoodTrackerPage(),
+        '/': (context) => const HomePage(),
+        '/chatbot': (context) => ChatScreen(),
+        '/chatforum': (context) => const GroupSelectionScreen(),
+        '/chatlist': (context) => const ChatListScreen(),
+        '/chatdetail': (context) => const GroupSelectionScreen(), // FIXED REFERENCE
+        '/moodtracker': (context) => const MoodTrackerPage(),
       },
     );
   }

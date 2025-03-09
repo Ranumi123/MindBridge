@@ -1,73 +1,70 @@
 import 'package:flutter/material.dart';
-import '../repositories/chat_repository.dart';
-import '../../models/message_model_new.dart';
+import '../../widgets/chat_bubble_new.dart';
 
-class ChatScreen extends StatefulWidget {
-  final String groupName;
 
-  const ChatScreen({super.key, required this.groupName});
+class GroupChatScreen extends StatefulWidget {
+  const GroupChatScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<GroupChatScreen> createState() => _GroupChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
-  final ChatRepository _chatRepository = ChatRepository();
-  final TextEditingController _messageController = TextEditingController();
-  List<MessageModel> messages = [];
+class _GroupChatScreenState extends State<GroupChatScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, dynamic>> _messages = [
+    {'text': 'Hey! How are you doing?', 'isMe': false, 'time': '10:47 PM'},
+    {'text': 'I’m good, thanks! How about you?', 'isMe': true, 'time': '10:48 PM'},
+  ];
 
-  @override
-  void initState() {
-    super.initState();
-    fetchMessages();
-  }
-
-  Future<void> fetchMessages() async {
-    final fetchedMessages = await _chatRepository.getMessages(widget.groupName);
-    setState(() => messages = fetchedMessages);
-  }
-
-  void sendMessage() async {
-    if (_messageController.text.isNotEmpty) {
-      await _chatRepository.sendMessage(widget.groupName, _messageController.text);
-      fetchMessages(); // Refresh messages
-      _messageController.clear();
-    }
+  void _sendMessage() {
+    if (_controller.text.trim().isEmpty) return;
+    setState(() {
+      _messages.add({
+        'text': _controller.text,
+        'isMe': true,
+        'time': '10:49 PM',
+      });
+      _controller.clear();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.groupName)),
+      appBar: AppBar(title: const Text('Group 1 - Floyd')),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(messages[index].message),
-                  subtitle: Text(messages[index].timestamp.toLocal().toString()),
-                );
-              },
+              padding: const EdgeInsets.all(10.0),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) =>
+                  ChatBubble(message: _messages[index]),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(hintText: 'Type a message...'),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: sendMessage,
-                ),
-              ],
+          _buildMessageInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                hintText: 'Type a message...',
+                border: OutlineInputBorder(),
+              ),
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send, color: Colors.blue),
+            onPressed: _sendMessage,
           ),
         ],
       ),
