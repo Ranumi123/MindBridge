@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Import your screens correctly
+// Import screens
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
 import 'views/forum/screens/group_selection_screen.dart';
@@ -9,10 +9,10 @@ import 'views/forum/screens/chat_list_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
 
 void main() {
-  runApp(const MyApp()); // Changed from MindBridgeApp to MyApp
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget { // Changed class name to MyApp
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget { // Changed class name to MyApp
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          foregroundColor: Color.fromARGB(255, 206, 189, 189),
           elevation: 0,
           titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),

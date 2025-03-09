@@ -11,15 +11,12 @@ class GroupChatScreen extends StatefulWidget {
 
 class _GroupChatScreenState extends State<GroupChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [
-    {'text': 'Hey! How are you?', 'isMe': false, 'time': '10:47 PM'},
-    {'text': 'I’m good, how about you?', 'isMe': true, 'time': '10:48 PM'},
-  ];
+  final List<Map<String, dynamic>> _messages = [];
 
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
     setState(() {
-      _messages.add({'text': _controller.text, 'isMe': true, 'time': '10:49 PM'});
+      _messages.add({'text': _controller.text, 'isMe': true, 'time': 'Now'});
       _controller.clear();
     });
   }
