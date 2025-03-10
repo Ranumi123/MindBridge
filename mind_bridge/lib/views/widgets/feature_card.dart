@@ -5,7 +5,11 @@ class FeatureCard extends StatelessWidget {
   final String imagePath;
   final String route;
 
-  const FeatureCard({super.key, required this.title, required this.imagePath, required this.route});
+  const FeatureCard(
+      {super.key,
+      required this.title,
+      required this.imagePath,
+      required this.route});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,8 @@ class FeatureCard extends StatelessWidget {
             children: [
               Expanded(child: Image.asset(imagePath, fit: BoxFit.cover)),
               SizedBox(height: 8),
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ],
           ),
         ),

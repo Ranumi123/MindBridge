@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../../services/auth_service.dart';
 import 'dart:convert';
 
 class SignupPage extends StatefulWidget {
@@ -13,7 +13,8 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   void _signup() async {
     final name = _nameController.text;
@@ -110,7 +111,9 @@ class _SignupPageState extends State<SignupPage> {
                   prefixIcon: Icon(Icons.lock, color: Colors.blue.shade800),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Colors.blue.shade800,
                     ),
                     onPressed: () {
@@ -135,7 +138,9 @@ class _SignupPageState extends State<SignupPage> {
                   prefixIcon: Icon(Icons.lock, color: Colors.blue.shade800),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Colors.blue.shade800,
                     ),
                     onPressed: () {

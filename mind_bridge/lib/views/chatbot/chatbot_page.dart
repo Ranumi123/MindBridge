@@ -15,15 +15,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Message> _messages = [];
   bool _isLoading = false;
   bool _isBackendAvailable = true; // Set to true to connect to the backend
-<<<<<<< Updated upstream
-  String _backendUrl = 'http://172.20.10.2:5001/chat'; // Update with your backend URL
-=======
-  String _backendUrl =
-      'http://192.168.1.2:5001/chat'; // Update with your backend URL
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+  String _backendUrl = 'http://192.168.1.2:5001/chat'; // Update with your backend URL
 
   Future<void> _sendMessage(String message) async {
     setState(() {

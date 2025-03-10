@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'chat_screen.dart';
-import 'profile_setup_screen.dart'; // Import the ProfilePage
-import 'chat_forum.dart'; // Import the ChatForum screen
+import '../chatbot/chatbot_page.dart';
+import '../profile_setup_page/profile_setup_screen.dart'; // Import the ProfilePage
+import '../forum/screens/chatforum_page.dart'; // Import the ChatForum screen
 
 class PrivacySettingsPage extends StatefulWidget {
   @override
@@ -201,7 +201,10 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                 ),
                 child: Text(
                   'Save Changes',
-                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               SizedBox(height: 20),
@@ -221,7 +224,10 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                 ),
                 child: Text(
                   'Chat Support',
-                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               SizedBox(height: 20),
@@ -242,7 +248,10 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                 ),
                 child: Text(
                   'Go to Chat Forum',
-                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
