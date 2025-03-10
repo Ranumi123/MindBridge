@@ -33,7 +33,7 @@ class MeditationDetailScreen extends StatelessWidget {
                       height: 200,
                       color: Colors.grey.shade300,
                       child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey), //flutter error icon
                       ),
                     );
                   },
