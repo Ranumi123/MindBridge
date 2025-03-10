@@ -29,7 +29,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     try {
       final response = await http.get(Uri.parse("http://localhost:5000/api/meditations"));
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200) { //for successful response
         setState(() {
           meditations = json.decode(response.body);
           isLoading = false;
