@@ -82,7 +82,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
           // Filter Bar
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            child: Row(
+            child: Row( //created Row child
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: ["All", "Sleep", "Meditation", "Yoga"].map((filter) {
                 // to create a choice chip for each filter
