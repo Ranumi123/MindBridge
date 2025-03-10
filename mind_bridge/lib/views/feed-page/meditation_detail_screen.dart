@@ -60,7 +60,7 @@ class MeditationDetailScreen extends StatelessWidget {
                 children: [
                   Chip(
                     label: Text(meditation['category'] ?? 'Unknown'),
-                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.3),
+                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.3), //withOpacity was deprecated hence withValues with alpha was used
                   ),
                   const SizedBox(width: 10),
                   Chip(
