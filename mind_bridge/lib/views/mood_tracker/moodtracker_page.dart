@@ -20,11 +20,11 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
     {"image": "assets/images/Focus.jpg", "label": "Focused"}
   ];
 
-  int currentIndex = 0; // To track the selected mood index
+  int currentIndex = 0; // Tracks the index of the currently selected mood
 
   @override
   void dispose() {
-    _pageController.dispose(); // Dispose of the PageController to free resources
+    _pageController.dispose(); // Release resources used by the PageController
     super.dispose();
   }
 
@@ -39,7 +39,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
           const SizedBox(height: 20),
 
-          // Swipeable Mood Selector with Emphasis on the Selected One
+          // Swipeable Mood Selector with Highlight on the Active One
           SizedBox(
             height: 150,
             child: PageView.builder(
@@ -47,33 +47,33 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
               itemCount: moodOptions.length,
               onPageChanged: (index) {
                 setState(() {
-                  currentIndex = index; // Update the selected mood index
-                  selectedMood = moodOptions[index]['label']; // Set the selected mood label
+                  currentIndex = index; // Update the selected mood's index
+                  selectedMood = moodOptions[index]['label']; // Set the label of the selected mood
                 });
               },
               itemBuilder: (context, index) {
                 final mood = moodOptions[index];
-                bool isSelected = index == currentIndex; // Check if this mood is selected
+                bool isSelected = index == currentIndex; // Identify if the mood is the current selection
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
-                  transform: isSelected ? Matrix4.identity()..scale(1.2) : Matrix4.identity(), // Scale the selected mood
+                  transform: isSelected ? Matrix4.identity()..scale(1.2) : Matrix4.identity(), // Enlarge the selected mood
                   child: Column(
                     children: [
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            currentIndex = index; // Set the selected mood when tapped
-                            selectedMood = mood['label']; // Update the selected mood label
+                            currentIndex = index; // Set the selected mood on tap
+                            selectedMood = mood['label']; // Assign the corresponding label to the mood
                           });
                         },
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Blur or Opacity Effect to emphasize the selected mood
+                            // Reduce opacity or blur for unselected moods
                             Opacity(
-                              opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected moods
+                              opacity: isSelected ? 1.0 : 0.3, // Dim the non-selected moods
                               child: CircleAvatar(
                                 radius: 50,
                                 backgroundImage: AssetImage(mood['image']!),
@@ -114,12 +114,12 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
           ElevatedButton(
             onPressed: () {
               if (selectedMood != null || _textController.text.trim().isNotEmpty) {
-                // Show a message when a mood is selected or when text is entered
+                // Display a confirmation message when a mood is selected or text is entered
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Mood '$selectedMood' saved!")),
                 );
                 setState(() {
-                  _textController.clear(); // Clear the text field after submission
+                  _textController.clear(); // Reset the text input field after submission
                 });
               }
             },
