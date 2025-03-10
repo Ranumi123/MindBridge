@@ -57,7 +57,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
 
   // Function to open YouTube links
   void _launchYouTube(String url) async {
-    final Uri uri = Uri.parse(url);
+    final Uri uri = Uri.parse(url); // to parse the uri
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
