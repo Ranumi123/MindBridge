@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  url_launcher: ^6.1.11
+#   url_launcher: ^6.1.11
   video_player: ^2.7.0 # For video playback functionality
   chewie: ^1.4.0 # For enhanced video controls
   http: ^1.1.0 # For making HTTP requests (API calls)
@@ -41,6 +41,7 @@ dependencies:
   cached_network_image: ^3.2.0 # For loading network images with caching
   flutter_svg: ^2.0.10  # (Latest version at the time of writing)
   url_launcher: ^6.2.5
+
 
 
 

@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'meditation_detail_screen.dart';
 
-
 class MeditationListScreen extends StatefulWidget {
   const MeditationListScreen({super.key});
 
@@ -36,15 +35,12 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
           isLoading = false;
         });
       } else {
-        // Exception statement to say that meditations weren't loaded
         throw Exception("Failed to load meditations");
       }
     } catch (e) {
       setState(() {
         isLoading = false;
         errorMessage = "Could not load data. Check your internet connection";
-
-        
       });
     }
   }
@@ -187,6 +183,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                     ),
                   ],
                 ),
+
       backgroundColor: Colors.white,
     );
   }

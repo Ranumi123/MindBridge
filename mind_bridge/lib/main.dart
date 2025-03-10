@@ -41,7 +41,11 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
+        '/': (context) => HomePage(),
+        '/chatbot': (context) => ChatbotPage(),
+        '/chatforum': (context) => ChatForumPage(),
+        '/moodtracker': (context) => MoodTrackerPage(),,
+        '/chatbot': (context) => ChatbotPage(),
         '/chatbot': (context) => ChatScreen(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
