@@ -44,8 +44,8 @@ class PricingScreen extends StatelessWidget {
             _buildFeatureComparison(),
             SizedBox(height: 20),
 
-            // // Payment Options
-            // _buildPaymentOptions(),
+            // Payment Options
+            _buildPaymentOptions(),
 
             // // FAQ Section
             // _buildFAQ(),
@@ -134,6 +134,35 @@ class PricingScreen extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  } 
+
+  Widget _buildPaymentOptions() {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Accepted Payment Methods', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.credit_card, size: 40, color: Colors.blue),
+                Icon(Icons.paypal, size: 40, color: Colors.blueAccent),
+                Icon(Icons.account_balance_wallet, size: 40, color: Colors.green),
+                Icon(Icons.phone_android, size: 40, color: Colors.orange),
+              ],
+            ),
+            SizedBox(height: 10),
+            Text('💡 Student Discounts & Special Offers Available!', style: TextStyle(color: Colors.orange)),
+            Text('✅ 30-Day Money-Back Guarantee!', style: TextStyle(color: Colors.green)),
+          ],
+        ),
+      ),
     );
   }
 }
