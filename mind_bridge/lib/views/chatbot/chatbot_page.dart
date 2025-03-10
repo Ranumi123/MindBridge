@@ -16,8 +16,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final List<Message> _messages = [];
   bool _isLoading = false;
   bool _isBackendAvailable = true; // Set to true to connect to the backend
-  String _backendUrl =
-      'http://192.168.1.2:5001/chat'; // Update with your backend URL
+  String _backendUrl = 'http://192.168.1.2:5001/chat'; // Update with your backend URL
 
   // Animation controller for send button
   late AnimationController _sendButtonController;
@@ -81,8 +80,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           setState(() {
             _messages.add(Message(
               role: 'bot',
-              content:
-              data['reply'], // Use 'reply' as per your backend response
+              content: data['reply'], // Use 'reply' as per your backend response
               timestamp: DateTime.now(), // Add timestamp
             ));
             _isLoading = false;
@@ -286,8 +284,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: backgroundColor,
           image: DecorationImage(
-            image: AssetImage('assets/images/chat_pattern.png'),
-            opacity: 5,
+            image: AssetImage('assets/images/new_bg.png'),
+            opacity: 0.2, // Adjust opacity to make the background more visible
             fit: BoxFit.cover,
           ),
         ),
