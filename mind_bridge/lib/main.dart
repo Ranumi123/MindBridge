@@ -5,7 +5,7 @@ import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
 import 'views/forum/screens/group_chat_screen.dart';
 import 'views/forum/screens/chat_list_screen.dart';
-
+import 'views/therapist_dashboard/dashboard_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
 
 void main() {
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/chatlist': (context) => const ChatListScreen(),
         '/chatdetail': (context) => const GroupSelectionScreen(), // FIXED REFERENCE
         '/moodtracker': (context) => const MoodTrackerPage(),
+        '/dashboard': (context) => const DashboardScreen(),
       },
     );
   }
