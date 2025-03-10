@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
-// Correctly import your files with proper paths
+// Import screens
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
+import 'views/forum/screens/group_selection_screen.dart';
 import 'views/forum/screens/group_chat_screen.dart';
 import 'views/forum/screens/chat_list_screen.dart';
-import 'views/therapist_dashboard/dashboard_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
 
 void main() {
@@ -20,16 +19,32 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MindBridge',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Color.fromARGB(255, 206, 189, 189),
+          elevation: 0,
+          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
         '/chatbot': (context) => ChatScreen(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
-        '/chatdetail': (context) => const GroupSelectionScreen(), // FIXED REFERENCE
         '/moodtracker': (context) => const MoodTrackerPage(),
-        '/dashboard': (context) => const DashboardScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/groupchat') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => GroupChatScreen(groupName: args['groupName']),
+          );
+        }
+        return null; // Return null for undefined routes
       },
     );
   }

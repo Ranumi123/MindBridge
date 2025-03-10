@@ -212,7 +212,7 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChatScreen()),
+                    MaterialPageRoute(builder: (context) => ChatbotPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

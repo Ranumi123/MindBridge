@@ -13,20 +13,16 @@ class ChatBubble extends StatelessWidget {
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 5),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isMe ? Colors.blue[100] : Colors.grey[300],
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(message['text']!, style: const TextStyle(fontSize: 16)),
-            Text(
-              message['time']!,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
+            Text(message['time']!, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       ),

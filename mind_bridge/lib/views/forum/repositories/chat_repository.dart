@@ -4,7 +4,7 @@ import '../../models/message_model_new.dart';
 class ChatRepository {
   final ApiClient apiClient = ApiClient();
 
-  Future<List<String>> getGroups() async => await apiClient.fetchGroups();
+  Future<List<Map<String, dynamic>>> getGroups() async => await apiClient.fetchGroups();
 
   Future<List<MessageModel>> getMessages(String groupId) async {
     final data = await apiClient.fetchMessages(groupId);
