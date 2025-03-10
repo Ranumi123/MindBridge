@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-// Import your screens
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
 import 'views/forum/screens/group_selection_screen.dart';
