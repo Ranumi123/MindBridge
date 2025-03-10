@@ -5,12 +5,12 @@ import '../models/message_model.dart';
 import '../widgets/chat_bubble.dart';
 import '../widgets/loading_indicator.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatbotPage extends StatefulWidget {
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatbotPageState createState() => _ChatbotPageState();
 }
 
-class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
+class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<Message> _messages = [];
@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       _messages.add(Message(
         role: 'user',
         content: message,
-        timestamp: DateTime.now(), // Add timestamp
+        timestamp: DateTime.now(),
       ));
       _isLoading = true;
     });
@@ -69,7 +69,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           body: jsonEncode({
             'message': message,
             'userId': '12345'
-          }), // Add userId for emergency contacts
+          }),
         );
 
         print('Response status code: ${response.statusCode}'); // Debug log
@@ -80,8 +80,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           setState(() {
             _messages.add(Message(
               role: 'bot',
-              content: data['reply'], // Use 'reply' as per your backend response
-              timestamp: DateTime.now(), // Add timestamp
+              content: data['reply'],
+              timestamp: DateTime.now(),
             ));
             _isLoading = false;
           });
@@ -107,7 +107,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             _messages.add(Message(
               role: 'bot',
               content: errorMessage,
-              timestamp: DateTime.now(), // Add timestamp
+              timestamp: DateTime.now(),
             ));
             _isLoading = false;
           });
@@ -202,7 +202,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       _messages.add(Message(
         role: 'bot',
         content: errorMessage,
-        timestamp: DateTime.now(), // Add timestamp
+        timestamp: DateTime.now(),
       ));
       _isLoading = false;
     });
@@ -227,7 +227,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       _messages.add(Message(
         role: 'bot',
         content: response,
-        timestamp: DateTime.now(), // Add timestamp
+        timestamp: DateTime.now(),
       ));
       _isLoading = false;
     });
@@ -240,7 +240,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     // Get the theme and colors for consistent styling
     final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
+    final primaryColor = Color(0xFF4CAF50); // Light green accent
     final backgroundColor = Colors.grey[50];
 
     return Scaffold(
@@ -257,14 +257,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blue[700]!, Colors.blue[400]!],
+              colors: [Color(0xFF4CAF50), Color(0xFF81C784)], // Light green gradient
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
         elevation: 4,
-        shadowColor: Colors.blue.withOpacity(0.4),
+        shadowColor: Colors.green.withOpacity(0.4),
         actions: [
           IconButton(
             icon: Icon(Icons.info_outline, color: Colors.white),
@@ -339,7 +339,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
-                              color: isUser ? Colors.blue[700] : Colors.white,
+                              color: isUser ? Color(0xFF4CAF50) : Colors.white,
                               borderRadius: BorderRadius.circular(20).copyWith(
                                 bottomLeft: isUser ? Radius.circular(20) : Radius.circular(5),
                                 bottomRight: isUser ? Radius.circular(5) : Radius.circular(20),
@@ -449,14 +449,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       return Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.blue[700]!, Colors.blue[500]!],
+                            colors: [Color(0xFF4CAF50), Color(0xFF81C784)], // Light green gradient
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(50),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.blue.withOpacity(0.4 * _sendButtonController.value),
+                              color: Colors.green.withOpacity(0.4 * _sendButtonController.value),
                               blurRadius: 8,
                               offset: Offset(0, 4),
                             ),
@@ -513,7 +513,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             height: 8,
             margin: EdgeInsets.only(right: 4),
             decoration: BoxDecoration(
-              color: Colors.blue[300],
+              color: Color(0xFF4CAF50), // Light green accent
               borderRadius: BorderRadius.circular(4),
             ),
             child: TweenAnimationBuilder<double>(
@@ -540,15 +540,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Colors.blue[50],
+        color: Colors.green[50],
         borderRadius: BorderRadius.circular(size / 2),
-        border: Border.all(color: Colors.blue[100]!),
+        border: Border.all(color: Colors.green[100]!),
       ),
       child: Center(
         child: Icon(
           Icons.android_rounded,
           size: size * 0.6,
-          color: Colors.blue[700],
+          color: Color(0xFF4CAF50), // Light green accent
         ),
       ),
     );
@@ -560,7 +560,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       height: 36,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue[700]!, Colors.blue[500]!],
+          colors: [Color(0xFF4CAF50), Color(0xFF81C784)], // Light green gradient
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
