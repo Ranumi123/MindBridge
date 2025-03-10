@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart'; //url_launcher supported in ndk version 27 onwards
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'meditation_detail_screen.dart';
+
 
 class MeditationListScreen extends StatefulWidget {
   const MeditationListScreen({super.key});
