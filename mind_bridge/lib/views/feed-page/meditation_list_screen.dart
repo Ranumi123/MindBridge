@@ -154,7 +154,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                             // Play Button Overlay
                             Positioned(
                               child: GestureDetector(
-                                onTap: () => _launchYouTube(meditation["url"]!),
+                                onTap: () => _launchYouTube(meditation["url"]!), // when tapped, launch YouTube
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.black54,
