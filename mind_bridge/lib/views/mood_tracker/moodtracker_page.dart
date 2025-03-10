@@ -20,6 +20,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
     {"image": "assets/images/Focus.jpg", "label": "Focused"}
   ];
 
+  int currentIndex = 0; // To track the selected mood index
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +33,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
           const SizedBox(height: 20),
           
-          // Swipeable Mood Selector
+          // Swipeable Mood Selector with Emphasis on the Selected One
           SizedBox(
             height: 150,
             child: PageView.builder(
@@ -39,28 +41,47 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
               itemCount: moodOptions.length,
               onPageChanged: (index) {
                 setState(() {
+                  currentIndex = index;
                   selectedMood = moodOptions[index]['label'];
                 });
               },
               itemBuilder: (context, index) {
                 final mood = moodOptions[index];
-                return Transform.scale(
-                  scale: selectedMood == mood['label'] ? 1.2 : 1.0,
+                bool isSelected = index == currentIndex;
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  transform: isSelected ? Matrix4.identity()..scale(1.2) : Matrix4.identity(),
                   child: Column(
                     children: [
                       GestureDetector(
                         onTap: () {
                           setState(() {
+                            currentIndex = index;
                             selectedMood = mood['label'];
                           });
                         },
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundImage: AssetImage(mood['image']!),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Blur or Opacity Effect
+                            Opacity(
+                              opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundImage: AssetImage(mood['image']!),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Text(mood['label']!, style: const TextStyle(fontSize: 16)),
+                      Text(mood['label']!,
+                          style: TextStyle(
+                              fontSize: isSelected ? 16 : 14,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected ? Colors.black : Colors.grey)),
                     ],
                   ),
                 );
