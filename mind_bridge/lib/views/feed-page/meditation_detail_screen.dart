@@ -73,7 +73,7 @@ class MeditationDetailScreen extends StatelessWidget {
 
               // Meditation Description
               Text(
-                meditation['description'] ?? 'No description available.',
+                meditation['description'] ?? 'No description available.', //if meditation description is null value, error message appears
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 30),
