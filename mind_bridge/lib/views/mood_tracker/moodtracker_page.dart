@@ -39,7 +39,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
           const SizedBox(height: 20),
 
-          // Swipeable Mood Selector with Emphasis on the Selected One
           SizedBox(
             height: 150,
             child: PageView.builder(
@@ -71,7 +70,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Opacity Effect to emphasize the selected emoji
                             Opacity(
                               opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
                               child: CircleAvatar(
