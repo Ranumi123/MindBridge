@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'group_chat_screen.dart';
+import 'group_details_screen.dart';
 
 class GroupSelectionScreen extends StatefulWidget {
   const GroupSelectionScreen({super.key});
@@ -9,23 +9,25 @@ class GroupSelectionScreen extends StatefulWidget {
 }
 
 class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
-  // List of predefined groups with their current members
+  // List of predefined groups with details
   final List<Map<String, dynamic>> groups = [
-    {'name': 'Tech Talk', 'members': [], 'limit': 10},
-    {'name': 'Fitness Club', 'members': [], 'limit': 10},
-    {'name': 'Book Lovers', 'members': [], 'limit': 10},
-    {'name': 'Gaming Zone', 'members': [], 'limit': 10},
-    {'name': 'Music Vibes', 'members': [], 'limit': 10},
+    {'name': 'Tech Talk', 'members': [], 'limit': 10, 'description': 'Discuss the latest tech trends!'},
+    {'name': 'Fitness Club', 'members': [], 'limit': 10, 'description': 'Stay fit and healthy with others!'},
+    {'name': 'Book Lovers', 'members': [], 'limit': 10, 'description': 'Share and discuss your favorite books!'},
+    {'name': 'Gaming Zone', 'members': [], 'limit': 10, 'description': 'Talk about games and play together!'},
+    {'name': 'Music Vibes', 'members': [], 'limit': 10, 'description': 'Share your favorite music and artists!'},
   ];
 
   void joinGroup(int index) {
     setState(() {
       if (groups[index]['members'].length < groups[index]['limit']) {
         groups[index]['members'].add('You'); // Simulating user joining
+
+        // Navigate to Group Details Screen
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => GroupChatScreen(groupName: groups[index]['name']),
+            builder: (context) => GroupDetailsScreen(group: groups[index]),
           ),
         );
       } else {

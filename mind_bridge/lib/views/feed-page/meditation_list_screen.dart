@@ -27,7 +27,8 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
   // Fetch data from backend server
   Future<void> fetchMeditations() async {
     try {
-      final response = await http.get(Uri.parse("http://localhost:5000/api/meditations"));
+      final response =
+          await http.get(Uri.parse("http://localhost:5000/api/meditations"));
 
       if (response.statusCode == 200) { //for successful response
         setState(() {
@@ -42,6 +43,8 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       setState(() {
         isLoading = false;
         errorMessage = "Could not load data. Check your internet connection";
+
+        
       });
     }
   }
@@ -51,7 +54,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     if (selectedFilter == "All") {
       return meditations;
     } else {
-      return meditations.where((med) => med["category"] == selectedFilter).toList();
+      return meditations
+          .where((med) => med["category"] == selectedFilter)
+          .toList();
     }
   }
 
@@ -74,7 +79,8 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator()) // Show loading state
+          ? const Center(
+              child: CircularProgressIndicator()) // Show loading state
           : errorMessage.isNotEmpty
           ? Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
           : Column(
@@ -159,38 +165,28 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                                   decoration: const BoxDecoration(
                                     color: Colors.black54,
                                     shape: BoxShape.circle,
+
                                   ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: const Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 30,
+                                  title: Text(
+                                    meditation["title"]!,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    "${meditation["duration"]} • ${meditation["author"]}",
+                                    style: TextStyle(color: Colors.grey[600]),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        title: Text(
-                          meditation["title"]!,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "${meditation["duration"]} • ${meditation["author"]}",
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
+                          );
+                        },
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                  ],
+                ),
       backgroundColor: Colors.white,
     );
   }

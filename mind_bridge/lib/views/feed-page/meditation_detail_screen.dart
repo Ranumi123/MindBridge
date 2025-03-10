@@ -33,7 +33,10 @@ class MeditationDetailScreen extends StatelessWidget {
                       height: 200,
                       color: Colors.grey.shade300,
                       child: const Center(
+
                         child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey), //flutter error icon
+
+
                       ),
                     );
                   },
@@ -44,14 +47,16 @@ class MeditationDetailScreen extends StatelessWidget {
               // Meditation Title
               Text(
                 meditation['title'] ?? 'No Title',
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
 
               // Meditation Author
               Text(
                 'By ${meditation['author'] ?? 'Unknown'}',
-                style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                style:
+                    const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
               ),
               const SizedBox(height: 10),
 
@@ -83,16 +88,19 @@ class MeditationDetailScreen extends StatelessWidget {
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                   ),
                   icon: const Icon(Icons.play_arrow, color: Colors.white),
-                  label: const Text("Play Meditation", style: TextStyle(color: Colors.white)),
+                  label: const Text("Play Meditation",
+                      style: TextStyle(color: Colors.white)),
                   onPressed: () async {
                     final url = meditation['url'];
                     if (url != null && url.isNotEmpty) {
                       final Uri uri = Uri.parse(url); //uri is passed into url
                       if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        await launchUrl(uri,
+                            mode: LaunchMode.externalApplication);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Could not open video")), //error message for when video cannot be opened
