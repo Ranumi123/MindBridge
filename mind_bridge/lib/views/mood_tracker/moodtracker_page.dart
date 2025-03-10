@@ -20,11 +20,11 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
     {"image": "assets/images/Focus.jpg", "label": "Focused"}
   ];
 
-  int currentIndex = 0;
+  int currentIndex = 0; // To track the selected mood index
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _pageController.dispose(); // Dispose of the PageController to free resources
     super.dispose();
   }
 
@@ -39,6 +39,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
           const SizedBox(height: 20),
 
+          // Swipeable Mood Selector with Emphasis on the Selected One
           SizedBox(
             height: 150,
             child: PageView.builder(
@@ -46,32 +47,33 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
               itemCount: moodOptions.length,
               onPageChanged: (index) {
                 setState(() {
-                  currentIndex = index;
-                  selectedMood = moodOptions[index]['label'];
+                  currentIndex = index; // Update the selected mood index
+                  selectedMood = moodOptions[index]['label']; // Set the selected mood label
                 });
               },
               itemBuilder: (context, index) {
                 final mood = moodOptions[index];
-                bool isSelected = index == currentIndex;
+                bool isSelected = index == currentIndex; // Check if this mood is selected
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
-                  transform: isSelected ? Matrix4.identity()..scale(1.2) : Matrix4.identity(),
+                  transform: isSelected ? Matrix4.identity()..scale(1.2) : Matrix4.identity(), // Scale the selected mood
                   child: Column(
                     children: [
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            currentIndex = index;
-                            selectedMood = mood['label'];
+                            currentIndex = index; // Set the selected mood when tapped
+                            selectedMood = mood['label']; // Update the selected mood label
                           });
                         },
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
+                            // Blur or Opacity Effect to emphasize the selected mood
                             Opacity(
-                              opacity: isSelected ? 1.0 : 0.3,
+                              opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected moods
                               child: CircleAvatar(
                                 radius: 50,
                                 backgroundImage: AssetImage(mood['image']!),
@@ -85,7 +87,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                           style: TextStyle(
                               fontSize: isSelected ? 16 : 14,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected ? Colors.black : Colors.grey)),
+                              color: isSelected ? Colors.black : Colors.grey)), // Emphasize the selected mood
                     ],
                   ),
                 );
@@ -112,11 +114,12 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
           ElevatedButton(
             onPressed: () {
               if (selectedMood != null || _textController.text.trim().isNotEmpty) {
+                // Show a message when a mood is selected or when text is entered
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Mood '$selectedMood' saved!")),
                 );
                 setState(() {
-                  _textController.clear();
+                  _textController.clear(); // Clear the text field after submission
                 });
               }
             },
