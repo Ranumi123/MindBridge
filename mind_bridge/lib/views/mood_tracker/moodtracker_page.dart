@@ -155,8 +155,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
 
           if (showThumbsUp)
             SizedBox(
-              width: screenWidth * 0.3, // Adjusted width for a smaller GIF
-              height: screenWidth * 0.3, // Adjusted height for a smaller GIF
+              width: screenWidth * 0.5, // Adjusted width for a larger GIF
+              height: screenWidth * 0.5, // Adjusted height for a larger GIF
               child: GifImage(
                 controller: _gifController,
                 image: AssetImage('assets/gifs/thumbs_up.gif'),
