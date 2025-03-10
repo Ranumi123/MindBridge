@@ -20,7 +20,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
     {"image": "assets/images/Focus.jpg", "label": "Focused"}
   ];
 
-  int currentIndex = 0; // To track the selected mood index
+  int currentIndex = 0;
 
   @override
   void dispose() {
@@ -71,7 +71,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                           alignment: Alignment.center,
                           children: [
                             Opacity(
-                              opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
+                              opacity: isSelected ? 1.0 : 0.3,
                               child: CircleAvatar(
                                 radius: 50,
                                 backgroundImage: AssetImage(mood['image']!),
