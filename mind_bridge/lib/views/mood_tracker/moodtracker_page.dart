@@ -24,7 +24,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
   @override
   void dispose() {
-    // Dispose of the PageController when no longer needed
     _pageController.dispose();
     super.dispose();
   }
@@ -39,7 +38,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
           const Text("How are you feeling today?", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
           const SizedBox(height: 20),
-          
+
           // Swipeable Mood Selector with Emphasis on the Selected One
           SizedBox(
             height: 150,
@@ -72,7 +71,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Blur or Opacity Effect to emphasize the selected emoji
+                            // Opacity Effect to emphasize the selected emoji
                             Opacity(
                               opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
                               child: CircleAvatar(
