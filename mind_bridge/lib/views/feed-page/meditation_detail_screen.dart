@@ -95,7 +95,7 @@ class MeditationDetailScreen extends StatelessWidget {
                         await launchUrl(uri, mode: LaunchMode.externalApplication);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Could not open video")),
+                          const SnackBar(content: Text("Could not open video")), //error message for when video cannot be opened
                         );
                       }
                     } else {
