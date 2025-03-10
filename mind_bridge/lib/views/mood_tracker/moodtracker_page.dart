@@ -23,6 +23,13 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
   int currentIndex = 0; // To track the selected mood index
 
   @override
+  void dispose() {
+    // Dispose of the PageController when no longer needed
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Mood Tracker"), backgroundColor: Colors.blueAccent),
