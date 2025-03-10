@@ -11,7 +11,7 @@ class MeditationDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(meditation['title'] ?? 'Meditation'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blueAccent, //main color of the app
       ),
       body: SingleChildScrollView(
         child: Padding(
