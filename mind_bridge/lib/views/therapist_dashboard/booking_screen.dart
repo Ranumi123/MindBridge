@@ -16,7 +16,7 @@ class _BookingScreenState extends State<BookingScreen> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   TextEditingController contactController = TextEditingController();
-  TextEditingController dateController = TextEditingController(); 
+  TextEditingController dateController = TextEditingController();
   String? selectedGender;
   String? selectedCommunication;
   String? selectedTime;
@@ -34,7 +34,9 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Book ${widget.therapist.name}'), backgroundColor: Colors.teal),
+      appBar: AppBar(
+          title: Text('Book ${widget.therapist.name}'),
+          backgroundColor: Colors.teal),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Form(
@@ -44,55 +46,47 @@ class _BookingScreenState extends State<BookingScreen> {
             children: [
               _buildTextField(fullNameController, 'Full Name', true),
               SizedBox(height: 10),
-
-              // Date of Birth (Date Picker)
               TextFormField(
                 controller: dobController,
-                decoration: InputDecoration(labelText: 'Date of Birth', border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                    labelText: 'Date of Birth', border: OutlineInputBorder()),
                 readOnly: true,
                 onTap: () => _selectDate(context, dobController),
-                validator: (value) => value!.isEmpty ? 'Enter your date of birth' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Enter your date of birth' : null,
               ),
               SizedBox(height: 10),
-
-              // Gender (Dropdown)
-              _buildDropdown('Gender (Optional)', genderOptions, selectedGender, (value) {
+              _buildDropdown('Gender (Optional)', genderOptions, selectedGender,
+                  (value) {
                 setState(() => selectedGender = value);
               }),
               SizedBox(height: 10),
-
-              // Contact Information
               _buildTextField(contactController, 'Email or Phone Number', true),
               SizedBox(height: 10),
-
-              // Preferred Communication Method
-              _buildDropdown('Preferred Communication', communicationOptions, selectedCommunication, (value) {
+              _buildDropdown('Preferred Communication', communicationOptions,
+                  selectedCommunication, (value) {
                 setState(() => selectedCommunication = value);
               }),
               SizedBox(height: 10),
-
-              // Preferred Date (Date Picker)
               TextFormField(
                 controller: dateController,
-                decoration: InputDecoration(labelText: 'Preferred Date', border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                    labelText: 'Preferred Date', border: OutlineInputBorder()),
                 readOnly: true,
                 onTap: () => _selectDate(context, dateController),
-                validator: (value) => value!.isEmpty ? 'Select a preferred date' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Select a preferred date' : null,
               ),
               SizedBox(height: 10),
-
-              // Preferred Time (Dropdown)
-              _buildDropdown('Preferred Time', timeOptions, selectedTime, (value) {
+              _buildDropdown('Preferred Time', timeOptions, selectedTime,
+                  (value) {
                 setState(() => selectedTime = value);
               }),
               SizedBox(height: 10),
-
-              // Pricing Plan
-              Text("Select a Pricing Plan", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text("Select a Pricing Plan",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               _buildPricingPlans(),
               SizedBox(height: 20),
-
-              // Confirm Booking Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -113,19 +107,24 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   // Generic Text Field
-  Widget _buildTextField(TextEditingController controller, String label, bool isRequired) {
+  Widget _buildTextField(
+      TextEditingController controller, String label, bool isRequired) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
-      validator: (value) => (isRequired && value!.isEmpty) ? 'Enter your $label' : null,
+      decoration:
+          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      validator: (value) =>
+          (isRequired && value!.isEmpty) ? 'Enter your $label' : null,
     );
   }
 
   // Custom Dropdown Widget
-  Widget _buildDropdown(String label, List<String> options, String? selectedValue, ValueChanged<String?> onChanged) {
+  Widget _buildDropdown(String label, List<String> options,
+      String? selectedValue, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
       value: selectedValue,
-      decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
+      decoration:
+          InputDecoration(labelText: label, border: OutlineInputBorder()),
       items: options.map((option) {
         return DropdownMenuItem(value: option, child: Text(option));
       }).toList(),
@@ -151,7 +150,8 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   // Show Date Picker
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
