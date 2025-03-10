@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 // Import screens
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'models/message_model.dart';
+import '../models/message_model.dart';
 import '../widgets/chat_bubble.dart';
-import 'widgets/loading_indicator.dart';
+import '../widgets/loading_indicator.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -15,7 +15,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Message> _messages = [];
   bool _isLoading = false;
   bool _isBackendAvailable = true; // Set to true to connect to the backend
-  String _backendUrl = 'http://192.168.1.2:5001/chat'; // Update with your backend URL
+  String _backendUrl =
+      'http://192.168.1.2:5001/chat'; // Update with your backend URL
 
   Future<void> _sendMessage(String message) async {
     setState(() {
@@ -33,7 +34,10 @@ class _ChatScreenState extends State<ChatScreen> {
         final response = await http.post(
           Uri.parse(_backendUrl),
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'message': message, 'userId': '12345'}), // Add userId for emergency contacts
+          body: jsonEncode({
+            'message': message,
+            'userId': '12345'
+          }), // Add userId for emergency contacts
         );
 
         print('Response status code: ${response.statusCode}'); // Debug log
@@ -44,7 +48,8 @@ class _ChatScreenState extends State<ChatScreen> {
           setState(() {
             _messages.add(Message(
               role: 'bot',
-              content: data['reply'], // Use 'reply' as per your backend response
+              content:
+                  data['reply'], // Use 'reply' as per your backend response
               timestamp: DateTime.now(), // Add timestamp
             ));
             _isLoading = false;
@@ -142,7 +147,8 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Text(
           'Chatbot',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
         flexibleSpace: Container(
@@ -186,7 +192,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     Expanded(
                       child: Text(
                         'Development mode: Backend not connected',
-                        style: TextStyle(fontSize: 12, color: Colors.blueAccent[800]),
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.blueAccent[800]),
                       ),
                     ),
                   ],
