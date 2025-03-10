@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gifimage/flutter_gifimage.dart';
 import '../widgets/bottom_navbar.dart';
 
 class MoodTrackerPage extends StatefulWidget {
@@ -8,7 +9,7 @@ class MoodTrackerPage extends StatefulWidget {
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
 }
 
-class _MoodTrackerPageState extends State<MoodTrackerPage> {
+class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProviderStateMixin {
   final TextEditingController _textController = TextEditingController();
   String? selectedMood;
   final PageController _pageController = PageController(viewportFraction: 0.6);
@@ -22,11 +23,23 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
   int currentIndex = 0; // To track the selected mood index
   bool showThumbsUp = false; // Track whether to show the thumbs-up animation
+  late GifController _gifController;
+
+  @override
+  void initState() {
+    super.initState();
+    _gifController = GifController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _gifController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -122,7 +135,10 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                   showThumbsUp = true;
                 });
 
-                // Hide the thumbs up after a short delay
+                // Play the full GIF
+                _gifController.repeat(min: 0, max: 30, period: const Duration(milliseconds: 500));
+
+                // Hide the thumbs-up after a short delay
                 Future.delayed(const Duration(seconds: 2), () {
                   setState(() {
                     showThumbsUp = false;
@@ -138,12 +154,12 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
           ),
 
           if (showThumbsUp)
-            ScaleTransition(
-              scale: AlwaysStoppedAnimation(1.2),
-              child: Container(
-                width: screenWidth * 0.3, // Adjusted width for a smaller GIF
-                height: screenWidth * 0.3, // Adjusted height for a smaller GIF
-                child: Image.asset('assets/gifs/thumbs_up.gif', fit: BoxFit.contain),
+            SizedBox(
+              width: screenWidth * 0.3, // Adjusted width for a smaller GIF
+              height: screenWidth * 0.3, // Adjusted height for a smaller GIF
+              child: GifImage(
+                controller: _gifController,
+                image: AssetImage('assets/gifs/thumbs_up.gif'),
               ),
             ),
         ],
