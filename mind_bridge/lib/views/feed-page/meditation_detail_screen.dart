@@ -60,12 +60,12 @@ class MeditationDetailScreen extends StatelessWidget {
                 children: [
                   Chip(
                     label: Text(meditation['category'] ?? 'Unknown'),
-                    backgroundColor: Colors.blueAccent.withOpacity(0.2),
+                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.3),
                   ),
                   const SizedBox(width: 10),
                   Chip(
                     label: Text(meditation['duration'] ?? 'Unknown'),
-                    backgroundColor: Colors.greenAccent.withOpacity(0.2),
+                    backgroundColor: Colors.greenAccent.withValues(alpha: 0.3),
                   ),
                 ],
               ),
