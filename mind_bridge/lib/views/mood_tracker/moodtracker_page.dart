@@ -72,7 +72,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Blur or Opacity Effect
+                            // Blur or Opacity Effect to emphasize the selected emoji
                             Opacity(
                               opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
                               child: CircleAvatar(
