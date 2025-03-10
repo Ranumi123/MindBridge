@@ -14,7 +14,7 @@ class MeditationListScreen extends StatefulWidget {
 
 class _MeditationListScreenState extends State<MeditationListScreen> {
   List<dynamic> meditations = []; // Holds data from backend server
-  String selectedFilter = "All";  // Default filter
+  String selectedFilter = "All";  // Default filter so "All" is selected
   bool isLoading = true;          // Loading state
   String errorMessage = "";        // Error message
 
