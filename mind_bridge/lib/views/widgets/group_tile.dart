@@ -7,11 +7,24 @@ class GroupTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(group['name']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text('Members: ${group['members']}'),
-      trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: () => Navigator.pushNamed(context, '/chatlist'),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blueAccent.shade100,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.blue,
+          child: Text(
+            group['name']!.split(' ')[1],
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        title: Text(group['name']!, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text('${group['members']} members'),
+        onTap: () => Navigator.pushNamed(context, '/chatdetail'),
+      ),
     );
   }
 }
