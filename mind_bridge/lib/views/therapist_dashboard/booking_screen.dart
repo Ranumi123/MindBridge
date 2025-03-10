@@ -106,7 +106,6 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  // Generic Text Field
   Widget _buildTextField(
       TextEditingController controller, String label, bool isRequired) {
     return TextFormField(
@@ -118,7 +117,6 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  // Custom Dropdown Widget
   Widget _buildDropdown(String label, List<String> options,
       String? selectedValue, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
@@ -133,7 +131,6 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  // Pricing Plan Radio Buttons
   Widget _buildPricingPlans() {
     return Column(
       children: pricingPlans.map((plan) {
@@ -149,7 +146,6 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  // Show Date Picker
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
@@ -165,7 +161,6 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  // Confirm Booking Action
   void _confirmBooking() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
