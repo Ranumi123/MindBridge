@@ -16,7 +16,7 @@ class _BookingScreenState extends State<BookingScreen> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   TextEditingController contactController = TextEditingController();
-  TextEditingController dateController = TextEditingController(); // For Preferred Date
+  TextEditingController dateController = TextEditingController(); 
   String? selectedGender;
   String? selectedCommunication;
   String? selectedTime;
