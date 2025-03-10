@@ -34,6 +34,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
           isLoading = false;
         });
       } else {
+        // Exception statement to say that meditations weren't loaded
         throw Exception("Failed to load meditations");
       }
     } catch (e) {
