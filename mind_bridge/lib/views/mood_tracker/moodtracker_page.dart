@@ -23,6 +23,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   bool showThumbsUp = false;
+  Map<String, bool> isHovered = {};
 
   @override
   void initState() {
@@ -34,6 +35,9 @@ class _MoodTrackerPageState extends State<MoodTrackerPage>
     _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
+    for (var mood in moodOptions) {
+      isHovered[mood['label']!] = false;
+    }
   }
 
   void _saveMood() {
@@ -89,44 +93,48 @@ class _MoodTrackerPageState extends State<MoodTrackerPage>
               spacing: screenWidth * 0.03,
               runSpacing: screenHeight * 0.015,
               alignment: WrapAlignment.center,
-              children: moodOptions
-                  .map((mood) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () =>
-                                setState(() => selectedMood = mood['label']),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: Size(70, 70),
-                              shape: CircleBorder(),
-                              backgroundColor: selectedMood == mood['label']
-                                  ? Color(0xFF3CDFCA)
-                                  : Colors.white,
-                              side: BorderSide(
-                                  color: selectedMood == mood['label']
-                                      ? Colors.blueAccent
-                                      : Colors.transparent,
-                                  width: 2),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Container(
+              children: moodOptions.map((mood) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MouseRegion(
+                      onEnter: (_) => setState(() => isHovered[mood['label']!] = true),
+                      onExit: (_) => setState(() => isHovered[mood['label']!] = false),
+                      child: AnimatedScale(
+                        scale: (isHovered[mood['label']!] ?? false) ? 1.2 : 1.0,
+                        duration: Duration(milliseconds: 200),
+                        child: ElevatedButton(
+                          onPressed: () =>
+                              setState(() => selectedMood = mood['label']),
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(70, 70),
+                            shape: CircleBorder(),
+                            backgroundColor: selectedMood == mood['label']
+                                ? Color(0xFF3CDFCA)
+                                : Colors.white,
+                            side: BorderSide(
+                                color: selectedMood == mood['label']
+                                    ? Colors.blueAccent
+                                    : Colors.transparent,
+                                width: 2),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: ClipOval(
+                            child: Image.asset(
+                              mood['image']!,
+                              fit: BoxFit.cover,
                               width: 70,
                               height: 70,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  mood['image']!,
-                                  fit: BoxFit.cover,
-                                  width: 70,
-                                  height: 70,
-                                ),
-                              ),
                             ),
                           ),
-                          SizedBox(height: 4),
-                          Text(mood['label']!, style: TextStyle(fontSize: 12)),
-                        ],
-                      ))
-                  .toList(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(mood['label']!, style: TextStyle(fontSize: 12)),
+                  ],
+                );
+              }).toList(),
             ),
             SizedBox(height: screenHeight * 0.02),
             Text("Express yourself in words ✨",
@@ -190,5 +198,3 @@ class _MoodTrackerPageState extends State<MoodTrackerPage>
     super.dispose();
   }
 }
-//test 1
-//test 2
