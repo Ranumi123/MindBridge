@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; //url_launcher supported in ndk version 27 onwards
 
 class MeditationDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> meditation;
+  final Map<String, dynamic> meditation; //declaring immutable map named "meditation" with dynamic type
 
   const MeditationDetailScreen({super.key, required this.meditation});
 
