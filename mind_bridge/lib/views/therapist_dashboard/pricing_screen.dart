@@ -47,8 +47,8 @@ class PricingScreen extends StatelessWidget {
             // Payment Options
             _buildPaymentOptions(),
 
-            // // FAQ Section
-            // _buildFAQ(),
+            // FAQ Section
+            _buildFAQ(),
 
             SizedBox(height: 20),
           ],
@@ -137,6 +137,7 @@ class PricingScreen extends StatelessWidget {
     );
   } 
 
+  // Payment Options Section
   Widget _buildPaymentOptions() {
     return Card(
       elevation: 3,
@@ -163,6 +164,40 @@ class PricingScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+    // FAQ Section
+  Widget _buildFAQ() {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Frequently Asked Questions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            _buildFAQItem('Can I cancel anytime?', 'Yes! You can cancel your subscription at any time with no extra fees.'),
+            _buildFAQItem('Are therapy sessions included in all plans?', 'No, only Basic, Premium, and VIP plans include therapy sessions.'),
+            _buildFAQItem('What happens if I miss a session?', 'Missed sessions can be rescheduled, but refunds are not provided.'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // FAQ Item Widget
+  Widget _buildFAQItem(String question, String answer) {
+    return ExpansionTile(
+      title: Text(question, style: TextStyle(fontWeight: FontWeight.bold)),
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+          child: Text(answer),
+        ),
+      ],
     );
   }
 }
