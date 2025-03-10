@@ -162,6 +162,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
                 image: AssetImage('assets/gifs/thumbs_up.gif'),
               ),
             ),
+
+          // Final comment: Added an animation for thumbs-up after mood is saved
         ],
       ),
     );
