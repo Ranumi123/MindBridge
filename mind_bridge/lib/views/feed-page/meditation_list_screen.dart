@@ -84,6 +84,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: ["All", "Sleep", "Meditation", "Yoga"].map((filter) {
+                // to create a choice chip for each filter
                 return ChoiceChip(
                   label: Text(filter, style: const TextStyle(color: Colors.white)),
                   selected: selectedFilter == filter,
