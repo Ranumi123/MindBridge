@@ -39,7 +39,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage = "Could not load data. Check your internet connection. node server.js run karapan http!";
+        errorMessage = "Could not load data. Check your internet connection";
       });
     }
   }
