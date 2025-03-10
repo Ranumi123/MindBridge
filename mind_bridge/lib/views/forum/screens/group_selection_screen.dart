@@ -1,80 +1,61 @@
 import 'package:flutter/material.dart';
+import 'group_details_screen.dart';
 
-
-class GroupSelectionScreen extends StatelessWidget {
+class GroupSelectionScreen extends StatefulWidget {
   const GroupSelectionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final groups = [
-      {'name': 'Group 1 - Floyd', 'members': '5/10'},
-      {'name': 'Group 2 - Devon', 'members': '8/10'},
-      {'name': 'Group 3 - Jerome', 'members': '7/10'},
-      {'name': 'Group 4 - Eleanor', 'members': '9/10'},
-    ];
+  _GroupSelectionScreenState createState() => _GroupSelectionScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community Forum'),
-        backgroundColor: Colors.blue.shade800,
-        elevation: 4,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Chat Groups',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
-              ),
-            ),
-            const SizedBox(height: 15),
-            Expanded(
-              child: ListView.builder(
-                itemCount: groups.length,
-                itemBuilder: (context, index) {
-                  final group = groups[index];
-                  return _buildGroupCard(context, group);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
+  // List of predefined groups with details
+  final List<Map<String, dynamic>> groups = [
+    {'name': 'Tech Talk', 'members': [], 'limit': 10, 'description': 'Discuss the latest tech trends!'},
+    {'name': 'Fitness Club', 'members': [], 'limit': 10, 'description': 'Stay fit and healthy with others!'},
+    {'name': 'Book Lovers', 'members': [], 'limit': 10, 'description': 'Share and discuss your favorite books!'},
+    {'name': 'Gaming Zone', 'members': [], 'limit': 10, 'description': 'Talk about games and play together!'},
+    {'name': 'Music Vibes', 'members': [], 'limit': 10, 'description': 'Share your favorite music and artists!'},
+  ];
+
+  void joinGroup(int index) {
+    setState(() {
+      if (groups[index]['members'].length < groups[index]['limit']) {
+        groups[index]['members'].add('You'); // Simulating user joining
+
+        // Navigate to Group Details Screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GroupDetailsScreen(group: groups[index]),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('This group is full! Max 10 members.')),
+        );
+      }
+    });
   }
 
-  Widget _buildGroupCard(BuildContext context, Map<String, String> group) {
-    return Card(
-      color: Colors.white,
-      elevation: 4,
-      shadowColor: Colors.blueAccent.withOpacity(0.4),
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        leading: CircleAvatar(
-          backgroundColor: Colors.blueAccent,
-          child: Text(
-            group['name']!.split(' ')[1], // Extract group number
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        title: Text(
-          group['name']!,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        subtitle: Text(
-          '${group['members']} members',
-          style: const TextStyle(color: Colors.grey),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
-        onTap: () {
-          Navigator.pushNamed(context, '/chatdetail');
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Join a Group')),
+      body: ListView.builder(
+        itemCount: groups.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: const EdgeInsets.all(8.0),
+            child: ListTile(
+              title: Text(groups[index]['name']),
+              subtitle: Text('${groups[index]['members'].length} / ${groups[index]['limit']} members'),
+              trailing: ElevatedButton(
+                onPressed: () => joinGroup(index),
+                child: const Text('Join'),
+              ),
+            ),
+          );
         },
       ),
     );
