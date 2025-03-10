@@ -60,7 +60,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      throw "Could not launch $url";
+      throw "Could not launch $url"; //exception to state that link could not be opened
     }
   }
 
