@@ -90,7 +90,7 @@ class MeditationDetailScreen extends StatelessWidget {
                   onPressed: () async {
                     final url = meditation['url'];
                     if (url != null && url.isNotEmpty) {
-                      final Uri uri = Uri.parse(url);
+                      final Uri uri = Uri.parse(url); //uri is passed into url
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri, mode: LaunchMode.externalApplication);
                       } else {
