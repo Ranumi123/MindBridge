@@ -41,8 +41,8 @@ class PricingScreen extends StatelessWidget {
             ),
 
             SizedBox(height: 20),
-            // _buildFeatureComparison(),
-            // SizedBox(height: 20),
+            _buildFeatureComparison(),
+            SizedBox(height: 20),
 
             // // Payment Options
             // _buildPaymentOptions(),
@@ -87,6 +87,53 @@ class PricingScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  // Features Comparison Table
+  Widget _buildFeatureComparison() {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text('Feature Comparison', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: {0: FractionColumnWidth(0.5)},
+              children: [
+                _buildTableRow(['Features', 'Free', 'Basic', 'Premium', 'VIP'], isHeader: true),
+                _buildTableRow(['Therapy Sessions', '0', '2/mo', '5/mo', 'Unlimited']),
+                _buildTableRow(['AI Chatbot Access', 'Basic', 'Advanced', 'Advanced', 'Premium']),
+                _buildTableRow(['24/7 Crisis Support', '❌', '❌', '✔', '✔']),
+                _buildTableRow(['Community Access', 'Limited', '✔', '✔', '✔']),
+                _buildTableRow(['Mood Tracking', '❌', '❌', '✔', '✔']),
+                _buildTableRow(['Exclusive Webinars', '❌', '❌', '❌', '✔']),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Build Table Row
+  TableRow _buildTableRow(List<String> cells, {bool isHeader = false}) {
+    return TableRow(
+      decoration: isHeader ? BoxDecoration(color: Colors.teal[100]) : null,
+      children: cells.map((cell) {
+        return Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            cell,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: isHeader ? FontWeight.bold : FontWeight.normal),
+          ),
+        );
+      }).toList(),
     );
   }
 }
