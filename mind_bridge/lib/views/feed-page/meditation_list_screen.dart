@@ -124,7 +124,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
+                            color: Colors.black.withValues(alpha: 0.3), //withOpacity was deprecated hence withValues were used
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
