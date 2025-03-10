@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart'; //url_launcher supported in ndk version 27 onwards
 
 class MeditationDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> meditation;
+  final Map<String, dynamic> meditation; //declaring immutable map named "meditation" with dynamic type
 
   const MeditationDetailScreen({super.key, required this.meditation});
 
@@ -11,7 +11,7 @@ class MeditationDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(meditation['title'] ?? 'Meditation'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blueAccent, //main color of the app
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -24,7 +24,7 @@ class MeditationDetailScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
                   meditation['image'] ?? '',
-                  width: double.infinity,
+                  width: double.infinity, //ensures that the image fills the available width
                   height: 200,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
@@ -33,8 +33,10 @@ class MeditationDetailScreen extends StatelessWidget {
                       height: 200,
                       color: Colors.grey.shade300,
                       child: const Center(
-                        child: Icon(Icons.image_not_supported,
-                            size: 50, color: Colors.grey),
+
+                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey), //flutter error icon
+
+
                       ),
                     );
                   },
@@ -63,7 +65,7 @@ class MeditationDetailScreen extends StatelessWidget {
                 children: [
                   Chip(
                     label: Text(meditation['category'] ?? 'Unknown'),
-                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.3),
+                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.3), //withOpacity was deprecated hence withValues with alpha was used
                   ),
                   const SizedBox(width: 10),
                   Chip(
@@ -76,7 +78,7 @@ class MeditationDetailScreen extends StatelessWidget {
 
               // Meditation Description
               Text(
-                meditation['description'] ?? 'No description available.',
+                meditation['description'] ?? 'No description available.', //if meditation description is null value, error message appears
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 30),
@@ -95,13 +97,13 @@ class MeditationDetailScreen extends StatelessWidget {
                   onPressed: () async {
                     final url = meditation['url'];
                     if (url != null && url.isNotEmpty) {
-                      final Uri uri = Uri.parse(url);
+                      final Uri uri = Uri.parse(url); //uri is passed into url
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri,
                             mode: LaunchMode.externalApplication);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Could not open video")),
+                          const SnackBar(content: Text("Could not open video")), //error message for when video cannot be opened
                         );
                       }
                     } else {
