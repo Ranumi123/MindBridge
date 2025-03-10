@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
-import 'views/forum/chatforum_page.dart';
+import 'views/forum/screens/group_selection_screen.dart';
+import 'views/forum/screens/chat_list_screen.dart';
+import 'views/forum/screens/group_chat_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,17 +18,35 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MindBridge',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[100],
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 2.0,
+        ),
+        cardTheme: CardTheme(
+          color: Colors.white,
+          shadowColor: Colors.grey.withOpacity(0.5),
+          elevation: 3.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 16),
+        ),
+      ),
       initialRoute: '/',
       routes: {
-<<<<<<< Updated upstream
         '/': (context) => HomePage(),
         '/chatbot': (context) => ChatbotPage(),
         '/chatforum': (context) => ChatForumPage(),
-        '/moodtracker': (context) => MoodTrackerPage(),
-=======
-        '/': (context) => const HomePage(),
+        '/moodtracker': (context) => MoodTrackerPage(),,
         '/chatbot': (context) => ChatbotPage(),
+        '/chatbot': (context) => ChatScreen(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
         '/chatdetail': (context) {
@@ -34,7 +54,6 @@ class MyApp extends StatelessWidget {
           return GroupChatScreen(group: args);
         },
         '/moodtracker': (context) => const MoodTrackerPage(),
->>>>>>> Stashed changes
       },
     );
   }
