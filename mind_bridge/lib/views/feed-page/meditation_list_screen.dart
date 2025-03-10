@@ -24,7 +24,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     fetchMeditations();
   }
 
-  // Fetch data from backend
+  // Fetch data from backend server
   Future<void> fetchMeditations() async {
     try {
       final response = await http.get(Uri.parse("http://localhost:5000/api/meditations"));
