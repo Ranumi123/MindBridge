@@ -66,42 +66,29 @@ class DoctorListScreen extends StatelessWidget {
 
                   return isTablet
                       ? GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Two doctors per row on tablets
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 0.8, // Adjust for better height
-                        ),
-                        itemCount: doctors.length,
-                        itemBuilder: (context, index) {
-                          return DoctorCard(therapist: doctors[index]);
-                        },
-                      )
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Two doctors per row on tablets
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.8, // Adjust for better height
+                          ),
+                          itemCount: doctors.length,
+                          itemBuilder: (context, index) {
+                            return DoctorCard(therapist: doctors[index]);
+                          },
+                        )
                       : ListView.builder(
-                        itemCount: doctors.length,
-                        itemBuilder: (context, index) {
-                          return DoctorCard(therapist: doctors[index]);
-                        },
-                      );
+                          itemCount: doctors.length,
+                          itemBuilder: (context, index) {
+                            return DoctorCard(therapist: doctors[index]);
+                          },
+                        );
                 },
               ),
             ),
 
             SizedBox(height: 20),
-
-            // View More Button
-            // Center(
-            //   child: ElevatedButton.icon(
-            //     onPressed: () {},
-            //     icon: Icon(Icons.arrow_forward),
-            //     label: Text('View More'),
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: Colors.teal,
-            //       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            //       textStyle: TextStyle(fontSize: 18),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
