@@ -55,7 +55,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send, color: Colors.blue),
+            icon: const Icon(Icons.send, color: Color.fromARGB(255, 16, 118, 202)),
             onPressed: _sendMessage,
           ),
         ],
