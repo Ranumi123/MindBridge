@@ -20,6 +20,9 @@ class _ChatScreenState extends State<ChatScreen> {
 =======
   String _backendUrl =
       'http://192.168.1.2:5001/chat'; // Update with your backend URL
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
   Future<void> _sendMessage(String message) async {

@@ -18,7 +18,10 @@ packages:
     source: hosted
     version: "2.1.2"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   cached_network_image:
     dependency: "direct main"
     description:
@@ -53,7 +56,10 @@ packages:
     source: hosted
     version: "1.4.0"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   chewie:
     dependency: "direct main"
     description:
@@ -80,7 +86,10 @@ packages:
     source: hosted
     version: "1.19.1"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   crypto:
     dependency: transitive
     description:
@@ -115,7 +124,10 @@ packages:
     source: hosted
     version: "1.3.2"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   ffi:
     dependency: transitive
     description:
@@ -216,7 +228,10 @@ packages:
     source: hosted
     version: "1.16.0"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   nested:
     dependency: transitive
     description:
@@ -259,7 +274,10 @@ packages:
     source: hosted
     version: "1.9.1"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   path_parsing:
     dependency: transitive
     description:
@@ -371,7 +389,10 @@ packages:
     source: hosted
     version: "1.10.1"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   sprintf:
     dependency: transitive
     description:
@@ -446,7 +467,10 @@ packages:
     source: hosted
     version: "1.4.1"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   synchronized:
     dependency: transitive
     description:
@@ -473,7 +497,10 @@ packages:
     source: hosted
     version: "0.7.4"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   typed_data:
     dependency: transitive
     description:
@@ -532,10 +559,13 @@ packages:
     source: hosted
     version: "14.3.1"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 sdks:
   dart: ">=3.7.0-0 <4.0.0"
   flutter: ">=3.18.0-18.0.pre.54"
 =======
+=======
+>>>>>>> Stashed changes
   wakelock_plus:
     dependency: transitive
     description:
