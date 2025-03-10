@@ -19,10 +19,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
       routes: {
+<<<<<<< Updated upstream
         '/': (context) => HomePage(),
         '/chatbot': (context) => ChatbotPage(),
         '/chatforum': (context) => ChatForumPage(),
         '/moodtracker': (context) => MoodTrackerPage(),
+=======
+        '/': (context) => const HomePage(),
+        '/chatbot': (context) => ChatbotPage(),
+        '/chatforum': (context) => const GroupSelectionScreen(),
+        '/chatlist': (context) => const ChatListScreen(),
+        '/chatdetail': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return GroupChatScreen(group: args);
+        },
+        '/moodtracker': (context) => const MoodTrackerPage(),
+>>>>>>> Stashed changes
       },
     );
   }
