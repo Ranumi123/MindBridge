@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_gifimage/flutter_gifimage.dart';
+import 'package:flutter_gifimage/flutter_gifimage.dart';
 import '../widgets/bottom_navbar.dart';
 
 class MoodTrackerPage extends StatefulWidget {
