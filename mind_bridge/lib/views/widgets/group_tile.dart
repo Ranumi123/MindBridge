@@ -11,11 +11,11 @@ class GroupTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.blueAccent.shade100,
+        color: const Color.fromARGB(255, 79, 136, 227),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.blueAccent.withOpacity(0.3),
+            color: const Color.fromARGB(255, 22, 56, 114).withOpacity(0.3),
             blurRadius: 6,
             offset: const Offset(0, 4),
           )
