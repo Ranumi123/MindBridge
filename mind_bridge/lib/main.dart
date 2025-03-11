@@ -6,6 +6,9 @@ import 'views/forum/screens/chat_list_screen.dart';
 import 'views/forum/screens/group_chat_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
 
+
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'MindBridge',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[100],
+        scaffoldBackgroundColor: const Color.fromARGB(255, 213, 185, 185),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
