@@ -13,13 +13,17 @@ class _GifScreenState extends State<GifScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
+    
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _opacity = 0.0;
       });
     });
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pop(context);
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.pop(context);
+      }
     });
   }
 
@@ -30,7 +34,7 @@ class _GifScreenState extends State<GifScreen> {
       body: Center(
         child: AnimatedOpacity(
           opacity: _opacity,
-          duration: Duration(seconds: 1),
+          duration: const Duration(seconds: 1),
           child: Image.asset('assets/gifs/thumbs_up.gif', width: 200, height: 200),
         ),
       ),

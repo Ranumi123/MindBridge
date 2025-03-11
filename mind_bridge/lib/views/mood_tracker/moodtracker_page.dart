@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../mood_tracker/gif_screen.dart';  // Import the GifScreen page
 import '../widgets/bottom_navbar.dart';
-import 'gif_screen.dart';
 
 class MoodTrackerPage extends StatefulWidget {
   const MoodTrackerPage({super.key});
@@ -9,184 +9,125 @@ class MoodTrackerPage extends StatefulWidget {
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
 }
 
-class _MoodTrackerPageState extends State<MoodTrackerPage>
-    with SingleTickerProviderStateMixin {
+class _MoodTrackerPageState extends State<MoodTrackerPage> {
   final TextEditingController _textController = TextEditingController();
   String? selectedMood;
+  final PageController _pageController = PageController(viewportFraction: 0.6);
+
   final List<Map<String, String>> moodOptions = [
     {"image": "assets/images/Happy.jpg", "label": "Happy"},
     {"image": "assets/images/Calm.jpg", "label": "Calm"},
     {"image": "assets/images/Relaxed.png", "label": "Relaxed"},
     {"image": "assets/images/Focus.jpg", "label": "Focused"}
   ];
-  int _selectedIndex = 0;
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  bool showThumbsUp = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
-    );
-  }
-
-  void _saveMood() {
-    if (selectedMood == null && _textController.text.trim().isEmpty) return;
-
-    setState(() {
-      showThumbsUp = true;
-    });
-    _animationController.forward();
-
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        showThumbsUp = false;
-      });
-      _animationController.reset();
-    });
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Mood saved!")));
-
-    setState(() {
-      selectedMood = null;
-      _textController.clear();
-    });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int currentIndex = 0; // To track the selected mood index
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Mood Tracker"),
-        backgroundColor: Color(0xFF2DABCA),
+        title: const Text("Mood Tracker"),
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.05, vertical: screenHeight * 0.03),
-        child: Column(
-          children: [
-            Text("How are you feeling today?",
-                style: TextStyle(
-                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold)),
-            SizedBox(height: screenHeight * 0.02),
-            Wrap(
-              spacing: screenWidth * 0.03,
-              runSpacing: screenHeight * 0.015,
-              alignment: WrapAlignment.center,
-              children: moodOptions
-                  .map((mood) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () =>
-                                setState(() => selectedMood = mood['label']),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: Size(70, 70),
-                              shape: CircleBorder(),
-                              backgroundColor: selectedMood == mood['label']
-                                  ? Color(0xFF3CDFCA)
-                                  : Colors.white,
-                              side: BorderSide(
-                                  color: selectedMood == mood['label']
-                                      ? Colors.blueAccent
-                                      : Colors.transparent,
-                                  width: 2),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  mood['image']!,
-                                  fit: BoxFit.cover,
-                                  width: 70,
-                                  height: 70,
-                                ),
-                              ),
-                            ),
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          const Text("How are you feeling today?", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+          const SizedBox(height: 20),
+
+          // Swipeable Mood Selector
+          SizedBox(
+            height: 150,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: moodOptions.length,
+              onPageChanged: (index) {
+                setState(() {
+                  currentIndex = index;
+                  selectedMood = moodOptions[index]['label'];
+                });
+              },
+              itemBuilder: (context, index) {
+                final mood = moodOptions[index];
+                bool isSelected = index == currentIndex;
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  transform: Matrix4.identity()..scale(isSelected ? 1.2 : 1.0),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndex = index;
+                            selectedMood = mood['label'];
+                          });
+                        },
+                        child: Opacity(
+                          opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: AssetImage(mood['image']!),
                           ),
-                          SizedBox(height: 4),
-                          Text(mood['label']!, style: TextStyle(fontSize: 12)),
-                        ],
-                      ))
-                  .toList(),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            Text("Express yourself in words ✨",
-                style: TextStyle(
-                    fontSize: screenWidth * 0.045,
-                    fontWeight: FontWeight.bold)),
-            SizedBox(height: screenHeight * 0.01),
-            Container(
-              width: screenWidth * 0.9,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(mood['label']!,
+                          style: TextStyle(
+                              fontSize: isSelected ? 16 : 14,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected ? Colors.black : Colors.grey)),
+                    ],
                   ),
-                ],
-              ),
-              child: TextField(
-                controller: _textController,
-                style: TextStyle(color: Colors.black),
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none),
-                  hintText: "Type your feelings here...",
-                ),
-                maxLines: 1,
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text("Express yourself in words ✨",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: "Type your feelings here...",
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
-            ElevatedButton(onPressed: _saveMood, child: Text("Submit")),
-            SizedBox(height: screenHeight * 0.02),
-            if (showThumbsUp)
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: Container(
-                  width: screenWidth * 0.5,
-                  height: screenWidth * 0.5,
-                  child: Image.asset('assets/gifs/thumbs_up.gif',
-                      fit: BoxFit.contain),
-                ),
-              ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+          ),
+
+          ElevatedButton(
+            onPressed: () {
+              if (selectedMood != null || _textController.text.trim().isNotEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Mood '$selectedMood' saved!")),
+                );
+
+                // Clear text input
+                setState(() {
+                  _textController.clear();
+                });
+
+                // Navigate to the GIF screen for animation
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const GifScreen()),
+                );
+              }
+            },
+            child: const Text("Submit"),
+          ),
+        ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
-// Correctly import your files with proper paths
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
-import 'views/forum/screens/group_chat_screen.dart';
+import 'views/forum/screens/group_selection_screen.dart';
 import 'views/forum/screens/chat_list_screen.dart';
-import 'views/therapist_dashboard/dashboard_screen.dart';
+import 'views/forum/screens/group_chat_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
+
+
+
 
 void main() {
   runApp(const MyApp());
@@ -20,16 +21,39 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MindBridge',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 213, 185, 185),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 2.0,
+        ),
+        cardTheme: CardTheme(
+          color: Colors.white,
+          shadowColor: Colors.grey.withOpacity(0.5),
+          elevation: 3.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 16),
+        ),
+      ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
-        '/chatbot': (context) => ChatScreen(),
+        '/': (context) => HomePage(),
+        '/chatbot': (context) => ChatbotPage(),
+        '/moodtracker': (context) => MoodTrackerPage(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
-        '/chatdetail': (context) => const GroupSelectionScreen(), // FIXED REFERENCE
-        '/moodtracker': (context) => const MoodTrackerPage(),
-        '/dashboard': (context) => const DashboardScreen(),
+        '/chatdetail': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          return GroupChatScreen(group: args);
+        },
       },
     );
   }
