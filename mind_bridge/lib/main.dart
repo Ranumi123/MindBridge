@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'MindBridge',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 186, 166, 166),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 213, 185, 185),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
