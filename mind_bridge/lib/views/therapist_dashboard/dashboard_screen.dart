@@ -25,11 +25,11 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Local Image
+            
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
-                'assets/images/Dashboard.png', // Ensure this image exists in assets
+                'assets/images/Dashboard.png', 
                 height: 450,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -44,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Button to See All Doctors
+            
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -61,7 +61,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Button to View Pricing Plans
+            
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
