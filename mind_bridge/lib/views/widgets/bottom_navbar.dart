@@ -15,19 +15,27 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image:
-              AssetImage('assets/images/nav_background.png'), // PNG Background
+        image: const DecorationImage(
+          image: AssetImage(
+              'assets/images/nav_background.png'), // Background image
           fit: BoxFit.cover,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem('assets/icons/home.svg', 'Home', 0),
-          _buildNavItem('assets/icons/forum.svg', 'Forum', 1),
-          _buildNavItem('assets/icons/mood.svg', 'Mood', 2),
+          _buildNavItem('assets/icons/feed.svg', 'Feed', 1),
+          _buildNavItem('assets/icons/therapist.svg', 'Therapist', 2),
+          _buildNavItem('assets/icons/profile.svg', 'Profile', 3),
         ],
       ),
     );

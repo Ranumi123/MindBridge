@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart'; // url_launcher supported in ndk version 27 onwards
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'meditation_detail_screen.dart';
@@ -12,8 +12,8 @@ class MeditationListScreen extends StatefulWidget {
 }
 
 class _MeditationListScreenState extends State<MeditationListScreen> {
-  List<dynamic> meditations = []; // Holds data from backend
-  String selectedFilter = "All"; // Default filter
+  List<dynamic> meditations = []; // Holds data from backend server
+  String selectedFilter = "All"; // Default filter so "All" is selected
   bool isLoading = true; // Loading state
   String errorMessage = ""; // Error message
 
@@ -23,13 +23,14 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     fetchMeditations();
   }
 
-  // Fetch data from backend
+  // Fetch data from backend server
   Future<void> fetchMeditations() async {
     try {
       final response =
           await http.get(Uri.parse("http://localhost:5000/api/meditations"));
 
       if (response.statusCode == 200) {
+        // for successful response
         setState(() {
           meditations = json.decode(response.body);
           isLoading = false;
@@ -40,8 +41,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage =
-            "Could not load data. Check your internet connection. node server.js run karapan http!";
+        errorMessage = "Could not load data. Check your internet connection";
       });
     }
   }
@@ -59,11 +59,11 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
 
   // Function to open YouTube links
   void _launchYouTube(String url) async {
-    final Uri uri = Uri.parse(url);
+    final Uri uri = Uri.parse(url); // to parse the uri
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      throw "Could not launch $url";
+      throw "Could not launch $url"; // exception to state that link could not be opened
     }
   }
 
@@ -133,7 +133,8 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
+                                      color: Colors.black
+                                          .withOpacity(0.3), // Fixed issue
                                       blurRadius: 8,
                                       spreadRadius: 2,
                                     ),
@@ -171,19 +172,12 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                                       // Play Button Overlay
                                       Positioned(
                                         child: GestureDetector(
-                                          onTap: () => _launchYouTube(
-                                              meditation["url"]!),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              color: Colors.black54,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            padding: const EdgeInsets.all(8),
-                                            child: const Icon(
-                                              Icons.play_arrow,
-                                              color: Colors.white,
-                                              size: 30,
-                                            ),
+                                          onTap: () => _launchYouTube(meditation[
+                                              "url"]!), // when tapped, launch YouTube
+                                          child: const Icon(
+                                            Icons.play_circle_fill,
+                                            size: 40,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),

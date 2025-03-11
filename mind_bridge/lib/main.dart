@@ -44,15 +44,16 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
-        '/chatbot': (context) =>  ChatbotPage(),
+        '/': (context) => HomePage(),
+        '/chatbot': (context) => ChatbotPage(),
+        '/moodtracker': (context) => MoodTrackerPage(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
         '/chatdetail': (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
           return GroupChatScreen(group: args);
         },
-        '/moodtracker': (context) => const MoodTrackerPage(),
       },
     );
   }
