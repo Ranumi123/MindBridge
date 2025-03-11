@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
-// Import your screens
 import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
 import 'views/forum/screens/group_selection_screen.dart';
 import 'views/forum/screens/chat_list_screen.dart';
 import 'views/forum/screens/group_chat_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
+
+
+
 
 void main() {
   runApp(const MyApp());
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/chatbot': (context) => ChatScreen(),
+        '/chatbot': (context) =>  ChatbotPage(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
         '/chatdetail': (context) {

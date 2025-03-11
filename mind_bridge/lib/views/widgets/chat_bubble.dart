@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isUser;
-  final DateTime timestamp; // Add timestamp parameter
+  final DateTime timestamp;
 
   const ChatBubble({
     Key? key,
     required this.message,
     required this.isUser,
-    required this.timestamp, // Make timestamp required
+    required this.timestamp,
   }) : super(key: key);
 
   @override
@@ -24,8 +24,7 @@ class ChatBubble extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.end, // Align timestamp to the end
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               message,
@@ -33,12 +32,12 @@ class ChatBubble extends StatelessWidget {
                 color: Colors.black87,
               ),
             ),
-            SizedBox(height: 4), // Add spacing between message and timestamp
+            SizedBox(height: 4),
             Text(
-              _formatTimestamp(timestamp), // Format the timestamp
+              _formatTimestamp(timestamp),
               style: TextStyle(
                 color: Colors.black54,
-                fontSize: 10, // Smaller font size for timestamp
+                fontSize: 10,
               ),
             ),
           ],
@@ -47,7 +46,6 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  // Helper function to format the timestamp
   String _formatTimestamp(DateTime timestamp) {
     return '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
