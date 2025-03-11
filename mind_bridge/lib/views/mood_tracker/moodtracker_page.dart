@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gifimage/flutter_gifimage.dart';
+import '../mood_tracker/gif_screen.dart';  // Import the GifScreen page
 import '../widgets/bottom_navbar.dart';
 
 class MoodTrackerPage extends StatefulWidget {
@@ -9,7 +9,7 @@ class MoodTrackerPage extends StatefulWidget {
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
 }
 
-class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProviderStateMixin {
+class _MoodTrackerPageState extends State<MoodTrackerPage> {
   final TextEditingController _textController = TextEditingController();
   String? selectedMood;
   final PageController _pageController = PageController(viewportFraction: 0.6);
@@ -22,20 +22,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
   ];
 
   int currentIndex = 0; // To track the selected mood index
-  bool showThumbsUp = false; // Track whether to show the thumbs-up animation
-  late GifController _gifController;
-
-  @override
-  void initState() {
-    super.initState();
-    _gifController = GifController(vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _gifController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +39,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
 
           const SizedBox(height: 20),
 
-          // Swipeable Mood Selector with Emphasis on the Selected One
+          // Swipeable Mood Selector
           SizedBox(
             height: 150,
             child: PageView.builder(
@@ -72,7 +58,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
-                  transform: isSelected ? Matrix4.identity()..scale(1.2) : Matrix4.identity(),
+                  transform: Matrix4.identity()..scale(isSelected ? 1.2 : 1.0),
                   child: Column(
                     children: [
                       GestureDetector(
@@ -82,18 +68,12 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
                             selectedMood = mood['label'];
                           });
                         },
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Blur or Opacity Effect
-                            Opacity(
-                              opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage: AssetImage(mood['image']!),
-                              ),
-                            ),
-                          ],
+                        child: Opacity(
+                          opacity: isSelected ? 1.0 : 0.3, // Reduce opacity for non-selected
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: AssetImage(mood['image']!),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -131,39 +111,21 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> with SingleTickerProv
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Mood '$selectedMood' saved!")),
                 );
-                setState(() {
-                  showThumbsUp = true;
-                });
 
-                // Play the full GIF
-                _gifController.repeat(min: 0, max: 30, period: const Duration(milliseconds: 500));
-
-                // Hide the thumbs-up after a short delay
-                Future.delayed(const Duration(seconds: 2), () {
-                  setState(() {
-                    showThumbsUp = false;
-                  });
-                });
-
+                // Clear text input
                 setState(() {
                   _textController.clear();
                 });
+
+                // Navigate to the GIF screen for animation
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const GifScreen()),
+                );
               }
             },
             child: const Text("Submit"),
           ),
-
-          if (showThumbsUp)
-            SizedBox(
-              width: screenWidth * 0.5, // Adjusted width for a larger GIF
-              height: screenWidth * 0.5, // Adjusted height for a larger GIF
-              child: GifImage(
-                controller: _gifController,
-                image: AssetImage('assets/gifs/thumbs_up.gif'),
-              ),
-            ),
-
-          // Final comment: Added an animation for thumbs-up after mood is saved
         ],
       ),
     );
