@@ -1,7 +1,7 @@
 class Therapist {
   final String name;
   final String specialty;
-  final String imageUrl; // Store local image path
+  final String imageUrl; 
 
   Therapist({
     required this.name,
