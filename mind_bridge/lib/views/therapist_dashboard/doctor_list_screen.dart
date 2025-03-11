@@ -38,7 +38,7 @@ class DoctorListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen width to determine layout
+    
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -57,21 +57,21 @@ class DoctorListScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Responsive Grid/List Layout
+            
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // If screen width > 600px (Tablet), use a Grid
+                  
                   bool isTablet = screenWidth > 600;
 
                   return isTablet
                       ? GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // Two doctors per row on tablets
+                            crossAxisCount: 2, 
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 0.8, // Adjust for better height
+                            childAspectRatio: 0.8, 
                           ),
                           itemCount: doctors.length,
                           itemBuilder: (context, index) {
