@@ -36,7 +36,7 @@ class SimpleChatScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(groupData['name'] ?? 'Chat'),
-        backgroundColor: const Color.fromARGB(255, 63, 218, 203),
+        backgroundColor: const Color.fromARGB(255, 51, 198, 183),
       ),
       body: Center(
         child: Text('Chat screen for ${groupData['name']}'),
