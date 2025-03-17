@@ -43,7 +43,7 @@ class WelcomePage extends StatelessWidget {
                     // Top section with logo and text
                     Column(
                       children: [
-                        // App logo image - Larger and with animation
+                        // App logo image - ENLARGED with better fit
                         TweenAnimationBuilder<double>(
                           tween: Tween<double>(begin: 0, end: 1),
                           duration: const Duration(milliseconds: 800),
@@ -57,9 +57,9 @@ class WelcomePage extends StatelessWidget {
                             );
                           },
                           child: Container(
-                            height: 80, // Increased height
-                            width: 80, // Added width
-                            padding: const EdgeInsets.all(8),
+                            height: 100, // Increased from 80 to 100
+                            width: 100, // Increased from 80 to 100
+                            padding: const EdgeInsets.all(2), // Reduced padding from 8 to 2
                             decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -72,9 +72,11 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: Image.asset(
-                              'assets/images/1.png',
-                              fit: BoxFit.contain,
+                            child: ClipOval( // Added ClipOval for perfect circle clipping
+                              child: Image.asset(
+                                'assets/images/1.png',
+                                fit: BoxFit.cover, // Changed from BoxFit.contain to BoxFit.cover
+                              ),
                             ),
                           ),
                         ),
@@ -153,7 +155,7 @@ class WelcomePage extends StatelessWidget {
                       ],
                     ),
 
-                    // Center section with your PNG image in a modern frame - ENLARGED
+                    // Center section with your PNG image in a modern frame
                     Expanded(
                       child: Center(
                         child: Container(
@@ -166,7 +168,7 @@ class WelcomePage extends StatelessWidget {
                                 top: screenSize.height * 0.05,
                                 right: screenSize.width * 0.15,
                                 child: Container(
-                                  width: 25, // Larger decorative element
+                                  width: 25,
                                   height: 25,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -178,7 +180,7 @@ class WelcomePage extends StatelessWidget {
                                 bottom: screenSize.height * 0.05,
                                 left: screenSize.width * 0.1,
                                 child: Container(
-                                  width: 20, // Larger decorative element
+                                  width: 20,
                                   height: 20,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -201,10 +203,10 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ),
 
-                              // Main image with frosted glass effect frame - ENLARGED
+                              // Main image with frosted glass effect frame
                               Container(
-                                width: screenSize.width * 0.9, // Increased from 0.8
-                                height: screenSize.width * 0.9, // Increased from 0.8
+                                width: screenSize.width * 0.9,
+                                height: screenSize.width * 0.9,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(40),
                                   boxShadow: [
@@ -250,11 +252,11 @@ class WelcomePage extends StatelessWidget {
                                         ),
                                       ),
 
-                                      // The image - ENLARGED
+                                      // The image
                                       Center(
                                         child: Container(
-                                          width: screenSize.width * 0.85, // Increased from 0.7
-                                          height: screenSize.width * 0.85, // Increased from 0.7
+                                          width: screenSize.width * 0.85,
+                                          height: screenSize.width * 0.85,
                                           padding: const EdgeInsets.all(10),
                                           child: Image.asset(
                                             'assets/images/2.png',
