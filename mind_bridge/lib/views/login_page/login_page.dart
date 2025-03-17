@@ -291,34 +291,77 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     // Space for the larger image in the stack
                     SizedBox(height: screenSize.height * 0.3), // Adjusted spacing
 
-                    // Added divider for better visual separation
+                    // Enhanced welcome message section
                     Container(
                       margin: EdgeInsets.only(bottom: 25),
-                      height: 2,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            Color(0xFF1EBBD7).withOpacity(0.3),
-                            Colors.transparent,
-                          ],
-                        ),
+                      child: Column(
+                        children: [
+                          // Subtle divider above welcome message
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            height: 2,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Color(0xFF1EBBD7).withOpacity(0.3),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          // Welcome message with gradient background card
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white,
+                                  Color(0xFFE7F5FB),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFF4B9FE1).withOpacity(0.1),
+                                  blurRadius: 15,
+                                  spreadRadius: 0,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Welcome Back!",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF4A6572),
+                                    letterSpacing: 0.5,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  "Log in to continue your mental health journey",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF4A6572).withOpacity(0.8),
+                                    letterSpacing: 0.2,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-
-                    // Form header label
-                    Text(
-                      "Welcome back",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF4A6572),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    SizedBox(height: 20), // Added more space
 
                     // Form fields with animation
                     AnimatedBuilder(
