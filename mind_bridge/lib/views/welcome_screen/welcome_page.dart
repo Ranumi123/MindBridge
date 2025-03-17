@@ -45,8 +45,6 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
         ),
         child: Stack(
           children: [
-            // Removed background subtle pattern for better visibility of effects
-
             // Main content
             SafeArea(
               child: Padding(
@@ -163,72 +161,66 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                                       ),
                                     );
                                   },
-                                  child: MouseRegion(
-                                    onEnter: (_) => setState(() {}),
-                                    onExit: (_) => setState(() {}),
-                                    child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 300),
-                                      width: screenSize.width * 0.9,
-                                      height: screenSize.width * 0.9,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(40),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(40),
-                                        child: Stack(
-                                          children: [
-                                            // Background blur with increased transparency
-                                            BackdropFilter(
-                                              filter: ui.ImageFilter.blur(
-                                                sigmaX: 5,
-                                                sigmaY: 5,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    width: screenSize.width * 0.9,
+                                    height: screenSize.width * 0.9,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(40),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(40),
+                                      child: Stack(
+                                        children: [
+                                          // Background blur with increased transparency
+                                          BackdropFilter(
+                                            filter: ui.ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5,
+                                            ),
+                                            child: Container(
+                                              color: Colors.white.withOpacity(0.05),
+                                            ),
+                                          ),
+
+                                          // Interactive gradient overlay with more subtle styling
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  Colors.white.withOpacity(0.25),
+                                                  Colors.white.withOpacity(0.05),
+                                                ],
                                               ),
-                                              child: Container(
-                                                color: Colors.white.withOpacity(0.05),
+                                              borderRadius: BorderRadius.circular(40),
+                                              border: Border.all(
+                                                color: Colors.white.withOpacity(0.2),
+                                                width: 1,
                                               ),
                                             ),
+                                          ),
 
-                                            // Interactive gradient overlay with more subtle styling
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                  colors: [
-                                                    Colors.white.withOpacity(0.25),
-                                                    Colors.white.withOpacity(0.05),
-                                                  ],
-                                                ),
-                                                borderRadius: BorderRadius.circular(40),
-                                                border: Border.all(
-                                                  color: Colors.white.withOpacity(0.2),
-                                                  width: 1,
-                                                ),
+                                          // The image
+                                          Center(
+                                            child: Container(
+                                              width: screenSize.width * 0.85,
+                                              height: screenSize.width * 0.85,
+                                              padding: const EdgeInsets.all(10),
+                                              child: Image.asset(
+                                                'assets/images/2.png',
+                                                fit: BoxFit.contain,
                                               ),
                                             ),
-
-                                            // Removed all decorative curved lines
-
-                                            // The image
-                                            Center(
-                                              child: Container(
-                                                width: screenSize.width * 0.85,
-                                                height: screenSize.width * 0.85,
-                                                padding: const EdgeInsets.all(10),
-                                                child: Image.asset(
-                                                  'assets/images/2.png',
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
 
-                                // Clean rotating dots around the picture
+                                // Clean rotating dots around the picture - PROPERLY CENTERED
                                 AnimatedBuilder(
                                   animation: _animationController,
                                   builder: (context, child) {
@@ -236,11 +228,16 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                                       children: List.generate(12, (index) {
                                         // Calculating the position on a circle
                                         final angle = 2 * math.pi * index / 12 + (_animationController.value * 2 * math.pi);
-                                        final radius = screenSize.width * 0.41; // Reduced radius - closer to image
-                                        final centerX = screenSize.width * 0.45;
-                                        final centerY = screenSize.width * 0.45;
 
-                                        // Calculate position
+                                        // Using exact center coordinates for perfect centering
+                                        // The container is 90% of screen width, and centered within the available space
+                                        final radius = screenSize.width * 0.41; // Radius for dots
+
+                                        // Center coordinates - exact center of the container
+                                        final centerX = screenSize.width * 0.45; // Half of the container width (90% / 2 = 45%)
+                                        final centerY = screenSize.width * 0.45; // Same for height since it's square
+
+                                        // Calculate position using the center coordinates
                                         final x = centerX + radius * math.cos(angle);
                                         final y = centerY + radius * math.sin(angle);
 
@@ -248,8 +245,8 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                                         final dotSize = 8.0 + (index % 3) * 1.5;
 
                                         return Positioned(
-                                          left: x - dotSize / 2,
-                                          top: y - dotSize / 2,
+                                          left: x - dotSize / 2, // Center the dot on its position
+                                          top: y - dotSize / 2,  // Center the dot on its position
                                           child: Container(
                                             width: dotSize,
                                             height: dotSize,
@@ -457,4 +454,3 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
     );
   }
 }
-
