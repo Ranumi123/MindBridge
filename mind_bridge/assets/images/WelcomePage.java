@@ -4,35 +4,35 @@ import '../login_page/login_page.dart';
 import '../signup_page/signup_page.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, const Color(0xFFF0F8FF)], // Subtle gradient background
-            stops: const [0.0, 1.0],
+            colors: [Colors.white, Color(0xFFF0F8FF)], // Subtle gradient background
+            stops: [0.0, 1.0],
           ),
         ),
         child: Stack(
           children: [
-            // Background subtle pattern - Empty asset removed
+            // Background subtle pattern
             Opacity(
               opacity: 0.05,
               child: Container(
-                decoration: const BoxDecoration(
-                  // Image removed since asset was empty
-                  color: Colors.grey,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/pattern.png'), // Add a subtle pattern PNG if available
+                    repeat: ImageRepeat.repeat,
+                  ),
                 ),
               ),
             ),
-
+            
             // Main content
             SafeArea(
               child: Padding(
@@ -46,16 +46,16 @@ class WelcomePage extends StatelessWidget {
                       children: [
                         // App logo image
                         Image.asset(
-                          'assets/images/1.png',
+                          'assets/imgbg2.png', // Your logo PNG
                           height: 60,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 20),
-
+                        SizedBox(height: 20),
+                        
                         // Logo with gradient text and blur effect
                         ShaderMask(
                           shaderCallback: (Rect bounds) {
-                            return const LinearGradient(
+                            return LinearGradient(
                               colors: [
                                 Color(0xFF4B9FE1), // Blue shade
                                 Color(0xFF1EBBD7), // Teal shade
@@ -75,20 +75,20 @@ class WelcomePage extends StatelessWidget {
                                 Shadow(
                                   color: Colors.black12,
                                   blurRadius: 15,
-                                  offset: const Offset(0, 5),
+                                  offset: Offset(0, 5),
                                 ),
                               ],
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        const SizedBox(height: 15),
-
+                        SizedBox(height: 15),
+                        
                         // Tagline with modern styling and animation
-                        TweenAnimationBuilder<double>(
+                        TweenAnimationBuilder(
                           tween: Tween<double>(begin: 0, end: 1),
-                          duration: const Duration(milliseconds: 800),
-                          builder: (context, value, child) {
+                          duration: Duration(milliseconds: 800),
+                          builder: (context, double value, child) {
                             return Opacity(
                               opacity: value,
                               child: Transform.translate(
@@ -98,7 +98,7 @@ class WelcomePage extends StatelessWidget {
                             );
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.7),
                               borderRadius: BorderRadius.circular(20),
@@ -110,7 +110,7 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: const Text(
+                            child: Text(
                               'Your Mental Health Companion',
                               style: TextStyle(
                                 fontSize: 16,
@@ -124,12 +124,12 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ],
                     ),
-
+                    
                     // Center section with your PNG image in a modern frame
                     Expanded(
                       child: Center(
                         child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 30),
+                          margin: EdgeInsets.symmetric(vertical: 30),
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
@@ -142,7 +142,7 @@ class WelcomePage extends StatelessWidget {
                                   height: 20,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.2),
+                                    color: Color(0xFF4B9FE1).withOpacity(0.2),
                                   ),
                                 ),
                               ),
@@ -154,11 +154,11 @@ class WelcomePage extends StatelessWidget {
                                   height: 15,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF20E4B5).withOpacity(0.3),
+                                    color: Color(0xFF20E4B5).withOpacity(0.3),
                                   ),
                                 ),
                               ),
-
+                              
                               // Main image with frosted glass effect frame
                               Container(
                                 width: screenSize.width * 0.8,
@@ -170,7 +170,7 @@ class WelcomePage extends StatelessWidget {
                                       color: Colors.black.withOpacity(0.1),
                                       blurRadius: 30,
                                       spreadRadius: 5,
-                                      offset: const Offset(0, 15),
+                                      offset: Offset(0, 15),
                                     ),
                                   ],
                                 ),
@@ -188,7 +188,7 @@ class WelcomePage extends StatelessWidget {
                                           color: Colors.white.withOpacity(0.1),
                                         ),
                                       ),
-
+                                      
                                       // Gradient overlay
                                       Container(
                                         decoration: BoxDecoration(
@@ -207,11 +207,11 @@ class WelcomePage extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-
+                                      
                                       // The image
                                       Center(
                                         child: Image.asset(
-                                          'assets/images/2.png', // Your main PNG image
+                                          'assets/imgbg2.png', // Your main PNG image
                                           width: screenSize.width * 0.7,
                                           height: screenSize.width * 0.7,
                                           fit: BoxFit.contain,
@@ -226,181 +226,106 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    // Bottom section with stylized buttons
-                    Column(
-                      children: [
-                        // Advanced Get Started Button with animation
-                        TweenAnimationBuilder<double>(
-                          tween: Tween<double>(begin: 0, end: 1),
-                          duration: const Duration(milliseconds: 600),
-                          builder: (context, value, child) {
-                            return Transform.translate(
-                              offset: Offset(0, 30 * (1 - value)),
-                              child: Opacity(
-                                opacity: value,
-                                child: child,
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF4B9FE1), // Blue
-                                  Color(0xFF1EBBD7), // Teal
-                                  Color(0xFF20E4B5), // Mint green
-                                ],
-                                stops: [0.0, 0.5, 1.0],
-                              ),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF1EBBD7).withOpacity(0.3),
-                                  blurRadius: 15,
-                                  spreadRadius: 1,
-                                  offset: const Offset(0, 8),
-                                ),
-                                BoxShadow(
-                                  color: const Color(0xFF20E4B5).withOpacity(0.2),
-                                  blurRadius: 25,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(30),
-                                splashColor: Colors.white.withOpacity(0.2),
-                                highlightColor: Colors.white.withOpacity(0.1),
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) =>
-                                          SignupPage(),
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        var curve = Curves.easeOutQuint;
-                                        var curveTween = CurveTween(curve: curve);
-                                        var begin = const Offset(0.0, 1.0);
-                                        var end = Offset.zero;
-                                        var tween = Tween(begin: begin, end: end).chain(curveTween);
-                                        var offsetAnimation = animation.drive(tween);
-                                        return SlideTransition(
-                                          position: offsetAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration: const Duration(milliseconds: 700),
-                                    ),
-                                  );
-                                },
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        'Get Started',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.2),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.arrow_forward_rounded,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Sign In Link with better styling
-                        TweenAnimationBuilder<double>(
-                          tween: Tween<double>(begin: 0, end: 1),
-                          duration: const Duration(milliseconds: 800),
-                          builder: (context, value, child) {
-                            return Opacity(
+                
+                // Bottom section with stylized buttons
+                Container(
+                  child: Column(
+                    children: [
+                      // Advanced Get Started Button with animation
+                      TweenAnimationBuilder(
+                        tween: Tween<double>(begin: 0, end: 1),
+                        duration: Duration(milliseconds: 600),
+                        builder: (context, double value, child) {
+                          return Transform.translate(
+                            offset: Offset(0, 30 * (1 - value)),
+                            child: Opacity(
                               opacity: value,
                               child: child,
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
-                                  blurRadius: 10,
-                                  spreadRadius: 0,
-                                ),
-                              ],
                             ),
-                            child: GestureDetector(
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFF4B9FE1), // Blue
+                                Color(0xFF1EBBD7), // Teal
+                                Color(0xFF20E4B5), // Mint green
+                              ],
+                              stops: [0.0, 0.5, 1.0],
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xFF1EBBD7).withOpacity(0.3),
+                                blurRadius: 15,
+                                spreadRadius: 1,
+                                offset: Offset(0, 8),
+                              ),
+                              BoxShadow(
+                                color: Color(0xFF20E4B5).withOpacity(0.2),
+                                blurRadius: 25,
+                                spreadRadius: 0,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(30),
+                              splashColor: Colors.white.withOpacity(0.2),
+                              highlightColor: Colors.white.withOpacity(0.1),
                               onTap: () {
                                 Navigator.pushReplacement(
                                   context,
                                   PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) =>
-                                        LoginPage(),
+                                    pageBuilder: (context, animation, secondaryAnimation) => SignupPage(),
                                     transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                       var curve = Curves.easeOutQuint;
                                       var curveTween = CurveTween(curve: curve);
-                                      var tween = Tween(begin: 0.0, end: 1.0).chain(curveTween);
-                                      var fadeAnimation = animation.drive(tween);
-                                      return FadeTransition(
-                                        opacity: fadeAnimation,
+                                      var begin = Offset(0.0, 1.0);
+                                      var end = Offset.zero;
+                                      var tween = Tween(begin: begin, end: end).chain(curveTween);
+                                      var offsetAnimation = animation.drive(tween);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
                                         child: child,
                                       );
                                     },
-                                    transitionDuration: const Duration(milliseconds: 500),
+                                    transitionDuration: Duration(milliseconds: 700),
                                   ),
                                 );
                               },
-                              child: RichText(
-                                text: TextSpan(
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const TextSpan(
-                                      text: 'Already have an account? ',
+                                    Text(
+                                      'Get Started',
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFF4A6572),
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5,
                                       ),
                                     ),
-                                    TextSpan(
-                                      text: 'Sign In',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF1EBBD7),
-                                        decoration: TextDecoration.underline,
-                                        decorationColor: const Color(0xFF1EBBD7).withOpacity(0.3),
-                                        decorationThickness: 2,
+                                    SizedBox(width: 12),
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.arrow_forward_rounded,
+                                        color: Colors.white,
+                                        size: 20,
                                       ),
                                     ),
                                   ],
@@ -409,14 +334,87 @@ class WelcomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      
+                      SizedBox(height: 24),
+                      
+                      // Sign In Link with better styling
+                      TweenAnimationBuilder(
+                        tween: Tween<double>(begin: 0, end: 1),
+                        duration: Duration(milliseconds: 800),
+                        builder: (context, double value, child) {
+                          return Opacity(
+                            opacity: value,
+                            child: child,
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.03),
+                                blurRadius: 10,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    var curve = Curves.easeOutQuint;
+                                    var curveTween = CurveTween(curve: curve);
+                                    var tween = Tween(begin: 0.0, end: 1.0).chain(curveTween);
+                                    var fadeAnimation = animation.drive(tween);
+                                    return FadeTransition(
+                                      opacity: fadeAnimation,
+                                      child: child,
+                                    );
+                                  },
+                                  transitionDuration: Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Already have an account? ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF4A6572),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Sign In',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF1EBBD7),
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Color(0xFF1EBBD7).withOpacity(0.3),
+                                      decorationThickness: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -428,8 +426,8 @@ class PulseAnimation extends StatefulWidget {
   final Duration duration;
 
   const PulseAnimation({
-    Key? key,
-    required this.child,
+    Key key,
+    @required this.child,
     this.duration = const Duration(milliseconds: 2000),
   }) : super(key: key);
 
@@ -438,8 +436,8 @@ class PulseAnimation extends StatefulWidget {
 }
 
 class _PulseAnimationState extends State<PulseAnimation> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  AnimationController _controller;
+  Animation<double> _animation;
 
   @override
   void initState() {
