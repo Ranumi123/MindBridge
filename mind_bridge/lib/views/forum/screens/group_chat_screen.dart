@@ -256,6 +256,40 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     }
   }
 
+  // Add method to leave the group
+  Future<void> _leaveGroup() async {
+    // Show confirmation dialog
+    final shouldLeave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Group'),
+        content: Text('Are you sure you want to leave "${widget.group.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('LEAVE'),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (shouldLeave) {
+      // Navigate back to group selection screen
+      if (mounted) {
+        Navigator.of(context).pop();
+        // Show confirmation snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('You left "${widget.group.name}"')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -300,17 +334,25 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.videocam),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.call),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
+          // Add leave group option in the app bar menu
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'leave') {
+                _leaveGroup();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'leave',
+                child: Row(
+                  children: [
+                    Icon(Icons.exit_to_app, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Leave group', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -390,33 +432,20 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   ),
                 ),
                 
-                // Camera button
-                IconButton(
-                  icon: const Icon(Icons.camera_alt),
-                  color: Colors.grey.shade600,
-                  onPressed: () {},
-                ),
-                
                 // Send button
-                _messageController.text.isEmpty && !_isSending
-                    ? IconButton(
-                        icon: const Icon(Icons.mic),
-                        color: Colors.teal,
-                        onPressed: () {},
-                      )
-                    : IconButton(
-                        icon: _isSending
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.send),
-                        color: Colors.teal,
-                        onPressed: _isSending ? null : _sendMessage,
-                      ),
+                IconButton(
+                  icon: _isSending
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Icon(Icons.send),
+                  color: Colors.teal,
+                  onPressed: _isSending ? null : _sendMessage,
+                ),
               ],
             ),
           ),
