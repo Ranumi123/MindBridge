@@ -224,6 +224,40 @@ class ApiClient {
       return false;
     }
   }
+  
+  Future<bool> leaveGroup(String groupId, String username) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/groups/$groupId/leave'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'username': username}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      // Update mock group data when server is not available
+      final groupIndex = _mockGroups.indexWhere((group) => group.id == groupId);
+      if (groupIndex != -1) {
+        final parts = _mockGroups[groupIndex].members.split('/');
+        final currentMembers = int.parse(parts[0]);
+        
+        if (currentMembers > 0) {
+          // Remove the username from members list
+          final updatedMembersList = List<String>.from(_mockGroups[groupIndex].membersList);
+          updatedMembersList.remove(username);
+          
+          _mockGroups[groupIndex] = ChatGroup(
+            id: _mockGroups[groupIndex].id,
+            name: _mockGroups[groupIndex].name,
+            members: '${currentMembers - 1}/10',
+            description: _mockGroups[groupIndex].description,
+            membersList: updatedMembersList,
+          );
+          return true;
+        }
+      }
+      return false;
+    }
+  }
 }
 
 // The ChatRepository class
@@ -246,5 +280,9 @@ class ChatRepository {
   
   Future<bool> joinGroup(String groupId, String username) async {
     return await apiClient.joinGroup(groupId, username);
+  }
+  
+  Future<bool> leaveGroup(String groupId, String username) async {
+    return await apiClient.leaveGroup(groupId, username);
   }
 }
