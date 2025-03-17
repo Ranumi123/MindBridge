@@ -142,15 +142,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             left: 0,
             right: 0,
             child: Container(
-              height: screenSize.height * 0.45, // Increased from 0.38 to 0.45
+              height: screenSize.height * 0.4, // Slightly reduced height for better spacing
               child: Stack(
                 children: [
                   // Background wave with deeper curve
                   CustomPaint(
-                    size: Size(screenSize.width, screenSize.height * 0.45), // Match container height
+                    size: Size(screenSize.width, screenSize.height * 0.4),
                     painter: TopWavePainter(
                       color: Color(0xFF1EBBD7).withOpacity(0.1),
-                      depth: 1.5, // Slightly deeper curve
+                      depth: 1.5,
                     ),
                   ),
 
@@ -167,15 +167,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     ),
                   ),
 
-                  // Image positioned nicely in the curved area - ENLARGED and centered better
+                  // Image positioned nicely in the curved area
                   Positioned(
-                    bottom: -10, // Moved down a bit to break out of the curve
+                    bottom: -10,
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: screenSize.height * 0.35, // Increased from 0.25 to 0.35
+                      height: screenSize.height * 0.32, // Slightly adjusted for better fit
                       child: Image.asset(
-                        'assets/images/loginimage.png',
+                        'assets/images/loginimage2.png',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -288,8 +288,37 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ],
                     ),
 
-                    // Space for the larger image in the stack - INCREASED height
-                    SizedBox(height: screenSize.height * 0.35), // Increased from 0.28 to 0.35
+                    // Space for the larger image in the stack
+                    SizedBox(height: screenSize.height * 0.3), // Adjusted spacing
+
+                    // Added divider for better visual separation
+                    Container(
+                      margin: EdgeInsets.only(bottom: 25),
+                      height: 2,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            Color(0xFF1EBBD7).withOpacity(0.3),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Form header label
+                    Text(
+                      "Welcome back",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF4A6572),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(height: 20), // Added more space
 
                     // Form fields with animation
                     AnimatedBuilder(
@@ -409,7 +438,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                     ),
 
-                    SizedBox(height: 30),
+                    SizedBox(height: 20), // Adjusted spacing
 
                     // Login button with animation
                     AnimatedBuilder(
@@ -492,7 +521,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                     ),
 
-                    SizedBox(height: 20),
+                    SizedBox(height: 25), // Increased spacing
 
                     // Don't have account link
                     AnimatedBuilder(
