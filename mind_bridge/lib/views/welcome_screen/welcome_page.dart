@@ -58,9 +58,9 @@ class WelcomePage extends StatelessWidget {
                             );
                           },
                           child: Container(
-                            height: 100, // Increased from 80 to 100
-                            width: 100, // Increased from 80 to 100
-                            padding: const EdgeInsets.all(2), // Reduced padding from 8 to 2
+                            height: 100,
+                            width: 100,
+                            padding: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -73,10 +73,10 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: ClipOval( // Added ClipOval for perfect circle clipping
+                            child: ClipOval(
                               child: Image.asset(
                                 'assets/images/1.png',
-                                fit: BoxFit.cover, // Changed from BoxFit.contain to BoxFit.cover
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
@@ -164,7 +164,7 @@ class WelcomePage extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Background animation glow
+                              // Background animation glow - Increased opacity for better visibility
                               TweenAnimationBuilder<double>(
                                 tween: Tween<double>(begin: 0.9, end: 1.1),
                                 duration: const Duration(milliseconds: 3000),
@@ -173,7 +173,7 @@ class WelcomePage extends StatelessWidget {
                                   return Transform.scale(
                                     scale: value,
                                     child: Opacity(
-                                      opacity: 0.1,
+                                      opacity: 0.15, // Increased from 0.1 to 0.15
                                       child: Container(
                                         width: screenSize.width * 1.0,
                                         height: screenSize.width * 1.0,
@@ -181,7 +181,7 @@ class WelcomePage extends StatelessWidget {
                                           shape: BoxShape.circle,
                                           gradient: RadialGradient(
                                             colors: [
-                                              const Color(0xFF4B9FE1).withOpacity(0.5),
+                                              const Color(0xFF4B9FE1).withOpacity(0.6),
                                               const Color(0xFF20E4B5).withOpacity(0.0),
                                             ],
                                             stops: const [0.1, 1.0],
@@ -193,76 +193,76 @@ class WelcomePage extends StatelessWidget {
                                 },
                               ),
 
-                              // Decorative curved line 1 (upper left)
+                              // Decorative curved line 1 (upper left) - Increased opacity
                               Positioned(
                                 top: screenSize.height * 0.05,
                                 left: -20,
                                 child: CustomPaint(
                                   size: Size(screenSize.width * 0.5, screenSize.height * 0.1),
                                   painter: CurvedLinePainter(
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.2),
-                                    strokeWidth: 2,
+                                    color: const Color(0xFF4B9FE1).withOpacity(0.25), // Increased opacity
+                                    strokeWidth: 2.5, // Slightly thicker
                                     isLeftToRight: true,
                                   ),
                                 ),
                               ),
 
-                              // Decorative curved line 2 (upper right)
+                              // Decorative curved line 2 (upper right) - Increased opacity
                               Positioned(
                                 top: screenSize.height * 0.08,
                                 right: 0,
                                 child: CustomPaint(
                                   size: Size(screenSize.width * 0.4, screenSize.height * 0.07),
                                   painter: CurvedLinePainter(
-                                    color: const Color(0xFF1EBBD7).withOpacity(0.15),
-                                    strokeWidth: 3,
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.22), // Increased opacity
+                                    strokeWidth: 3.5, // Slightly thicker
                                     isLeftToRight: false,
                                   ),
                                 ),
                               ),
 
-                              // Decorative curved line 3 (lower left)
+                              // Decorative curved line 3 (lower left) - Increased opacity
                               Positioned(
                                 bottom: screenSize.height * 0.12,
                                 left: 10,
                                 child: CustomPaint(
                                   size: Size(screenSize.width * 0.4, screenSize.height * 0.08),
                                   painter: CurvedLinePainter(
-                                    color: const Color(0xFF20E4B5).withOpacity(0.2),
-                                    strokeWidth: 2.5,
+                                    color: const Color(0xFF20E4B5).withOpacity(0.25), // Increased opacity
+                                    strokeWidth: 3, // Slightly thicker
                                     isLeftToRight: false,
                                   ),
                                 ),
                               ),
 
-                              // Decorative curved line 4 (lower right)
+                              // Decorative curved line 4 (lower right) - Increased opacity
                               Positioned(
                                 bottom: screenSize.height * 0.05,
                                 right: -10,
                                 child: CustomPaint(
                                   size: Size(screenSize.width * 0.45, screenSize.height * 0.1),
                                   painter: CurvedLinePainter(
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.15),
-                                    strokeWidth: 3,
+                                    color: const Color(0xFF4B9FE1).withOpacity(0.22), // Increased opacity
+                                    strokeWidth: 3.5, // Slightly thicker
                                     isLeftToRight: true,
                                   ),
                                 ),
                               ),
 
-                              // Wave curve along the middle
+                              // Wave curve along the middle - Increased opacity
                               Positioned(
                                 top: screenSize.height * 0.2,
                                 left: 0,
                                 child: CustomPaint(
                                   size: Size(screenSize.width * 0.85, screenSize.height * 0.08),
                                   painter: WavePainter(
-                                    color: const Color(0xFF1EBBD7).withOpacity(0.15),
-                                    strokeWidth: 2,
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.25), // Increased opacity
+                                    strokeWidth: 2.5, // Slightly thicker
                                   ),
                                 ),
                               ),
 
-                              // Decorative elements - circles
+                              // Decorative elements - circles with increased opacity
                               Positioned(
                                 top: screenSize.height * 0.05,
                                 right: screenSize.width * 0.15,
@@ -271,7 +271,7 @@ class WelcomePage extends StatelessWidget {
                                   height: 25,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.2),
+                                    color: const Color(0xFF4B9FE1).withOpacity(0.28), // Increased opacity
                                   ),
                                 ),
                               ),
@@ -283,12 +283,12 @@ class WelcomePage extends StatelessWidget {
                                   height: 20,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF20E4B5).withOpacity(0.3),
+                                    color: const Color(0xFF20E4B5).withOpacity(0.35), // Increased opacity
                                   ),
                                 ),
                               ),
 
-                              // Additional decorative element
+                              // Additional decorative element with increased opacity
                               Positioned(
                                 top: screenSize.height * 0.12,
                                 left: screenSize.width * 0.15,
@@ -297,12 +297,12 @@ class WelcomePage extends StatelessWidget {
                                   height: 15,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF1EBBD7).withOpacity(0.2),
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.28), // Increased opacity
                                   ),
                                 ),
                               ),
 
-                              // Main image with frosted glass effect frame
+                              // Main image with frosted glass effect frame - REDUCED SHADOW
                               Container(
                                 width: screenSize.width * 0.9,
                                 height: screenSize.width * 0.9,
@@ -310,10 +310,10 @@ class WelcomePage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(40),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 30,
-                                      spreadRadius: 5,
-                                      offset: const Offset(0, 15),
+                                      color: Colors.black.withOpacity(0.06), // Reduced opacity from 0.1 to 0.06
+                                      blurRadius: 25, // Reduced from 30
+                                      spreadRadius: 2, // Reduced from 5
+                                      offset: const Offset(0, 10), // Reduced from Offset(0, 15)
                                     ),
                                   ],
                                 ),
@@ -328,52 +328,52 @@ class WelcomePage extends StatelessWidget {
                                           sigmaY: 10,
                                         ),
                                         child: Container(
-                                          color: Colors.white.withOpacity(0.1),
+                                          color: Colors.white.withOpacity(0.08), // Slightly reduced opacity
                                         ),
                                       ),
 
-                                      // Gradient overlay
+                                      // Gradient overlay - Lighter for better visibility of curves
                                       Container(
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              Colors.white.withOpacity(0.5),
-                                              Colors.white.withOpacity(0.1),
+                                              Colors.white.withOpacity(0.4), // Reduced from 0.5
+                                              Colors.white.withOpacity(0.08), // Reduced from 0.1
                                             ],
                                           ),
                                           borderRadius: BorderRadius.circular(40),
                                           border: Border.all(
-                                            color: Colors.white.withOpacity(0.3),
+                                            color: Colors.white.withOpacity(0.25), // Reduced from 0.3
                                             width: 1.5,
                                           ),
                                         ),
                                       ),
 
-                                      // Inner decorative curved line (top)
+                                      // Inner decorative curved line (top) - Increased opacity
                                       Positioned(
                                         top: 30,
                                         left: 20,
                                         child: CustomPaint(
                                           size: Size(screenSize.width * 0.6, 40),
                                           painter: CurvedLinePainter(
-                                            color: const Color(0xFF4B9FE1).withOpacity(0.1),
-                                            strokeWidth: 3,
+                                            color: const Color(0xFF4B9FE1).withOpacity(0.18), // Increased from 0.1
+                                            strokeWidth: 3.5, // Increased from 3
                                             isLeftToRight: true,
                                           ),
                                         ),
                                       ),
 
-                                      // Inner decorative curved line (bottom)
+                                      // Inner decorative curved line (bottom) - Increased opacity
                                       Positioned(
                                         bottom: 40,
                                         right: 20,
                                         child: CustomPaint(
                                           size: Size(screenSize.width * 0.55, 40),
                                           painter: CurvedLinePainter(
-                                            color: const Color(0xFF20E4B5).withOpacity(0.1),
-                                            strokeWidth: 3,
+                                            color: const Color(0xFF20E4B5).withOpacity(0.18), // Increased from 0.1
+                                            strokeWidth: 3.5, // Increased from 3
                                             isLeftToRight: false,
                                           ),
                                         ),
@@ -396,7 +396,7 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ),
 
-                              // Animated floating dot
+                              // Animated floating dot - Increased size and opacity
                               Positioned(
                                 top: screenSize.height * 0.1,
                                 right: screenSize.width * 0.25,
@@ -407,16 +407,46 @@ class WelcomePage extends StatelessWidget {
                                     return Transform.translate(
                                       offset: Offset(0, 10 * math.sin(value * 2 * math.pi)),
                                       child: Container(
+                                        width: 10, // Increased from 8
+                                        height: 10, // Increased from 8
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: const Color(0xFF4B9FE1).withOpacity(0.65), // Increased from 0.5
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFF4B9FE1).withOpacity(0.4), // Increased from 0.3
+                                              blurRadius: 12, // Increased from 10
+                                              spreadRadius: 2, // Increased from 1
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              // Additional animated floating dot for more visual interest
+                              Positioned(
+                                bottom: screenSize.height * 0.15,
+                                left: screenSize.width * 0.3,
+                                child: TweenAnimationBuilder<double>(
+                                  tween: Tween<double>(begin: 0, end: 1),
+                                  duration: const Duration(milliseconds: 3500), // Different duration
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, 8 * math.sin(value * 2 * math.pi + 1)), // Different phase
+                                      child: Container(
                                         width: 8,
                                         height: 8,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: const Color(0xFF4B9FE1).withOpacity(0.5),
+                                          color: const Color(0xFF20E4B5).withOpacity(0.65),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: const Color(0xFF4B9FE1).withOpacity(0.3),
-                                              blurRadius: 10,
-                                              spreadRadius: 1,
+                                              color: const Color(0xFF20E4B5).withOpacity(0.4),
+                                              blurRadius: 12,
+                                              spreadRadius: 2,
                                             ),
                                           ],
                                         ),
