@@ -129,9 +129,9 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
             left: 0,
             right: 0,
             child: Container(
-              height: screenSize.height * 0.3,
+              height: screenSize.height * 0.35,
               child: CustomPaint(
-                size: Size(screenSize.width, screenSize.height * 0.3),
+                size: Size(screenSize.width, screenSize.height * 0.35),
                 painter: TopWavePainter(
                   color: Color(0xFF1EBBD7).withOpacity(0.1),
                 ),
@@ -202,19 +202,7 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Top image inside the curved area
-                    Container(
-                      height: screenSize.height * 0.25,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Image.asset(
-                          'assets/images/signupimage.png', // Your main illustration
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-
-                    // Title and Back button
+                    // Title and Back button at the very top
                     Row(
                       children: [
                         IconButton(
@@ -224,18 +212,34 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                           constraints: BoxConstraints(),
                         ),
                         SizedBox(width: 8),
-                        Text(
-                          'Create Account',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF4A6572),
+                        Expanded(
+                          child: Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF4A6572),
+                            ),
                           ),
                         ),
                       ],
                     ),
 
-                    SizedBox(height: 20),
+                    SizedBox(height: 16),
+
+                    // Top image inside the curved area
+                    Container(
+                      height: screenSize.height * 0.25,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          'assets/images/signupimage.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 12),
 
                     // Logo with animation
                     AnimatedBuilder(
