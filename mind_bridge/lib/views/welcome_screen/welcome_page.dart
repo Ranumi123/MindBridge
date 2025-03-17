@@ -4,8 +4,30 @@ import '../login_page/login_page.dart';
 import '../signup_page/signup_page.dart';
 import 'dart:math' as math;
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +55,59 @@ class WelcomePage extends StatelessWidget {
               ),
             ),
 
+            // Interactive background elements that follow pointer
+            MouseRegion(
+              onHover: (event) {
+                // This enables the interactive elements to react on hover
+                setState(() {});
+              },
+              child: AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) {
+                  return Stack(
+                    children: List.generate(10, (index) {
+                      final size = 8.0 + (index % 3) * 5.0;
+                      final offset = 2 * math.pi * index / 10;
+                      final x = screenSize.width * 0.5 + math.cos(
+                          _animationController.value * 2 * math.pi + offset
+                      ) * screenSize.width * 0.4;
+                      final y = screenSize.height * 0.5 + math.sin(
+                          _animationController.value * 2 * math.pi + offset
+                      ) * screenSize.height * 0.3;
+
+                      return Positioned(
+                        left: x - size / 2,
+                        top: y - size / 2,
+                        child: Container(
+                          width: size,
+                          height: size,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.lerp(
+                              const Color(0xFF4B9FE1),
+                              const Color(0xFF20E4B5),
+                              index / 10,
+                            )!.withOpacity(0.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.lerp(
+                                  const Color(0xFF4B9FE1),
+                                  const Color(0xFF20E4B5),
+                                  index / 10,
+                                )!.withOpacity(0.2),
+                                blurRadius: 10,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+            ),
+
             // Main content
             SafeArea(
               child: Padding(
@@ -41,48 +116,9 @@ class WelcomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    // Top section with logo and text
+                    // Top section with text (removed logo)
                     Column(
                       children: [
-                        // App logo image - ENLARGED with better fit
-                        TweenAnimationBuilder<double>(
-                          tween: Tween<double>(begin: 0, end: 1),
-                          duration: const Duration(milliseconds: 800),
-                          builder: (context, value, child) {
-                            return Opacity(
-                              opacity: value,
-                              child: Transform.scale(
-                                scale: value,
-                                child: child,
-                              ),
-                            );
-                          },
-                          child: Container(
-                            height: 100,
-                            width: 100,
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 15,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'assets/images/1.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
                         // Logo with gradient text and blur effect
                         ShaderMask(
                           shaderCallback: (Rect bounds) {
@@ -164,7 +200,7 @@ class WelcomePage extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Background animation glow - Increased opacity for better visibility
+                              // Interactive animation glow
                               TweenAnimationBuilder<double>(
                                 tween: Tween<double>(begin: 0.9, end: 1.1),
                                 duration: const Duration(milliseconds: 3000),
@@ -173,7 +209,7 @@ class WelcomePage extends StatelessWidget {
                                   return Transform.scale(
                                     scale: value,
                                     child: Opacity(
-                                      opacity: 0.15, // Increased from 0.1 to 0.15
+                                      opacity: 0.15,
                                       child: Container(
                                         width: screenSize.width * 1.0,
                                         height: screenSize.width * 1.0,
@@ -193,278 +229,179 @@ class WelcomePage extends StatelessWidget {
                                 },
                               ),
 
-                              // Decorative curved line 1 (upper left) - Increased opacity
-                              Positioned(
-                                top: screenSize.height * 0.05,
-                                left: -20,
-                                child: CustomPaint(
-                                  size: Size(screenSize.width * 0.5, screenSize.height * 0.1),
-                                  painter: CurvedLinePainter(
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.25), // Increased opacity
-                                    strokeWidth: 2.5, // Slightly thicker
-                                    isLeftToRight: true,
-                                  ),
-                                ),
-                              ),
-
-                              // Decorative curved line 2 (upper right) - Increased opacity
-                              Positioned(
-                                top: screenSize.height * 0.08,
-                                right: 0,
-                                child: CustomPaint(
-                                  size: Size(screenSize.width * 0.4, screenSize.height * 0.07),
-                                  painter: CurvedLinePainter(
-                                    color: const Color(0xFF1EBBD7).withOpacity(0.22), // Increased opacity
-                                    strokeWidth: 3.5, // Slightly thicker
-                                    isLeftToRight: false,
-                                  ),
-                                ),
-                              ),
-
-                              // Decorative curved line 3 (lower left) - Increased opacity
-                              Positioned(
-                                bottom: screenSize.height * 0.12,
-                                left: 10,
-                                child: CustomPaint(
-                                  size: Size(screenSize.width * 0.4, screenSize.height * 0.08),
-                                  painter: CurvedLinePainter(
-                                    color: const Color(0xFF20E4B5).withOpacity(0.25), // Increased opacity
-                                    strokeWidth: 3, // Slightly thicker
-                                    isLeftToRight: false,
-                                  ),
-                                ),
-                              ),
-
-                              // Decorative curved line 4 (lower right) - Increased opacity
-                              Positioned(
-                                bottom: screenSize.height * 0.05,
-                                right: -10,
-                                child: CustomPaint(
-                                  size: Size(screenSize.width * 0.45, screenSize.height * 0.1),
-                                  painter: CurvedLinePainter(
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.22), // Increased opacity
-                                    strokeWidth: 3.5, // Slightly thicker
-                                    isLeftToRight: true,
-                                  ),
-                                ),
-                              ),
-
-                              // Wave curve along the middle - Increased opacity
-                              Positioned(
-                                top: screenSize.height * 0.2,
-                                left: 0,
-                                child: CustomPaint(
-                                  size: Size(screenSize.width * 0.85, screenSize.height * 0.08),
-                                  painter: WavePainter(
-                                    color: const Color(0xFF1EBBD7).withOpacity(0.25), // Increased opacity
-                                    strokeWidth: 2.5, // Slightly thicker
-                                  ),
-                                ),
-                              ),
-
-                              // Decorative elements - circles with increased opacity
-                              Positioned(
-                                top: screenSize.height * 0.05,
-                                right: screenSize.width * 0.15,
-                                child: Container(
-                                  width: 25,
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color(0xFF4B9FE1).withOpacity(0.28), // Increased opacity
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: screenSize.height * 0.05,
-                                left: screenSize.width * 0.1,
-                                child: Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color(0xFF20E4B5).withOpacity(0.35), // Increased opacity
-                                  ),
-                                ),
-                              ),
-
-                              // Additional decorative element with increased opacity
-                              Positioned(
-                                top: screenSize.height * 0.12,
-                                left: screenSize.width * 0.15,
-                                child: Container(
-                                  width: 15,
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color(0xFF1EBBD7).withOpacity(0.28), // Increased opacity
-                                  ),
-                                ),
-                              ),
-
-                              // Main image with frosted glass effect frame - REDUCED SHADOW
-                              Container(
-                                width: screenSize.width * 0.9,
-                                height: screenSize.width * 0.9,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.06), // Reduced opacity from 0.1 to 0.06
-                                      blurRadius: 25, // Reduced from 30
-                                      spreadRadius: 2, // Reduced from 5
-                                      offset: const Offset(0, 10), // Reduced from Offset(0, 15)
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(40),
-                                  child: Stack(
-                                    children: [
-                                      // Background blur
-                                      BackdropFilter(
-                                        filter: ui.ImageFilter.blur(
-                                          sigmaX: 10,
-                                          sigmaY: 10,
-                                        ),
-                                        child: Container(
-                                          color: Colors.white.withOpacity(0.08), // Slightly reduced opacity
-                                        ),
+                              // Main image with interactive glass morphism effect
+                              GestureDetector(
+                                onTap: () {
+                                  // Add interactive feedback on tap
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text("Let's get started on your journey!"),
+                                      backgroundColor: const Color(0xFF1EBBD7),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                },
+                                child: MouseRegion(
+                                  onEnter: (_) => setState(() {}),
+                                  onExit: (_) => setState(() {}),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    width: screenSize.width * 0.9,
+                                    height: screenSize.width * 0.9,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(40),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.06),
+                                          blurRadius: 25,
+                                          spreadRadius: 2,
+                                          offset: const Offset(0, 10),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(40),
+                                      child: Stack(
+                                        children: [
+                                          // Background blur
+                                          BackdropFilter(
+                                            filter: ui.ImageFilter.blur(
+                                              sigmaX: 10,
+                                              sigmaY: 10,
+                                            ),
+                                            child: Container(
+                                              color: Colors.white.withOpacity(0.08),
+                                            ),
+                                          ),
 
-                                      // Gradient overlay - Lighter for better visibility of curves
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Colors.white.withOpacity(0.4), // Reduced from 0.5
-                                              Colors.white.withOpacity(0.08), // Reduced from 0.1
+                                          // Interactive gradient overlay
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  Colors.white.withOpacity(0.4),
+                                                  Colors.white.withOpacity(0.08),
+                                                ],
+                                              ),
+                                              borderRadius: BorderRadius.circular(40),
+                                              border: Border.all(
+                                                color: Colors.white.withOpacity(0.25),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Decorative curved lines - now with animation
+                                          ...List.generate(4, (index) {
+                                            final isTopPosition = index < 2;
+                                            final isLeftPosition = index % 2 == 0;
+
+                                            return Positioned(
+                                              top: isTopPosition ? 30 + (index * 10) : null,
+                                              bottom: !isTopPosition ? 40 + ((index - 2) * 10) : null,
+                                              left: isLeftPosition ? 20 : null,
+                                              right: !isLeftPosition ? 20 : null,
+                                              child: TweenAnimationBuilder<double>(
+                                                tween: Tween<double>(begin: 0, end: 1),
+                                                duration: Duration(milliseconds: 2000 + (index * 200)),
+                                                builder: (context, value, child) {
+                                                  return Opacity(
+                                                    opacity: value * 0.2,
+                                                    child: Transform.translate(
+                                                      offset: Offset(
+                                                        isLeftPosition ? 10 * (1 - value) : -10 * (1 - value),
+                                                        0,
+                                                      ),
+                                                      child: CustomPaint(
+                                                        size: Size(screenSize.width * 0.6, 40),
+                                                        painter: CurvedLinePainter(
+                                                          color: index % 2 == 0
+                                                              ? const Color(0xFF4B9FE1).withOpacity(0.18)
+                                                              : const Color(0xFF20E4B5).withOpacity(0.18),
+                                                          strokeWidth: 3.5,
+                                                          isLeftToRight: index % 2 == 0,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }),
+
+                                          // The image
+                                          Center(
+                                            child: Container(
+                                              width: screenSize.width * 0.85,
+                                              height: screenSize.width * 0.85,
+                                              padding: const EdgeInsets.all(10),
+                                              child: Image.asset(
+                                                'assets/images/2.png',
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // Animated floating dots
+                              for (int i = 0; i < 5; i++)
+                                Positioned(
+                                  top: screenSize.height * (0.1 + (i * 0.05)),
+                                  right: screenSize.width * (0.25 - (i * 0.03)),
+                                  child: TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(begin: 0, end: 1),
+                                    duration: Duration(milliseconds: 2500 + (i * 500)),
+                                    builder: (context, value, child) {
+                                      return Transform.translate(
+                                        offset: Offset(0, 10 * math.sin(value * 2 * math.pi + (i * 0.5))),
+                                        child: Container(
+                                          width: 10 - (i % 3),
+                                          height: 10 - (i % 3),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.lerp(
+                                              const Color(0xFF4B9FE1),
+                                              const Color(0xFF20E4B5),
+                                              i / 5,
+                                            )!.withOpacity(0.65),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color.lerp(
+                                                  const Color(0xFF4B9FE1),
+                                                  const Color(0xFF20E4B5),
+                                                  i / 5,
+                                                )!.withOpacity(0.4),
+                                                blurRadius: 12,
+                                                spreadRadius: 2,
+                                              ),
                                             ],
                                           ),
-                                          borderRadius: BorderRadius.circular(40),
-                                          border: Border.all(
-                                            color: Colors.white.withOpacity(0.25), // Reduced from 0.3
-                                            width: 1.5,
-                                          ),
                                         ),
-                                      ),
-
-                                      // Inner decorative curved line (top) - Increased opacity
-                                      Positioned(
-                                        top: 30,
-                                        left: 20,
-                                        child: CustomPaint(
-                                          size: Size(screenSize.width * 0.6, 40),
-                                          painter: CurvedLinePainter(
-                                            color: const Color(0xFF4B9FE1).withOpacity(0.18), // Increased from 0.1
-                                            strokeWidth: 3.5, // Increased from 3
-                                            isLeftToRight: true,
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Inner decorative curved line (bottom) - Increased opacity
-                                      Positioned(
-                                        bottom: 40,
-                                        right: 20,
-                                        child: CustomPaint(
-                                          size: Size(screenSize.width * 0.55, 40),
-                                          painter: CurvedLinePainter(
-                                            color: const Color(0xFF20E4B5).withOpacity(0.18), // Increased from 0.1
-                                            strokeWidth: 3.5, // Increased from 3
-                                            isLeftToRight: false,
-                                          ),
-                                        ),
-                                      ),
-
-                                      // The image
-                                      Center(
-                                        child: Container(
-                                          width: screenSize.width * 0.85,
-                                          height: screenSize.width * 0.85,
-                                          padding: const EdgeInsets.all(10),
-                                          child: Image.asset(
-                                            'assets/images/2.png',
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   ),
                                 ),
-                              ),
-
-                              // Animated floating dot - Increased size and opacity
-                              Positioned(
-                                top: screenSize.height * 0.1,
-                                right: screenSize.width * 0.25,
-                                child: TweenAnimationBuilder<double>(
-                                  tween: Tween<double>(begin: 0, end: 1),
-                                  duration: const Duration(milliseconds: 2500),
-                                  builder: (context, value, child) {
-                                    return Transform.translate(
-                                      offset: Offset(0, 10 * math.sin(value * 2 * math.pi)),
-                                      child: Container(
-                                        width: 10, // Increased from 8
-                                        height: 10, // Increased from 8
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: const Color(0xFF4B9FE1).withOpacity(0.65), // Increased from 0.5
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0xFF4B9FE1).withOpacity(0.4), // Increased from 0.3
-                                              blurRadius: 12, // Increased from 10
-                                              spreadRadius: 2, // Increased from 1
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              // Additional animated floating dot for more visual interest
-                              Positioned(
-                                bottom: screenSize.height * 0.15,
-                                left: screenSize.width * 0.3,
-                                child: TweenAnimationBuilder<double>(
-                                  tween: Tween<double>(begin: 0, end: 1),
-                                  duration: const Duration(milliseconds: 3500), // Different duration
-                                  builder: (context, value, child) {
-                                    return Transform.translate(
-                                      offset: Offset(0, 8 * math.sin(value * 2 * math.pi + 1)), // Different phase
-                                      child: Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: const Color(0xFF20E4B5).withOpacity(0.65),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0xFF20E4B5).withOpacity(0.4),
-                                              blurRadius: 12,
-                                              spreadRadius: 2,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
 
-                    // Bottom section with stylized buttons
+                    // Bottom section with stylized interactive buttons
                     Column(
                       children: [
-                        // Advanced Get Started Button with animation
+                        // Advanced Get Started Button with animation and hover effect
                         TweenAnimationBuilder<double>(
                           tween: Tween<double>(begin: 0, end: 1),
                           duration: const Duration(milliseconds: 600),
@@ -477,92 +414,105 @@ class WelcomePage extends StatelessWidget {
                               ),
                             );
                           },
-                          child: Container(
-                            width: double.infinity,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF4B9FE1), // Blue
-                                  Color(0xFF1EBBD7), // Teal
-                                  Color(0xFF20E4B5), // Mint green
-                                ],
-                                stops: [0.0, 0.5, 1.0],
-                              ),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF1EBBD7).withOpacity(0.3),
-                                  blurRadius: 15,
-                                  spreadRadius: 1,
-                                  offset: const Offset(0, 8),
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: Container(
+                              width: double.infinity,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFF4B9FE1), // Blue
+                                    Color(0xFF1EBBD7), // Teal
+                                    Color(0xFF20E4B5), // Mint green
+                                  ],
+                                  stops: [0.0, 0.5, 1.0],
                                 ),
-                                BoxShadow(
-                                  color: const Color(0xFF20E4B5).withOpacity(0.2),
-                                  blurRadius: 25,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
                                 borderRadius: BorderRadius.circular(30),
-                                splashColor: Colors.white.withOpacity(0.2),
-                                highlightColor: Colors.white.withOpacity(0.1),
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) =>
-                                          SignupPage(),
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        var curve = Curves.easeOutQuint;
-                                        var curveTween = CurveTween(curve: curve);
-                                        var begin = const Offset(0.0, 1.0);
-                                        var end = Offset.zero;
-                                        var tween = Tween(begin: begin, end: end).chain(curveTween);
-                                        var offsetAnimation = animation.drive(tween);
-                                        return SlideTransition(
-                                          position: offsetAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration: const Duration(milliseconds: 700),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.3),
+                                    blurRadius: 15,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                  BoxShadow(
+                                    color: const Color(0xFF20E4B5).withOpacity(0.2),
+                                    blurRadius: 25,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(30),
+                                  splashColor: Colors.white.withOpacity(0.3),
+                                  highlightColor: Colors.white.withOpacity(0.2),
+                                  hoverColor: Colors.white.withOpacity(0.1),
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation, secondaryAnimation) =>
+                                            SignupPage(),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          var curve = Curves.easeOutQuint;
+                                          var curveTween = CurveTween(curve: curve);
+                                          var begin = const Offset(0.0, 1.0);
+                                          var end = Offset.zero;
+                                          var tween = Tween(begin: begin, end: end).chain(curveTween);
+                                          var offsetAnimation = animation.drive(tween);
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                        transitionDuration: const Duration(milliseconds: 700),
+                                      ),
+                                    );
+                                  },
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'Get Started',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        TweenAnimationBuilder<double>(
+                                          tween: Tween<double>(begin: 0, end: 1),
+                                          duration: const Duration(milliseconds: 1500),
+                                          builder: (context, value, child) {
+                                            return Transform.translate(
+                                              offset: Offset(5 * math.sin(value * 2 * math.pi), 0),
+                                              child: Container(
+                                                width: 30,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white.withOpacity(0.2),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.arrow_forward_rounded,
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        'Get Started',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.2),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.arrow_forward_rounded,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                 ),
                               ),
@@ -572,7 +522,7 @@ class WelcomePage extends StatelessWidget {
 
                         const SizedBox(height: 24),
 
-                        // Sign In Link with better styling
+                        // Sign In Link with interactive hover effects
                         TweenAnimationBuilder<double>(
                           tween: Tween<double>(begin: 0, end: 1),
                           duration: const Duration(milliseconds: 800),
@@ -582,62 +532,69 @@ class WelcomePage extends StatelessWidget {
                               child: child,
                             );
                           },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
-                                  blurRadius: 10,
-                                  spreadRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) =>
-                                        LoginPage(),
-                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                      var curve = Curves.easeOutQuint;
-                                      var curveTween = CurveTween(curve: curve);
-                                      var tween = Tween(begin: 0.0, end: 1.0).chain(curveTween);
-                                      var fadeAnimation = animation.drive(tween);
-                                      return FadeTransition(
-                                        opacity: fadeAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration: const Duration(milliseconds: 500),
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.03),
+                                    blurRadius: 10,
+                                    spreadRadius: 0,
                                   ),
-                                );
-                              },
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Already have an account? ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFF4A6572),
-                                      ),
+                                ],
+                              ),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(20),
+                                hoverColor: Colors.black.withOpacity(0.05),
+                                splashColor: Colors.white.withOpacity(0.3),
+                                highlightColor: Colors.white.withOpacity(0.2),
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) =>
+                                          LoginPage(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        var curve = Curves.easeOutQuint;
+                                        var curveTween = CurveTween(curve: curve);
+                                        var tween = Tween(begin: 0.0, end: 1.0).chain(curveTween);
+                                        var fadeAnimation = animation.drive(tween);
+                                        return FadeTransition(
+                                          opacity: fadeAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: const Duration(milliseconds: 500),
                                     ),
-                                    TextSpan(
-                                      text: 'Sign In',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF1EBBD7),
-                                        decoration: TextDecoration.underline,
-                                        decorationColor: const Color(0xFF1EBBD7).withOpacity(0.3),
-                                        decorationThickness: 2,
+                                  );
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Already have an account? ',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF4A6572),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      TextSpan(
+                                        text: 'Sign In',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF1EBBD7),
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: const Color(0xFF1EBBD7).withOpacity(0.3),
+                                          decorationThickness: 2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -750,57 +707,4 @@ class WavePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
-}
-
-// Animation class for floating pulse effect
-class PulseAnimation extends StatefulWidget {
-  final Widget child;
-  final Duration duration;
-
-  const PulseAnimation({
-    Key? key,
-    required this.child,
-    this.duration = const Duration(milliseconds: 2000),
-  }) : super(key: key);
-
-  @override
-  _PulseAnimationState createState() => _PulseAnimationState();
-}
-
-class _PulseAnimationState extends State<PulseAnimation> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) => Transform.scale(
-        scale: _animation.value,
-        child: child,
-      ),
-      child: widget.child,
-    );
-  }
 }
