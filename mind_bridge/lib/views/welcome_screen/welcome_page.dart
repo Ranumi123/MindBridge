@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import '../login_page/login_page.dart';
 import '../signup_page/signup_page.dart';
+import 'dart:math' as math;
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -155,7 +156,7 @@ class WelcomePage extends StatelessWidget {
                       ],
                     ),
 
-                    // Center section with your PNG image in a modern frame
+                    // Center section with your PNG image in a modern frame with CURVED LINES
                     Expanded(
                       child: Center(
                         child: Container(
@@ -163,6 +164,104 @@ class WelcomePage extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
+                              // Background animation glow
+                              TweenAnimationBuilder<double>(
+                                tween: Tween<double>(begin: 0.9, end: 1.1),
+                                duration: const Duration(milliseconds: 3000),
+                                curve: Curves.easeInOut,
+                                builder: (context, value, child) {
+                                  return Transform.scale(
+                                    scale: value,
+                                    child: Opacity(
+                                      opacity: 0.1,
+                                      child: Container(
+                                        width: screenSize.width * 1.0,
+                                        height: screenSize.width * 1.0,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: RadialGradient(
+                                            colors: [
+                                              const Color(0xFF4B9FE1).withOpacity(0.5),
+                                              const Color(0xFF20E4B5).withOpacity(0.0),
+                                            ],
+                                            stops: const [0.1, 1.0],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              // Decorative curved line 1 (upper left)
+                              Positioned(
+                                top: screenSize.height * 0.05,
+                                left: -20,
+                                child: CustomPaint(
+                                  size: Size(screenSize.width * 0.5, screenSize.height * 0.1),
+                                  painter: CurvedLinePainter(
+                                    color: const Color(0xFF4B9FE1).withOpacity(0.2),
+                                    strokeWidth: 2,
+                                    isLeftToRight: true,
+                                  ),
+                                ),
+                              ),
+
+                              // Decorative curved line 2 (upper right)
+                              Positioned(
+                                top: screenSize.height * 0.08,
+                                right: 0,
+                                child: CustomPaint(
+                                  size: Size(screenSize.width * 0.4, screenSize.height * 0.07),
+                                  painter: CurvedLinePainter(
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.15),
+                                    strokeWidth: 3,
+                                    isLeftToRight: false,
+                                  ),
+                                ),
+                              ),
+
+                              // Decorative curved line 3 (lower left)
+                              Positioned(
+                                bottom: screenSize.height * 0.12,
+                                left: 10,
+                                child: CustomPaint(
+                                  size: Size(screenSize.width * 0.4, screenSize.height * 0.08),
+                                  painter: CurvedLinePainter(
+                                    color: const Color(0xFF20E4B5).withOpacity(0.2),
+                                    strokeWidth: 2.5,
+                                    isLeftToRight: false,
+                                  ),
+                                ),
+                              ),
+
+                              // Decorative curved line 4 (lower right)
+                              Positioned(
+                                bottom: screenSize.height * 0.05,
+                                right: -10,
+                                child: CustomPaint(
+                                  size: Size(screenSize.width * 0.45, screenSize.height * 0.1),
+                                  painter: CurvedLinePainter(
+                                    color: const Color(0xFF4B9FE1).withOpacity(0.15),
+                                    strokeWidth: 3,
+                                    isLeftToRight: true,
+                                  ),
+                                ),
+                              ),
+
+                              // Wave curve along the middle
+                              Positioned(
+                                top: screenSize.height * 0.2,
+                                left: 0,
+                                child: CustomPaint(
+                                  size: Size(screenSize.width * 0.85, screenSize.height * 0.08),
+                                  painter: WavePainter(
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.15),
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+
                               // Decorative elements - circles
                               Positioned(
                                 top: screenSize.height * 0.05,
@@ -252,6 +351,34 @@ class WelcomePage extends StatelessWidget {
                                         ),
                                       ),
 
+                                      // Inner decorative curved line (top)
+                                      Positioned(
+                                        top: 30,
+                                        left: 20,
+                                        child: CustomPaint(
+                                          size: Size(screenSize.width * 0.6, 40),
+                                          painter: CurvedLinePainter(
+                                            color: const Color(0xFF4B9FE1).withOpacity(0.1),
+                                            strokeWidth: 3,
+                                            isLeftToRight: true,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Inner decorative curved line (bottom)
+                                      Positioned(
+                                        bottom: 40,
+                                        right: 20,
+                                        child: CustomPaint(
+                                          size: Size(screenSize.width * 0.55, 40),
+                                          painter: CurvedLinePainter(
+                                            color: const Color(0xFF20E4B5).withOpacity(0.1),
+                                            strokeWidth: 3,
+                                            isLeftToRight: false,
+                                          ),
+                                        ),
+                                      ),
+
                                       // The image
                                       Center(
                                         child: Container(
@@ -266,6 +393,36 @@ class WelcomePage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
+                                ),
+                              ),
+
+                              // Animated floating dot
+                              Positioned(
+                                top: screenSize.height * 0.1,
+                                right: screenSize.width * 0.25,
+                                child: TweenAnimationBuilder<double>(
+                                  tween: Tween<double>(begin: 0, end: 1),
+                                  duration: const Duration(milliseconds: 2500),
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, 10 * math.sin(value * 2 * math.pi)),
+                                      child: Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: const Color(0xFF4B9FE1).withOpacity(0.5),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFF4B9FE1).withOpacity(0.3),
+                                              blurRadius: 10,
+                                              spreadRadius: 1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
@@ -467,6 +624,102 @@ class WelcomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+// Curved line painter
+class CurvedLinePainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final bool isLeftToRight;
+
+  CurvedLinePainter({
+    required this.color,
+    required this.strokeWidth,
+    this.isLeftToRight = true,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    var path = Path();
+
+    if (isLeftToRight) {
+      path.moveTo(0, size.height * 0.8);
+      path.quadraticBezierTo(
+        size.width * 0.5,
+        size.height * 0.2,
+        size.width,
+        size.height * 0.5,
+      );
+    } else {
+      path.moveTo(size.width, size.height * 0.8);
+      path.quadraticBezierTo(
+        size.width * 0.5,
+        size.height * 0.2,
+        0,
+        size.height * 0.5,
+      );
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+// Wave line painter
+class WavePainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+
+  WavePainter({
+    required this.color,
+    required this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    var path = Path();
+
+    path.moveTo(0, size.height * 0.5);
+
+    // First curve up
+    path.cubicTo(
+      size.width * 0.25,
+      size.height * 0.0,
+      size.width * 0.25,
+      size.height * 1.0,
+      size.width * 0.5,
+      size.height * 0.5,
+    );
+
+    // Second curve down
+    path.cubicTo(
+      size.width * 0.75,
+      size.height * 0.0,
+      size.width * 0.75,
+      size.height * 1.0,
+      size.width,
+      size.height * 0.5,
+    );
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 // Animation class for floating pulse effect
