@@ -35,7 +35,7 @@ class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin
     _typingController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
+    )..repeat(reverse: false);
 
     // Add welcome message
     _messages.add(Message(
@@ -576,6 +576,7 @@ class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin
   Widget _buildTypingIndicator() {
     final primaryColor = Color(0xFF4B9FE1); // Blue from your app
     final accentColor = Color(0xFF1EBBD7); // Teal from your app
+    final tertiaryColor = Color(0xFF20E4B5); // Mint green from your app
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -591,26 +592,59 @@ class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin
         ],
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: List.generate(3, (index) {
           return AnimatedBuilder(
             animation: _typingController,
             builder: (context, child) {
-              final delay = index * 0.2;
+              // Create a staggered effect with different timing for each dot
+              final delay = index * 0.3;
               final t = (_typingController.value + delay) % 1.0;
-              final scale = 0.5 + (0.5 * math.sin(t * math.pi));
-              final color = Color.lerp(primaryColor, accentColor, scale);
 
-              return Container(
-                width: 8,
-                height: 8,
-                margin: EdgeInsets.only(right: 4),
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Transform.scale(
-                  scale: 0.8 + (0.4 * scale),
-                  child: Container(),
+              // Create bouncing effect
+              final bounce = math.sin(t * math.pi) * 8;
+
+              // Color interpolation between all three brand colors
+              Color dotColor;
+              if (t < 0.5) {
+                // Interpolate between primaryColor and accentColor
+                dotColor = Color.lerp(primaryColor, accentColor, t * 2)!;
+              } else {
+                // Interpolate between accentColor and tertiaryColor
+                dotColor = Color.lerp(accentColor, tertiaryColor, (t - 0.5) * 2)!;
+              }
+
+              return Padding(
+                padding: EdgeInsets.only(right: 5),
+                child: Transform.translate(
+                  offset: Offset(0, -bounce),
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: dotColor,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: dotColor.withOpacity(0.4),
+                          blurRadius: 6,
+                          spreadRadius: 0.5,
+                          offset: Offset(0, 2 + bounce/4),
+                        ),
+                      ],
+                    ),
+                    // Add a subtle glow effect
+                    child: Center(
+                      child: Container(
+                        width: 4,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               );
             },
