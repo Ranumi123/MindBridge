@@ -22,12 +22,11 @@ class WelcomePage extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Background subtle pattern - Empty asset removed
+            // Background subtle pattern
             Opacity(
               opacity: 0.05,
               child: Container(
                 decoration: const BoxDecoration(
-                  // Image removed since asset was empty
                   color: Colors.grey,
                 ),
               ),
@@ -44,11 +43,40 @@ class WelcomePage extends StatelessWidget {
                     // Top section with logo and text
                     Column(
                       children: [
-                        // App logo image
-                        Image.asset(
-                          'assets/images/1.png',
-                          height: 60,
-                          fit: BoxFit.contain,
+                        // App logo image - Larger and with animation
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(begin: 0, end: 1),
+                          duration: const Duration(milliseconds: 800),
+                          builder: (context, value, child) {
+                            return Opacity(
+                              opacity: value,
+                              child: Transform.scale(
+                                scale: value,
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 80, // Increased height
+                            width: 80, // Added width
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 15,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Image.asset(
+                              'assets/images/1.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 20),
 
@@ -125,21 +153,21 @@ class WelcomePage extends StatelessWidget {
                       ],
                     ),
 
-                    // Center section with your PNG image in a modern frame
+                    // Center section with your PNG image in a modern frame - ENLARGED
                     Expanded(
                       child: Center(
                         child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 30),
+                          margin: const EdgeInsets.symmetric(vertical: 20),
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
                               // Decorative elements - circles
                               Positioned(
-                                top: -10,
+                                top: screenSize.height * 0.05,
                                 right: screenSize.width * 0.15,
                                 child: Container(
-                                  width: 20,
-                                  height: 20,
+                                  width: 25, // Larger decorative element
+                                  height: 25,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: const Color(0xFF4B9FE1).withOpacity(0.2),
@@ -147,11 +175,11 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ),
                               Positioned(
-                                bottom: 20,
+                                bottom: screenSize.height * 0.05,
                                 left: screenSize.width * 0.1,
                                 child: Container(
-                                  width: 15,
-                                  height: 15,
+                                  width: 20, // Larger decorative element
+                                  height: 20,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: const Color(0xFF20E4B5).withOpacity(0.3),
@@ -159,10 +187,24 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ),
 
-                              // Main image with frosted glass effect frame
+                              // Additional decorative element
+                              Positioned(
+                                top: screenSize.height * 0.12,
+                                left: screenSize.width * 0.15,
+                                child: Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFF1EBBD7).withOpacity(0.2),
+                                  ),
+                                ),
+                              ),
+
+                              // Main image with frosted glass effect frame - ENLARGED
                               Container(
-                                width: screenSize.width * 0.8,
-                                height: screenSize.width * 0.8,
+                                width: screenSize.width * 0.9, // Increased from 0.8
+                                height: screenSize.width * 0.9, // Increased from 0.8
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(40),
                                   boxShadow: [
@@ -208,13 +250,16 @@ class WelcomePage extends StatelessWidget {
                                         ),
                                       ),
 
-                                      // The image
+                                      // The image - ENLARGED
                                       Center(
-                                        child: Image.asset(
-                                          'assets/images/2.png', // Your main PNG image
-                                          width: screenSize.width * 0.7,
-                                          height: screenSize.width * 0.7,
-                                          fit: BoxFit.contain,
+                                        child: Container(
+                                          width: screenSize.width * 0.85, // Increased from 0.7
+                                          height: screenSize.width * 0.85, // Increased from 0.7
+                                          padding: const EdgeInsets.all(10),
+                                          child: Image.asset(
+                                            'assets/images/2.png',
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
                                       ),
                                     ],
