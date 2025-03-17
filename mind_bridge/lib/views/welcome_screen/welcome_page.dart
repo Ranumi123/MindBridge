@@ -19,7 +19,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 15), // Slightly faster rotation
     )..repeat();
   }
 
@@ -200,33 +200,23 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Interactive animation glow
-                              TweenAnimationBuilder<double>(
-                                tween: Tween<double>(begin: 0.9, end: 1.1),
-                                duration: const Duration(milliseconds: 3000),
-                                curve: Curves.easeInOut,
-                                builder: (context, value, child) {
-                                  return Transform.scale(
-                                    scale: value,
-                                    child: Opacity(
-                                      opacity: 0.15,
-                                      child: Container(
-                                        width: screenSize.width * 1.0,
-                                        height: screenSize.width * 1.0,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          gradient: RadialGradient(
-                                            colors: [
-                                              const Color(0xFF4B9FE1).withOpacity(0.6),
-                                              const Color(0xFF20E4B5).withOpacity(0.0),
-                                            ],
-                                            stops: const [0.1, 1.0],
-                                          ),
-                                        ),
-                                      ),
+                              // Simple subtle glow without animation
+                              Opacity(
+                                opacity: 0.2,
+                                child: Container(
+                                  width: screenSize.width * 0.95,
+                                  height: screenSize.width * 0.95,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF4B9FE1).withOpacity(0.5),
+                                        const Color(0xFF20E4B5).withOpacity(0.0),
+                                      ],
+                                      stops: const [0.1, 1.0],
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
 
                               // Main image with interactive glass morphism effect
@@ -254,86 +244,42 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                                     height: screenSize.width * 0.9,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(40),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.06),
-                                          blurRadius: 25,
-                                          spreadRadius: 2,
-                                          offset: const Offset(0, 10),
-                                        ),
-                                      ],
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(40),
                                       child: Stack(
                                         children: [
-                                          // Background blur
+                                          // Background blur with increased transparency
                                           BackdropFilter(
                                             filter: ui.ImageFilter.blur(
-                                              sigmaX: 10,
-                                              sigmaY: 10,
+                                              sigmaX: 5,
+                                              sigmaY: 5,
                                             ),
                                             child: Container(
-                                              color: Colors.white.withOpacity(0.08),
+                                              color: Colors.white.withOpacity(0.05),
                                             ),
                                           ),
 
-                                          // Interactive gradient overlay
+                                          // Interactive gradient overlay with more subtle styling
                                           Container(
                                             decoration: BoxDecoration(
                                               gradient: LinearGradient(
                                                 begin: Alignment.topLeft,
                                                 end: Alignment.bottomRight,
                                                 colors: [
-                                                  Colors.white.withOpacity(0.4),
-                                                  Colors.white.withOpacity(0.08),
+                                                  Colors.white.withOpacity(0.25),
+                                                  Colors.white.withOpacity(0.05),
                                                 ],
                                               ),
                                               borderRadius: BorderRadius.circular(40),
                                               border: Border.all(
-                                                color: Colors.white.withOpacity(0.25),
-                                                width: 1.5,
+                                                color: Colors.white.withOpacity(0.2),
+                                                width: 1,
                                               ),
                                             ),
                                           ),
 
-                                          // Decorative curved lines - now with animation
-                                          ...List.generate(4, (index) {
-                                            final isTopPosition = index < 2;
-                                            final isLeftPosition = index % 2 == 0;
-
-                                            return Positioned(
-                                              top: isTopPosition ? 30 + (index * 10) : null,
-                                              bottom: !isTopPosition ? 40 + ((index - 2) * 10) : null,
-                                              left: isLeftPosition ? 20 : null,
-                                              right: !isLeftPosition ? 20 : null,
-                                              child: TweenAnimationBuilder<double>(
-                                                tween: Tween<double>(begin: 0, end: 1),
-                                                duration: Duration(milliseconds: 2000 + (index * 200)),
-                                                builder: (context, value, child) {
-                                                  return Opacity(
-                                                    opacity: value * 0.2,
-                                                    child: Transform.translate(
-                                                      offset: Offset(
-                                                        isLeftPosition ? 10 * (1 - value) : -10 * (1 - value),
-                                                        0,
-                                                      ),
-                                                      child: CustomPaint(
-                                                        size: Size(screenSize.width * 0.6, 40),
-                                                        painter: CurvedLinePainter(
-                                                          color: index % 2 == 0
-                                                              ? const Color(0xFF4B9FE1).withOpacity(0.18)
-                                                              : const Color(0xFF20E4B5).withOpacity(0.18),
-                                                          strokeWidth: 3.5,
-                                                          isLeftToRight: index % 2 == 0,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          }),
+                                          // Removed all decorative curved lines
 
                                           // The image
                                           Center(
@@ -354,44 +300,56 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                                 ),
                               ),
 
-                              // Animated floating dots
-                              for (int i = 0; i < 5; i++)
-                                Positioned(
-                                  top: screenSize.height * (0.1 + (i * 0.05)),
-                                  right: screenSize.width * (0.25 - (i * 0.03)),
-                                  child: TweenAnimationBuilder<double>(
-                                    tween: Tween<double>(begin: 0, end: 1),
-                                    duration: Duration(milliseconds: 2500 + (i * 500)),
-                                    builder: (context, value, child) {
-                                      return Transform.translate(
-                                        offset: Offset(0, 10 * math.sin(value * 2 * math.pi + (i * 0.5))),
+                              // Clean rotating dots around the picture
+                              AnimatedBuilder(
+                                animation: _animationController,
+                                builder: (context, child) {
+                                  return Stack(
+                                    children: List.generate(12, (index) {
+                                      // Calculating the position on a circle
+                                      final angle = 2 * math.pi * index / 12 + (_animationController.value * 2 * math.pi);
+                                      final radius = screenSize.width * 0.45; // Size of the circle
+                                      final centerX = screenSize.width * 0.45;
+                                      final centerY = screenSize.width * 0.45;
+
+                                      // Calculate position
+                                      final x = centerX + radius * math.cos(angle);
+                                      final y = centerY + radius * math.sin(angle);
+
+                                      // Dot size varies slightly around the circle
+                                      final dotSize = 10.0 + (index % 3) * 2.0;
+
+                                      return Positioned(
+                                        left: x - dotSize / 2,
+                                        top: y - dotSize / 2,
                                         child: Container(
-                                          width: 10 - (i % 3),
-                                          height: 10 - (i % 3),
+                                          width: dotSize,
+                                          height: dotSize,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Color.lerp(
                                               const Color(0xFF4B9FE1),
                                               const Color(0xFF20E4B5),
-                                              i / 5,
-                                            )!.withOpacity(0.65),
+                                              index / 12,
+                                            )!.withOpacity(0.9),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Color.lerp(
                                                   const Color(0xFF4B9FE1),
                                                   const Color(0xFF20E4B5),
-                                                  i / 5,
-                                                )!.withOpacity(0.4),
-                                                blurRadius: 12,
+                                                  index / 12,
+                                                )!.withOpacity(0.7),
+                                                blurRadius: 15,
                                                 spreadRadius: 2,
                                               ),
                                             ],
                                           ),
                                         ),
                                       );
-                                    },
-                                  ),
-                                ),
+                                    }),
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         ),
