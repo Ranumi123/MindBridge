@@ -1,22 +1,7 @@
 import 'package:flutter/material.dart';
+import 'group_selection_screen.dart'; // Import to use ChatGroup and ChatRepository
 
-// Define models inline to avoid import errors
-class ChatGroup {
-  final String id;
-  final String name;
-  final String members;
-  final String description;
-  final List<String> membersList;
-
-  ChatGroup({
-    required this.id, 
-    required this.name, 
-    required this.members,
-    this.description = '',
-    this.membersList = const [],
-  });
-}
-
+// Define MessageModel class directly in this file
 class MessageModel {
   final String id;
   final String message;
@@ -32,13 +17,35 @@ class MessageModel {
     this.isMe = false,
   });
 
+  factory MessageModel.fromJson(Map<String, dynamic> json) {
+    return MessageModel(
+      id: json['id'],
+      message: json['message'],
+      sender: json['sender'],
+      timestamp: json['timestamp'] is String 
+          ? DateTime.parse(json['timestamp']) 
+          : json['timestamp'],
+      isMe: json['isMe'] ?? json['sender'] == 'You',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'message': message,
+      'sender': sender,
+      'timestamp': timestamp.toIso8601String(),
+      'isMe': isMe,
+    };
+  }
+
   // Format the timestamp for display
   String get formattedTime {
     return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 }
 
-// Chat bubble widget directly defined in this file
+// Define ChatBubble widget directly in this file
 class ChatBubble extends StatelessWidget {
   final MessageModel message;
 
@@ -130,44 +137,6 @@ class ChatBubble extends StatelessWidget {
   }
 }
 
-// Simple repository implementation
-class ChatRepository {
-  // Mock messages
-  static final Map<String, List<MessageModel>> _mockMessages = {};
-
-  Future<List<MessageModel>> getMessages(String groupId) async {
-    // Return mock data 
-    if (!_mockMessages.containsKey(groupId)) {
-      _mockMessages[groupId] = [
-        MessageModel(
-          id: '1',
-          message: 'Welcome to the group!',
-          sender: 'Admin',
-          timestamp: DateTime.now().subtract(const Duration(days: 1)),
-        ),
-      ];
-    }
-    return _mockMessages[groupId]!;
-  }
-
-  Future<void> sendMessage(String groupId, String message) async {
-    // Store message locally
-    if (!_mockMessages.containsKey(groupId)) {
-      _mockMessages[groupId] = [];
-    }
-    
-    _mockMessages[groupId]!.add(
-      MessageModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        message: message,
-        sender: 'You',
-        timestamp: DateTime.now(),
-        isMe: true,
-      ),
-    );
-  }
-}
-
 class GroupChatScreen extends StatefulWidget {
   final ChatGroup group;
 
@@ -179,7 +148,7 @@ class GroupChatScreen extends StatefulWidget {
 
 class _GroupChatScreenState extends State<GroupChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final ChatRepository _chatRepository = ChatRepository();
+  late final ChatRepository _chatRepository = ChatRepository();
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   
@@ -203,10 +172,19 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   Future<void> _loadMessages() async {
     try {
-      final messages = await _chatRepository.getMessages(widget.group.id);
+      final messagesData = await _chatRepository.getMessages(widget.group.id);
+      final List<MessageModel> parsedMessages = [];
+      
+      // Convert the dynamic messages to MessageModel objects
+      for (var msg in messagesData) {
+        if (msg is Map<String, dynamic>) {
+          parsedMessages.add(MessageModel.fromJson(msg));
+        }
+      }
+      
       if (mounted) {
         setState(() {
-          _messages = messages;
+          _messages = parsedMessages;
           _isLoading = false;
         });
         // Scroll to bottom after messages load
@@ -228,7 +206,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     if (_scrollController.hasClients && _messages.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
         _scrollController.animateTo(
-          0,
+          _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -290,7 +268,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               radius: 20,
               backgroundColor: Colors.teal.shade200,
               child: Text(
-                widget.group.name.substring(0, 1),
+                widget.group.name.isNotEmpty ? widget.group.name[0] : '?',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -365,12 +343,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       : ListView.builder(
                           controller: _scrollController,
                           padding: const EdgeInsets.all(10.0),
-                          reverse: true, // Show newest messages at the bottom
                           itemCount: _messages.length,
                           itemBuilder: (context, index) {
-                            // Reverse the index to show newest at bottom
-                            final reverseIndex = _messages.length - 1 - index;
-                            return ChatBubble(message: _messages[reverseIndex]);
+                            return ChatBubble(message: _messages[index]);
                           },
                         ),
             ),

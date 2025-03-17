@@ -1,43 +1,6 @@
 import 'package:flutter/material.dart';
-
-// Define ChatGroup class inline to avoid import errors
-class ChatGroup {
-  final String id;
-  final String name;
-  final String members;
-  final String description;
-  final List<String> membersList;
-
-  ChatGroup({
-    required this.id, 
-    required this.name, 
-    required this.members,
-    this.description = '',
-    this.membersList = const [],
-  });
-}
-
-// Simple version of GroupChatScreen to reference in navigation
-class GroupChatScreen extends StatefulWidget {
-  final ChatGroup group;
-
-  const GroupChatScreen({super.key, required this.group});
-
-  @override
-  State createState() => _GroupChatScreenState();
-}
-
-class _GroupChatScreenState extends State<GroupChatScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.group.name)),
-      body: Center(
-        child: Text('Welcome to ${widget.group.name} chat!'),
-      ),
-    );
-  }
-}
+import 'group_chat_screen.dart';
+import 'group_selection_screen.dart';  // Import this to use the ChatGroup class
 
 class GroupDetailsScreen extends StatelessWidget {
   final ChatGroup group;
@@ -102,11 +65,19 @@ class GroupDetailsScreen extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Group Description
-            Text(
-              group.description,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black54,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Text(
+                group.description,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black87,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -174,10 +145,13 @@ class GroupDetailsScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  textStyle: const TextStyle(fontSize: 18),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   backgroundColor: Colors.teal,
                   foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: const Text('Enter Chat'),
               ),

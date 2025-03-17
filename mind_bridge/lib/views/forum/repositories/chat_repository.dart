@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// Everything is self-contained in this single file to avoid import issues
-
-// ChatGroup model
+// Define ChatGroup class directly in this file
 class ChatGroup {
   final String id;
   final String name;
@@ -45,7 +43,7 @@ class ChatGroup {
   }
 }
 
-// MessageModel model
+// Define MessageModel class directly in this file
 class MessageModel {
   final String id;
   final String message;
@@ -66,8 +64,10 @@ class MessageModel {
       id: json['id'],
       message: json['message'],
       sender: json['sender'],
-      timestamp: DateTime.parse(json['timestamp']),
-      isMe: json['sender'] == 'You', // Assuming 'You' is the current user
+      timestamp: json['timestamp'] is String 
+          ? DateTime.parse(json['timestamp']) 
+          : json['timestamp'],
+      isMe: json['isMe'] ?? json['sender'] == 'You',
     );
   }
 
@@ -87,7 +87,7 @@ class MessageModel {
   }
 }
 
-// ApiClient class
+// Define ApiClient class directly in this file
 class ApiClient {
   static const String baseUrl = 'http://localhost:3000';
   
@@ -97,31 +97,31 @@ class ApiClient {
       id: '1',
       name: 'Tech Talk',
       members: '0/10',
-      description: 'Discuss the latest tech trends!',
+      description: 'Discuss the latest tech trends and innovations. Share news about gadgets, software, and tech events!',
     ),
     ChatGroup(
       id: '2',
       name: 'Fitness Club',
       members: '0/10',
-      description: 'Stay fit and healthy with others!',
+      description: 'Stay fit and healthy with others! Share workout routines, nutrition tips, and fitness motivation.',
     ),
     ChatGroup(
       id: '3',
       name: 'Book Lovers',
       members: '0/10',
-      description: 'Share and discuss your favorite books!',
+      description: 'Share and discuss your favorite books! From classics to contemporary, fiction to non-fiction.',
     ),
     ChatGroup(
       id: '4',
       name: 'Gaming Zone',
       members: '0/10',
-      description: 'Talk about games and play together!',
+      description: 'Talk about games and play together! PC, console, or mobile - all gamers welcome here.',
     ),
     ChatGroup(
       id: '5',
       name: 'Music Vibes',
       members: '0/10',
-      description: 'Share your favorite music and artists!',
+      description: 'Share your favorite music and artists! Discover new songs, discuss concerts, and connect through music.',
     ),
   ];
 
@@ -138,6 +138,7 @@ class ApiClient {
         'name': group.name,
         'members': group.members,
         'description': group.description,
+        'membersList': group.membersList,
       }).toList();
     }
   }
@@ -163,6 +164,7 @@ class ApiClient {
         'message': message.message,
         'sender': message.sender,
         'timestamp': message.timestamp.toIso8601String(),
+        'isMe': message.isMe,
       }).toList();
     }
   }
@@ -186,6 +188,7 @@ class ApiClient {
           message: message,
           sender: 'You',
           timestamp: DateTime.now(),
+          isMe: true,
         ),
       );
     }
@@ -213,6 +216,7 @@ class ApiClient {
             name: _mockGroups[groupIndex].name,
             members: '${currentMembers + 1}/$maxMembers',
             description: _mockGroups[groupIndex].description,
+            membersList: [..._mockGroups[groupIndex].membersList, username],
           );
           return true;
         }
@@ -222,7 +226,7 @@ class ApiClient {
   }
 }
 
-// ChatRepository class
+// The ChatRepository class
 class ChatRepository {
   final ApiClient apiClient = ApiClient();
 
