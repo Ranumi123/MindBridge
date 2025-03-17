@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import '../login_page/login_page.dart';
 import '../signup_page/signup_page.dart';
-import 'dart:math' as math;
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -11,24 +10,7 @@ class WelcomePage extends StatefulWidget {
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 15), // Slightly faster rotation
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
+class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -116,7 +98,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                       ],
                     ),
 
-                    // Center section with image and rotating dots
+                    // Center section with image
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -220,61 +202,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                                   ),
                                 ),
 
-                                // Clean rotating dots around the picture - PROPERLY CENTERED
-                                AnimatedBuilder(
-                                  animation: _animationController,
-                                  builder: (context, child) {
-                                    return Stack(
-                                      children: List.generate(12, (index) {
-                                        // Calculating the position on a circle
-                                        final angle = 2 * math.pi * index / 12 + (_animationController.value * 2 * math.pi);
-
-                                        // Using exact center coordinates for perfect centering
-                                        // The container is 90% of screen width, and centered within the available space
-                                        final radius = screenSize.width * 0.41; // Radius for dots
-
-                                        // Center coordinates - exact center of the container
-                                        final centerX = screenSize.width * 0.45; // Half of the container width (90% / 2 = 45%)
-                                        final centerY = screenSize.width * 0.45; // Same for height since it's square
-
-                                        // Calculate position using the center coordinates
-                                        final x = centerX + radius * math.cos(angle);
-                                        final y = centerY + radius * math.sin(angle);
-
-                                        // Dot size varies slightly around the circle for visual interest
-                                        final dotSize = 8.0 + (index % 3) * 1.5;
-
-                                        return Positioned(
-                                          left: x - dotSize / 2, // Center the dot on its position
-                                          top: y - dotSize / 2,  // Center the dot on its position
-                                          child: Container(
-                                            width: dotSize,
-                                            height: dotSize,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color.lerp(
-                                                const Color(0xFF4B9FE1),
-                                                const Color(0xFF20E4B5),
-                                                index / 12,
-                                              )!.withOpacity(0.9),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Color.lerp(
-                                                    const Color(0xFF4B9FE1),
-                                                    const Color(0xFF20E4B5),
-                                                    index / 12,
-                                                  )!.withOpacity(0.7),
-                                                  blurRadius: 15,
-                                                  spreadRadius: 2,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    );
-                                  },
-                                ),
+                                // Dots have been removed from here
                               ],
                             ),
                           ),
