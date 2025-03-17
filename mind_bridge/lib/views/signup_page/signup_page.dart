@@ -239,29 +239,9 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                       ),
                     ),
 
-                    SizedBox(height: 12),
+                    SizedBox(height: 30),
 
-                    // Logo with animation
-                    AnimatedBuilder(
-                      animation: _animationController,
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: _fadeAnimation.value,
-                          child: child,
-                        );
-                      },
-                      child: Container(
-                        height: 80,
-                        child: Image.asset(
-                          'assets/images/1.png', // App logo
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 24),
-
-                    // Form fields with animation
+                    // Form fields with animation (logo removed)
                     AnimatedBuilder(
                       animation: _animationController,
                       builder: (context, child) {
@@ -445,7 +425,7 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                       ),
                     ),
 
-                    SizedBox(height: 24),
+                    SizedBox(height: 28),
 
                     // Continue button with animation
                     AnimatedBuilder(
