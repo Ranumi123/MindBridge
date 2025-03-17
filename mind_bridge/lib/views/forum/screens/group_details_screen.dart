@@ -7,6 +7,34 @@ class GroupDetailsScreen extends StatelessWidget {
 
   const GroupDetailsScreen({super.key, required this.group});
 
+  // Add method to leave the group
+  void _leaveGroup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Group'),
+        content: Text('Are you sure you want to leave "${group.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Go back to group selection
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('You left "${group.name}"')),
+              );
+            },
+            child: const Text('LEAVE'),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Parse members string to get current and max members
@@ -31,6 +59,28 @@ class GroupDetailsScreen extends StatelessWidget {
         title: Text(group.name),
         centerTitle: true,
         backgroundColor: Colors.teal,
+        actions: [
+          // Add option to leave group
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'leave') {
+                _leaveGroup(context);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'leave',
+                child: Row(
+                  children: [
+                    Icon(Icons.exit_to_app, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Leave group', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -132,29 +182,55 @@ class GroupDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            // Enter Chat Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GroupChatScreen(group: group),
+            // Button container for multiple buttons
+            Row(
+              children: [
+                // Enter Chat Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupChatScreen(group: group),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    child: const Text('Enter Chat'),
                   ),
                 ),
-                child: const Text('Enter Chat'),
-              ),
+                const SizedBox(width: 10),
+                // Leave Group Button
+                ElevatedButton(
+                  onPressed: () => _leaveGroup(context),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    backgroundColor: Colors.red.shade100,
+                    foregroundColor: Colors.red.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.exit_to_app, size: 18),
+                      SizedBox(width: 4),
+                      Text('Leave'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
