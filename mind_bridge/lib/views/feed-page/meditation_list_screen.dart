@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'meditation_detail_screen.dart';
 
-
 class MeditationListScreen extends StatefulWidget {
   const MeditationListScreen({super.key});
 
@@ -28,7 +27,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
   Future<void> fetchMeditations() async {
     try {
       final response =
-          await http.get(Uri.parse("http://localhost:5000/api/meditations"));
+      await http.get(Uri.parse("http://localhost:5000/api/meditations"));
 
       if (response.statusCode == 200) { //for successful response
         setState(() {
@@ -36,15 +35,12 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
           isLoading = false;
         });
       } else {
-        // Exception statement to say that meditations weren't loaded
         throw Exception("Failed to load meditations");
       }
     } catch (e) {
       setState(() {
         isLoading = false;
         errorMessage = "Could not load data. Check your internet connection";
-
-        
       });
     }
   }
@@ -80,7 +76,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       ),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator()) // Show loading state
+          child: CircularProgressIndicator()) // Show loading state
           : errorMessage.isNotEmpty
           ? Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
           : Column(
@@ -88,10 +84,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
           // Filter Bar
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            child: Row( //created Row child
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: ["All", "Sleep", "Meditation", "Yoga"].map((filter) {
-                // to create a choice chip for each filter
                 return ChoiceChip(
                   label: Text(filter, style: const TextStyle(color: Colors.white)),
                   selected: selectedFilter == filter,
@@ -130,7 +125,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3), //withOpacity was deprecated hence withValues were used
+                            color: Colors.black.withValues(alpha: 0.3), // Corrected syntax
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -160,34 +155,36 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
                             // Play Button Overlay
                             Positioned(
                               child: GestureDetector(
-                                onTap: () => _launchYouTube(meditation["url"]!), // when tapped, launch YouTube
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.black54,
-                                    shape: BoxShape.circle,
-
-                                  ),
-                                  title: Text(
-                                    meditation["title"]!,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    "${meditation["duration"]} • ${meditation["author"]}",
-                                    style: TextStyle(color: Colors.grey[600]),
-                                  ),
+                                onTap: () => _launchYouTube(meditation["url"]!),
+                                child: const Icon(
+                                  Icons.play_circle_fill,
+                                  size: 40,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                          );
-                        },
+                          ],
+                        ),
+                        title: Text(
+                          meditation["title"]!,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "${meditation["duration"]} • ${meditation["author"]}",
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
                       ),
                     ),
-                  ],
-                ),
-      backgroundColor: Colors.white,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
