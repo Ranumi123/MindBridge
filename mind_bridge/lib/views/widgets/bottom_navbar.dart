@@ -14,28 +14,34 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
-        image: const DecorationImage(
-          image: AssetImage(
-              'assets/images/nav_background.png'), // Background image
-          fit: BoxFit.cover,
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF4B9FE1), // Blue primary color
+            Color(0xFF1EBBD7), // Teal accent color
+            Color(0xFF20E4B5), // Tertiary color
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
         ),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 10,
             spreadRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem('assets/icons/home.svg', 'Home', 0),
           _buildNavItem('assets/icons/feed.svg', 'Feed', 1),
-          _buildNavItem('assets/icons/therapist.svg', 'Therapist', 2),
-          _buildNavItem('assets/icons/profile.svg', 'Profile', 3),
+          _buildNavItem('assets/icons/profile.svg', 'Profile', 2),
         ],
       ),
     );
@@ -51,18 +57,20 @@ class BottomNavBar extends StatelessWidget {
         children: [
           SvgPicture.asset(
             iconPath,
-            width: 30,
-            height: 30,
+            width: 26,
+            height: 26,
             colorFilter: ColorFilter.mode(
-              isSelected ? Colors.blue : Colors.grey,
+              isSelected ? Colors.white : Colors.white.withOpacity(0.7),
               BlendMode.srcIn,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.blue : Colors.grey,
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 12,
             ),
           ),
         ],
