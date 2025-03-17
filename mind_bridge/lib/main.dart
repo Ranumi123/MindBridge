@@ -3,10 +3,73 @@ import 'views/home/home_page.dart';
 import 'views/chatbot/chatbot_page.dart';
 import 'views/forum/screens/group_selection_screen.dart';
 import 'views/forum/screens/chat_list_screen.dart';
-import 'views/forum/screens/group_chat_screen.dart';
-import 'views/forum/screens/group_details_screen.dart';
-// Remove the problematic import and use the ChatGroup class from group_selection_screen.dart
+// We'll handle these screens differently
+// import 'views/forum/screens/group_chat_screen.dart';
+// import 'views/forum/screens/group_details_screen.dart';
 import 'views/mood_tracker/moodtracker_page.dart';
+import 'views/welcome_screen/welcome_page.dart'; // Import the welcome page
+import 'views/login_page/login_page.dart'; // Import the login page
+import 'views/signup_page/signup_page.dart'; // Import the signup page
+import 'views/privacy_settings_page/privacy_setting_page.dart'; // Import privacy settings page
+
+
+// Define ChatGroup class directly in main.dart to avoid import issues
+class ChatGroup {
+  final String id;
+  final String name;
+  final String members;
+  final String description;
+  final List<String> membersList;
+
+  ChatGroup({
+    required this.id,
+    required this.name,
+    required this.members,
+    this.description = '',
+    this.membersList = const [],
+  });
+}
+
+// Simple placeholder screen for when we need to redirect to chat
+class SimpleChatScreen extends StatelessWidget {
+  final Map<String, dynamic> groupData;
+
+  const SimpleChatScreen({Key? key, required this.groupData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(groupData['name'] ?? 'Chat'),
+        backgroundColor: const Color.fromARGB(255, 63, 218, 203),
+      ),
+      body: Center(
+        child: Text('Chat screen for ${groupData['name']}'),
+      ),
+    );
+  }
+}
+
+// Simple placeholder for group details
+class SimpleGroupDetailsScreen extends StatelessWidget {
+  final Map<String, dynamic> groupData;
+
+  const SimpleGroupDetailsScreen({Key? key, required this.groupData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(groupData['name'] ?? 'Group Details'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Text('Group details for ${groupData['name']}'),
+      ),
+    );
+  }
+}
+
 
 void main() {
   runApp(const MyApp());
@@ -47,9 +110,17 @@ class MyApp extends StatelessWidget {
           secondary: Colors.tealAccent,
         ),
       ),
-      initialRoute: '/',
+      // Start with the welcome page as the initial route
+      initialRoute: '/welcome',
       routes: {
-        '/': (context) => HomePage(),
+        // Authentication routes
+        '/welcome': (context) => WelcomePage(),
+        '/login': (context) => LoginPage(),
+        '/signup': (context) => SignupPage(),
+        '/privacy_settings': (context) => PrivacySettingsPage(),
+
+        // Main app routes
+        '/home': (context) => HomePage(),
         '/chatbot': (context) => ChatbotPage(),
         '/moodtracker': (context) => MoodTrackerPage(),
         '/chatforum': (context) => const GroupSelectionScreen(),
@@ -58,18 +129,15 @@ class MyApp extends StatelessWidget {
       // Use onGenerateRoute for dynamic routes that need parameters
       onGenerateRoute: (settings) {
         if (settings.name == '/chatdetail') {
+          // Check if we have the right parameter type
           final args = settings.arguments;
-          
-          // Explicitly import the ChatGroup class from the file where we've defined it
-          // Since we've defined it in group_selection_screen.dart
-          
-          // Handle different types of arguments
+
+          // If it's a map (most likely case from older parts of the app)
           if (args is Map<String, dynamic>) {
             try {
-              // Use the ChatGroup constructor from group_selection_screen.dart
-              final group = _createChatGroupFromMap(args);
+              // Use the simple chat screen with map data
               return MaterialPageRoute(
-                builder: (context) => GroupChatScreen(group: group),
+                builder: (context) => SimpleChatScreen(groupData: args),
               );
             } catch (e) {
               // If conversion fails, show error
@@ -81,7 +149,7 @@ class MyApp extends StatelessWidget {
               );
             }
           }
-          
+
           // For any other type, go to a default screen
           return MaterialPageRoute(
             builder: (context) => Scaffold(
@@ -91,15 +159,13 @@ class MyApp extends StatelessWidget {
           );
         } else if (settings.name == '/groupdetails') {
           final args = settings.arguments;
-          
-          // Handle different types of arguments
+
+          // If it's a map (most likely case)
           if (args is Map<String, dynamic>) {
             try {
-              // Use the ChatGroup constructor from group_selection_screen.dart
-              final group = _createChatGroupFromMap(args);
-              
+              // Use the simple details screen with map data
               return MaterialPageRoute(
-                builder: (context) => GroupDetailsScreen(group: group),
+                builder: (context) => SimpleGroupDetailsScreen(groupData: args),
               );
             } catch (e) {
               // If conversion fails, show error
@@ -111,7 +177,7 @@ class MyApp extends StatelessWidget {
               );
             }
           }
-          
+
           // For any other type, go to a default screen
           return MaterialPageRoute(
             builder: (context) => Scaffold(
@@ -120,26 +186,10 @@ class MyApp extends StatelessWidget {
             ),
           );
         }
-        
+
         // If unknown route, go to home
         return MaterialPageRoute(builder: (context) => HomePage());
       },
-    );
-  }
-  
-  // Helper method to create a ChatGroup from a Map
-  // This will use the ChatGroup class from group_selection_screen.dart
-  dynamic _createChatGroupFromMap(Map<String, dynamic> args) {
-    // This function creates a ChatGroup using the constructor syntax
-    // It will be automatically resolved to the ChatGroup class in group_selection_screen.dart
-    return ChatGroup(
-      id: args['id'] ?? '1',
-      name: args['name'] ?? 'Group Chat',
-      members: args['members'] ?? '1/10',
-      description: args['description'] ?? 'No description available',
-      membersList: args['membersList'] != null 
-          ? List<String>.from(args['membersList']) 
-          : ['You'],
     );
   }
 }
