@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
+import '../feed-page/meditation_list_screen.dart'; // Add this import
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +19,11 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (index == 1) {
-      Navigator.pushNamed(context, '/chatforum');
+      // Changed to navigate to MeditationListScreen instead of chat forum
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MeditationListScreen()),
+      );
     } else if (index == 2) {
       Navigator.pushNamed(context, '/moodtracker');
     }
