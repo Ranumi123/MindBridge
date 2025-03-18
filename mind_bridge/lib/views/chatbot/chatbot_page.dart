@@ -18,7 +18,7 @@ class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin
   final List<Message> _messages = [];
   bool _isLoading = false;
   bool _isBackendAvailable = true; // Set to true to connect to the backend
-  String _backendUrl = 'http://192.168.1.3:5001/chat'; // Update with your backend URL
+  String _backendUrl = 'http://172.20.10.2:5001/chat'; // Update with your backend URL
 
   // Animation controllers
   late AnimationController _sendButtonController;
