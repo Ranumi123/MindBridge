@@ -10,6 +10,7 @@ class WelcomePage extends StatefulWidget {
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
+<<<<<<< Updated upstream
 class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
@@ -298,9 +299,342 @@ class _WelcomePageState extends State<WelcomePage> {
                                 ],
                               ),
                             ),
+=======
+class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+
+    // Create a scale animation that goes from 0.95 to 1.05 and back
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 0.95, end: 1.05)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 1.05, end: 0.95)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 50,
+      ),
+    ]).animate(_animationController);
+
+    // Start the animation and make it repeat
+    _animationController.repeat();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+
+              // Logo in circle with shadow
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    'mind\nbridge',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: const Color(0xFF1EBBD7),
+                      fontWeight: FontWeight.w500,
+                      height: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // Main title
+              Text(
+                'mind bridge',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF1EBBD7),
+                  letterSpacing: -0.5,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Tagline
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  'Your Mental Health Companion',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF4A6572),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 50),
+
+              // Main image container with animation
+              Expanded(
+                child: Center(
+                  child: AnimatedBuilder(
+                    animation: _scaleAnimation,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _scaleAnimation.value,
+                        child: Container(
+                          width: size.width * 0.7,
+                          height: size.width * 0.7,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              // The image from assets
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: Image.asset(
+                                  'assets/images/2.png',
+                                  width: size.width * 0.7,
+                                  height: size.width * 0.7,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+
+                              // Curved light blue line top
+                              Positioned(
+                                top: size.width * 0.13,
+                                left: 0,
+                                right: 0,
+                                child: CustomPaint(
+                                  size: Size(size.width * 0.7, 2),
+                                  painter: CurvedLinePainter(
+                                    color: const Color(0xFFE0F7FA),
+                                    thickness: 2,
+                                  ),
+                                ),
+                              ),
+
+                              // Curved light blue line bottom
+                              Positioned(
+                                bottom: size.width * 0.13,
+                                left: 0,
+                                right: 0,
+                                child: CustomPaint(
+                                  size: Size(size.width * 0.7, 2),
+                                  painter: CurvedLinePainter(
+                                    color: const Color(0xFFE0F7FA),
+                                    thickness: 2,
+                                  ),
+                                ),
+                              ),
+
+                              // Small teal dot (top right)
+                              Positioned(
+                                top: size.width * 0.13,
+                                right: size.width * 0.15,
+                                child: Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFF1EBBD7),
+                                  ),
+                                ),
+                              ),
+
+                              // Small green dot (bottom left)
+                              Positioned(
+                                bottom: size.width * 0.13,
+                                left: size.width * 0.25,
+                                child: Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFF20E4B5),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // Get Started Button
+              Container(
+                width: double.infinity,
+                height: 56,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFF4B9FE1), // Blue
+                      Color(0xFF20E4B5), // Mint green
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1EBBD7).withOpacity(0.3),
+                      blurRadius: 15,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) => SignupPage(),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Get Started',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.arrow_forward_rounded,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Sign In link
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already have an account? ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF4A6572),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
+                            transitionDuration: const Duration(milliseconds: 300),
+>>>>>>> Stashed changes
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1EBBD7),
+                        ),
+                      ),
+<<<<<<< Updated upstream
 
                       const SizedBox(height: 16), // Mobile-optimized spacing
 
@@ -360,9 +694,90 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ],
             ),
+=======
+                    ),
+                  ],
+                ),
+              ),
+            ],
+>>>>>>> Stashed changes
           ),
         ),
       ),
     );
   }
+<<<<<<< Updated upstream
+=======
+}
+
+// Custom painter for the curved lines
+class CurvedLinePainter extends CustomPainter {
+  final Color color;
+  final double thickness;
+
+  CurvedLinePainter({required this.color, required this.thickness});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = thickness
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+    path.moveTo(0, size.height / 2);
+    path.quadraticBezierTo(
+        size.width / 2,
+        size.height / 2 - 20,
+        size.width,
+        size.height / 2
+    );
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+// Custom heart painter
+class HeartPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = const Color(0xFF20E4B5)
+      ..style = PaintingStyle.fill;
+
+    // Create heart path
+    Path path = Path();
+    double width = size.width;
+    double height = size.height;
+
+    path.moveTo(0.5 * width, height * 0.35);
+    path.cubicTo(
+        0.2 * width, height * 0.1,
+        -0.25 * width, height * 0.6,
+        0.5 * width, height
+    );
+    path.cubicTo(
+        1.25 * width, height * 0.6,
+        0.8 * width, height * 0.1,
+        0.5 * width, height * 0.35
+    );
+
+    canvas.drawPath(path, paint);
+
+    // Add shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.2)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+
+    Path shadowPath = Path();
+    shadowPath.addPath(path, const Offset(2, 8));
+    canvas.drawPath(shadowPath, shadowPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+>>>>>>> Stashed changes
 }
