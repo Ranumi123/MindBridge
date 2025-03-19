@@ -1,3 +1,4 @@
+// Updated server.js with MongoDB integration
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -7,6 +8,9 @@ const tf = require('@tensorflow/tfjs');
 const toxicity = require('@tensorflow-models/toxicity');
 const fs = require('fs').promises;
 const path = require('path');
+
+// Import MongoDB connection
+const { connectToMongoDB, getDB } = require('./db');
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
@@ -179,22 +183,72 @@ function getSuicidalResponse() {
     return responses[Math.floor(Math.random() * responses.length)];
 }
 
-function notifyEmergencyContacts(userId) {
-    const emergencyContacts = getEmergencyContacts(userId);
+// MongoDB-integrated functions
+async function getEmergencyContacts(userId) {
+    try {
+        const db = getDB();
+        const user = await db.collection('users').findOne({ _id: userId });
+        
+        if (user && user.emergencyContacts && user.emergencyContacts.length > 0) {
+            return user.emergencyContacts;
+        }
+        
+        // Default if no contacts found
+        return [
+            { name: "Contact 1", phone: "+1234567890" },
+            { name: "Contact 2", phone: "+0987654321" }
+        ];
+    } catch (error) {
+        console.error("Error getting emergency contacts:", error);
+        return [
+            { name: "Contact 1", phone: "+1234567890" },
+            { name: "Contact 2", phone: "+0987654321" }
+        ];
+    }
+}
+
+async function notifyEmergencyContacts(userId) {
+    const emergencyContacts = await getEmergencyContacts(userId);
+    
+    // Store crisis event in MongoDB
+    try {
+        const db = getDB();
+        
+        await db.collection('crisisEvents').insertOne({
+            userId,
+            timestamp: new Date(),
+            contactsNotified: emergencyContacts,
+            status: 'notified'
+        });
+    } catch (error) {
+        console.error("Error logging crisis event:", error);
+    }
+    
     emergencyContacts.forEach(contact => {
         sendSMS(contact.phone, `Urgent: User ${userId} may be in danger. Please check on them immediately.`);
     });
 }
 
-function getEmergencyContacts(userId) {
-    return [
-        { name: "Contact 1", phone: "+1234567890" },
-        { name: "Contact 2", phone: "+0987654321" }
-    ];
-}
-
 function sendSMS(phone, message) {
     console.log(`Sending SMS to ${phone}: ${message}`);
+    // Implement actual SMS sending here
+}
+
+// Store chat history in MongoDB
+async function storeChatMessage(userId, message, reply, status) {
+    try {
+        const db = getDB();
+        
+        await db.collection('chatHistory').insertOne({
+            userId,
+            message,
+            reply,
+            status,
+            timestamp: new Date()
+        });
+    } catch (error) {
+        console.error("Error storing chat message:", error);
+    }
 }
 
 // Routes
@@ -223,7 +277,9 @@ app.post('/chat', async (req, res) => {
 
         const commonPhrases = ['hello', 'good morning', 'how are you', 'test', 'thanks', 'bye'];
         if (commonPhrases.some(phrase => sanitizedMessage.toLowerCase().includes(phrase))) {
-            return res.json({ reply: "Thank you for reaching out! How can I assist you today?", status: "normal" });
+            const reply = "Thank you for reaching out! How can I assist you today?";
+            await storeChatMessage(userId, sanitizedMessage, reply, "normal");
+            return res.json({ reply, status: "normal" });
         }
 
         const { harmful, type, details } = await detectHarmfulText(sanitizedMessage);
@@ -233,10 +289,13 @@ app.post('/chat', async (req, res) => {
                 console.log(`Suicidal content detected: "${sanitizedMessage}"`);
                 console.log(`Matched with: ${JSON.stringify(details)}`);
                 
-                notifyEmergencyContacts(userId);
+                await notifyEmergencyContacts(userId);
+                
+                const reply = getSuicidalResponse();
+                await storeChatMessage(userId, sanitizedMessage, reply, "crisis");
                 
                 return res.status(200).json({ 
-                    reply: getSuicidalResponse(),
+                    reply,
                     status: "crisis",
                     resources: {
                         hotline: "988 or 1-800-273-8255",
@@ -245,8 +304,11 @@ app.post('/chat', async (req, res) => {
                     }
                 });
             } else {
+                const reply = "I'm not able to respond to that type of content. How can I help you with something else?";
+                await storeChatMessage(userId, sanitizedMessage, reply, "inappropriate");
+                
                 return res.status(200).json({ 
-                    reply: "I'm not able to respond to that type of content. How can I help you with something else?",
+                    reply,
                     status: "inappropriate"
                 });
             }
@@ -256,6 +318,8 @@ app.post('/chat', async (req, res) => {
         const response = await result.response;
         const text = response.candidates[0]?.content?.parts[0]?.text || "I'm sorry, I couldn't generate a response. How else can I help you?";
 
+        await storeChatMessage(userId, sanitizedMessage, text, "normal");
+        
         res.json({ reply: text, status: "normal" });
     } catch (error) {
         console.error("Error:", error);
@@ -269,9 +333,19 @@ app.use((err, req, res, next) => {
     res.status(500).json({ msg: "Something went wrong!" });
 });
 
-// Initialize the dataset when server starts
+// Initialize MongoDB and the dataset when server starts
 (async function() {
-    await loadSuicideDataset();
+    try {
+        // Connect to MongoDB first
+        await connectToMongoDB();
+        console.log("MongoDB connection established");
+        
+        // Then load the dataset
+        await loadSuicideDataset();
+    } catch (error) {
+        console.error("Initialization error:", error);
+        process.exit(1);
+    }
 })();
 
 const PORT = process.env.PORT || 5001;
