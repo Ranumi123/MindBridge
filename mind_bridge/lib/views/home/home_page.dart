@@ -249,58 +249,68 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       ),
                     ),
 
-                    // Feature Cards
+                    // Feature Cards - 2-1 layout (2 on top, 1 in middle below)
                     AnimatedBuilder(
                       animation: _animationController,
                       builder: (context, child) {
-                        return Container(
-                          width: double.infinity,
-                          child: Wrap(
-                            spacing: 16,
-                            runSpacing: 20,
-                            alignment: WrapAlignment.spaceEvenly,
-                            children: [
-                              Transform.translate(
-                                offset: Offset(0, 50 * (1 - _animationController.value)),
-                                child: Opacity(
-                                  opacity: _animationController.value,
-                                  child: _buildFeatureCard(
-                                    "AI Chatbot",
-                                    "Talk to our AI about your feelings",
-                                    "/chatbot",
-                                    Color(0xFF4B9FE1),
-                                    Icons.smart_toy_outlined,
+                        return Column(
+                          children: [
+                            // First row - 2 cards
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Transform.translate(
+                                  offset: Offset(0, 50 * (1 - _animationController.value)),
+                                  child: Opacity(
+                                    opacity: _animationController.value,
+                                    child: _buildFeatureCard(
+                                      "AI Chatbot",
+                                      "Talk to our AI about your feelings",
+                                      "/chatbot",
+                                      Color(0xFF4B9FE1),
+                                      Icons.smart_toy_outlined,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Transform.translate(
-                                offset: Offset(0, 50 * (1 - _animationController.value)),
-                                child: Opacity(
-                                  opacity: _animationController.value * 0.85,
-                                  child: _buildFeatureCard(
-                                    "Community",
-                                    "Connect with others on similar journeys",
-                                    "/chatforum",
-                                    Color(0xFF1EBBD7),
-                                    Icons.forum_outlined,
+                                SizedBox(width: 20),
+                                Transform.translate(
+                                  offset: Offset(0, 50 * (1 - _animationController.value)),
+                                  child: Opacity(
+                                    opacity: _animationController.value * 0.85,
+                                    child: _buildFeatureCard(
+                                      "Community",
+                                      "Connect with others on similar journeys",
+                                      "/chatforum",
+                                      Color(0xFF1EBBD7),
+                                      Icons.forum_outlined,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Transform.translate(
-                                offset: Offset(0, 50 * (1 - _animationController.value)),
-                                child: Opacity(
-                                  opacity: _animationController.value * 0.7,
-                                  child: _buildFeatureCard(
-                                    "Mood Tracker",
-                                    "Track and analyze your mood patterns",
-                                    "/moodtracker",
-                                    Color(0xFF20E4B5),
-                                    Icons.insights_outlined,
+                              ],
+                            ),
+
+                            SizedBox(height: 20),
+
+                            // Second row - 1 card centered
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Transform.translate(
+                                  offset: Offset(0, 50 * (1 - _animationController.value)),
+                                  child: Opacity(
+                                    opacity: _animationController.value * 0.7,
+                                    child: _buildFeatureCard(
+                                      "Mood Tracker",
+                                      "Track and analyze your mood patterns",
+                                      "/moodtracker",
+                                      Color(0xFF20E4B5),
+                                      Icons.insights_outlined,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -319,7 +329,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Widget _buildFeatureCard(String title, String subtitle, String route, Color accentColor, IconData icon) {
-    final cardWidth = (MediaQuery.of(context).size.width - 64 - 32) / 3; // Calculate based on screen width
+    // Fixed width for consistent card size in the 2-1 layout
+    final double cardWidth = 150.0;
 
     return GestureDetector(
       onTap: () {
