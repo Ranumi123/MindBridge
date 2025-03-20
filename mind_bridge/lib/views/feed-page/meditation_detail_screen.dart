@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; //url_launcher supported in ndk version 27 onwards
+import 'package:url_launcher/url_launcher.dart';
 
 class MeditationDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> meditation; //declaring immutable map named "meditation" with dynamic type
+  final Map<String, dynamic> meditation;
 
   const MeditationDetailScreen({super.key, required this.meditation});
 
@@ -11,7 +11,18 @@ class MeditationDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(meditation['title'] ?? 'Meditation'),
-        backgroundColor: Colors.blueAccent, //main color of the app
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF4B9FE1),
+                Color(0xFF1EBBD7)
+              ], // Gradient for AppBar
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -24,7 +35,7 @@ class MeditationDetailScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
                   meditation['image'] ?? '',
-                  width: double.infinity, //ensures that the image fills the available width
+                  width: double.infinity,
                   height: 200,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
@@ -33,10 +44,8 @@ class MeditationDetailScreen extends StatelessWidget {
                       height: 200,
                       color: Colors.grey.shade300,
                       child: const Center(
-
-                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey), //flutter error icon
-
-
+                        child: Icon(Icons.image_not_supported,
+                            size: 50, color: Colors.grey),
                       ),
                     );
                   },
@@ -65,12 +74,14 @@ class MeditationDetailScreen extends StatelessWidget {
                 children: [
                   Chip(
                     label: Text(meditation['category'] ?? 'Unknown'),
-                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.3), //withOpacity was deprecated hence withValues with alpha was used
+                    backgroundColor: const Color(0xFF1EBBD7)
+                        .withValues(alpha: 0.2), // Teal with transparency
                   ),
                   const SizedBox(width: 10),
                   Chip(
                     label: Text(meditation['duration'] ?? 'Unknown'),
-                    backgroundColor: Colors.greenAccent.withValues(alpha: 0.3),
+                    backgroundColor: const Color(0xFF20E4B5).withValues(
+                        alpha: 0.2), // Greenish accent with transparency
                   ),
                 ],
               ),
@@ -78,40 +89,59 @@ class MeditationDetailScreen extends StatelessWidget {
 
               // Meditation Description
               Text(
-                meditation['description'] ?? 'No description available.', //if meditation description is null value, error message appears
+                meditation['description'] ?? 'No description available.',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 30),
 
-              // Play Meditation Button
+              // Play Meditation Button with Gradient
               Center(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF4B9FE1),
+                        Color(0xFF1EBBD7)
+                      ], // Gradient for button
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  icon: const Icon(Icons.play_arrow, color: Colors.white),
-                  label: const Text("Play Meditation",
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () async {
-                    final url = meditation['url'];
-                    if (url != null && url.isNotEmpty) {
-                      final Uri uri = Uri.parse(url); //uri is passed into url
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri,
-                            mode: LaunchMode.externalApplication);
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Colors.transparent, // Allows gradient to show
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      elevation: 0, // Removes default shadow for a sleek look
+                    ),
+                    icon: const Icon(Icons.play_arrow, color: Colors.white),
+                    label: const Text("Play Meditation",
+                        style: TextStyle(color: Colors.white)),
+                    onPressed: () async {
+                      final url = meditation['url'];
+                      if (url != null && url.isNotEmpty) {
+                        final Uri uri = Uri.parse(url);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Could not open video")),
+                          );
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Could not open video")), //error message for when video cannot be opened
+                          const SnackBar(content: Text("No video available")),
                         );
                       }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("No video available")),
-                      );
-                    }
-                  },
+                    },
+                  ),
                 ),
               ),
             ],
@@ -121,3 +151,4 @@ class MeditationDetailScreen extends StatelessWidget {
     );
   }
 }
+//update
