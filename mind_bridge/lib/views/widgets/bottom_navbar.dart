@@ -38,13 +38,12 @@ class BottomNavBar extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem('assets/icons/home.svg', 'Home', 0),
-          _buildNavItem('assets/icons/search.svg', 'Explore', 1),
-          _buildNavItem('assets/icons/community.svg', 'Community', 2),
+          _buildNavItem('assets/icons/therapist.svg', 'Therapist', 1),
+          _buildNavItem('assets/icons/feed.svg', 'Feed', 2),
           _buildNavItem('assets/icons/settings.svg', 'Settings', 3),
-          _buildNavItem('assets/icons/profile.svg', 'Profile', 4),
         ],
       ),
     );
@@ -60,7 +59,7 @@ class BottomNavBar extends StatelessWidget {
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: 56,
+            width: 60,
             height: 40,
             decoration: BoxDecoration(
               color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
@@ -113,16 +112,16 @@ class BottomNavBar extends StatelessWidget {
           color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
         );
         break;
-      case 1: // Search/Explore
+      case 1: // Therapist
         icon = Icon(
-          Icons.search_rounded,
+          Icons.medical_services_rounded,
           size: 24,
           color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
         );
         break;
-      case 2: // Community
+      case 2: // Feed
         icon = Icon(
-          Icons.people_alt_rounded,
+          Icons.dynamic_feed_rounded,
           size: 24,
           color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
         );
@@ -130,13 +129,6 @@ class BottomNavBar extends StatelessWidget {
       case 3: // Settings
         icon = Icon(
           Icons.settings_rounded,
-          size: 24,
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-        );
-        break;
-      case 4: // Profile
-        icon = Icon(
-          Icons.person_rounded,
           size: 24,
           color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
         );
