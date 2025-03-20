@@ -4,6 +4,7 @@ import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
 import '../feed-page/meditation_list_screen.dart';
 import '../therapist_dashboard/appointment_screen.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   int _selectedIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _fadeInAnimation;
+
+  // For typing animation
+  String _displayText = "";
+  final String _fullText = "MindBridge";
+  int _currentIndex = 0;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -43,12 +50,41 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     // Start animations after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
+      _startTypingAnimation();
+    });
+  }
+
+  void _startTypingAnimation() {
+    // Reset state for animation restart
+    setState(() {
+      _displayText = "";
+      _currentIndex = 0;
+    });
+
+    // Create a timer that adds one character at a time
+    _timer = Timer.periodic(Duration(milliseconds: 150), (timer) {
+      if (_currentIndex < _fullText.length) {
+        setState(() {
+          _displayText = _fullText.substring(0, _currentIndex + 1);
+          _currentIndex++;
+        });
+      } else {
+        timer.cancel();
+
+        // Optional: Add a blinking cursor effect or restart animation after pause
+        Future.delayed(Duration(seconds: 2), () {
+          if (mounted) {
+            _startTypingAnimation();
+          }
+        });
+      }
     });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _timer?.cancel(); // Cancel the timer when disposing
     super.dispose();
   }
 
@@ -188,14 +224,30 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "MindBridge",
-                              style: TextStyle(
-                                color: Color(0xFF39B0E5),
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  _displayText,
+                                  style: TextStyle(
+                                    color: Color(0xFF39B0E5),
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                AnimatedOpacity(
+                                  opacity: (_currentIndex < _fullText.length && _currentIndex % 2 == 0) ? 1.0 : 0.0,
+                                  duration: Duration(milliseconds: 500),
+                                  child: Text(
+                                    "|",
+                                    style: TextStyle(
+                                      color: Color(0xFF39B0E5),
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             SizedBox(height: 10),
                             Text(
