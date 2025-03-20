@@ -1,3 +1,4 @@
+// This file contains the bottom navigation bar widget that is displayed at the bottom of the screen.
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
@@ -50,7 +51,8 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, String iconPath, String label, int index) {
+  Widget _buildNavItem(
+      BuildContext context, String iconPath, String label, int index) {
     bool isSelected = selectedIndex == index;
 
     return GestureDetector(
@@ -66,7 +68,9 @@ class BottomNavBar extends StatelessWidget {
             width: 60,
             height: 40,
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+              color: isSelected
+                  ? Colors.white.withOpacity(0.2)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
