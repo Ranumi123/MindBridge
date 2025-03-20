@@ -1,0 +1,2 @@
+/Users/dinurawanigasekara/Desktop/mind_bridge_8.0/MindBridge/mind_bridge/android/app/.cxx/Debug/2u2rou6d/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/dinurawanigasekara/Desktop/mind_bridge_8.0/MindBridge/mind_bridge/android/app/.cxx/Debug/2u2rou6d/armeabi-v7a/CMakeFiles/rebuild_cache.dir

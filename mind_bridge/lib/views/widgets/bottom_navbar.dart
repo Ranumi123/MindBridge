@@ -19,7 +19,7 @@ class BottomNavBar extends StatelessWidget {
     return Container(
       height: 65,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
             Color(0xFF4B9FE1), // Blue primary color
             Color(0xFF1EBBD7), // Teal accent color
@@ -98,7 +98,7 @@ class BottomNavBar extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+              color: Colors.white,
               fontSize: 10,
               fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
             ),
@@ -112,42 +112,46 @@ class BottomNavBar extends StatelessWidget {
     bool isSelected = selectedIndex == index;
     Widget icon;
 
+    // Use pure white for all icons, with opacity for unselected
+    final Color iconColor = isSelected ? Colors.white : Colors.white.withOpacity(0.7);
+
     switch (index) {
       case 0: // Home
         icon = Icon(
           Icons.home_rounded,
           size: 24,
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+          color: iconColor,
         );
         break;
       case 1: // Therapist
         icon = Icon(
           Icons.medical_services_rounded,
           size: 24,
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+          color: iconColor,
         );
         break;
       case 2: // Feed
         icon = Icon(
           Icons.dynamic_feed_rounded,
           size: 24,
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+          color: iconColor,
         );
         break;
       case 3: // Settings
         icon = Icon(
           Icons.settings_rounded,
           size: 24,
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+          color: iconColor,
         );
         break;
       default:
+      // For SVG icons, ensure they're white
         icon = SvgPicture.asset(
           iconPath,
           width: 24,
           height: 24,
           colorFilter: ColorFilter.mode(
-            isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+            iconColor,
             BlendMode.srcIn,
           ),
         );
