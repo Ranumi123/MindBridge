@@ -11,6 +11,8 @@ import 'views/welcome_screen/welcome_page.dart'; // Import the welcome page
 import 'views/login_page/login_page.dart'; // Import the login page
 import 'views/signup_page/signup_page.dart'; // Import the signup page
 import 'views/privacy_settings_page/privacy_setting_page.dart'; // Import privacy settings page
+import 'views/therapist_dashboard/appointment_screen.dart';
+
 
 
 // Define ChatGroup class directly in main.dart to avoid import issues
@@ -125,6 +127,8 @@ class MyApp extends StatelessWidget {
         '/moodtracker': (context) => MoodTrackerPage(),
         '/chatforum': (context) => const GroupSelectionScreen(),
         '/chatlist': (context) => const ChatListScreen(),
+        '/appointments': (context) => AppointmentScreen(),
+        
       },
       // Use onGenerateRoute for dynamic routes that need parameters
       onGenerateRoute: (settings) {
