@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
-import '../feed-page/meditation_list_screen.dart'; // Add this import
+import '../feed-page/meditation_list_screen.dart';
+import '../therapist_dashboard/doctor_list_screen.dart'; // Add this import
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,14 +19,24 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
 
-    if (index == 1) {
-      // Changed to navigate to MeditationListScreen instead of chat forum
+    // Navigation based on bottom navbar selection
+    if (index == 0) {
+      // Home - we're already here, no navigation needed
+    } else if (index == 1) {
+      // Therapist icon navigation - go to doctor list
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DoctorListScreen()),
+      );
+    } else if (index == 2) {
+      // Feed icon navigation - go to meditation list
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => MeditationListScreen()),
       );
-    } else if (index == 2) {
-      Navigator.pushNamed(context, '/moodtracker');
+    } else if (index == 3) {
+      // Settings icon navigation
+      Navigator.pushNamed(context, '/settings');
     }
   }
 
