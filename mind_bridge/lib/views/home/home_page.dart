@@ -163,7 +163,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Space for the top image
                     SizedBox(height: MediaQuery.of(context).size.height * 0.2),
@@ -219,7 +218,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     FadeTransition(
                       opacity: _fadeInAnimation,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 4.0, bottom: 16.0),
+                        padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
                             Text(
@@ -254,51 +253,54 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     AnimatedBuilder(
                       animation: _animationController,
                       builder: (context, child) {
-                        return Wrap(
-                          spacing: 20,
-                          runSpacing: 20,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            Transform.translate(
-                              offset: Offset(0, 50 * (1 - _animationController.value)),
-                              child: Opacity(
-                                opacity: _animationController.value,
-                                child: _buildFeatureCard(
-                                  "AI Chatbot",
-                                  "Talk to our AI about your feelings",
-                                  "/chatbot",
-                                  Color(0xFF4B9FE1),
-                                  Icons.smart_toy_outlined,
+                        return Container(
+                          width: double.infinity,
+                          child: Wrap(
+                            spacing: 16,
+                            runSpacing: 20,
+                            alignment: WrapAlignment.spaceEvenly,
+                            children: [
+                              Transform.translate(
+                                offset: Offset(0, 50 * (1 - _animationController.value)),
+                                child: Opacity(
+                                  opacity: _animationController.value,
+                                  child: _buildFeatureCard(
+                                    "AI Chatbot",
+                                    "Talk to our AI about your feelings",
+                                    "/chatbot",
+                                    Color(0xFF4B9FE1),
+                                    Icons.smart_toy_outlined,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Transform.translate(
-                              offset: Offset(0, 50 * (1 - _animationController.value)),
-                              child: Opacity(
-                                opacity: _animationController.value * 0.85,
-                                child: _buildFeatureCard(
-                                  "Community",
-                                  "Connect with others on similar journeys",
-                                  "/chatforum",
-                                  Color(0xFF1EBBD7),
-                                  Icons.forum_outlined,
+                              Transform.translate(
+                                offset: Offset(0, 50 * (1 - _animationController.value)),
+                                child: Opacity(
+                                  opacity: _animationController.value * 0.85,
+                                  child: _buildFeatureCard(
+                                    "Community",
+                                    "Connect with others on similar journeys",
+                                    "/chatforum",
+                                    Color(0xFF1EBBD7),
+                                    Icons.forum_outlined,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Transform.translate(
-                              offset: Offset(0, 50 * (1 - _animationController.value)),
-                              child: Opacity(
-                                opacity: _animationController.value * 0.7,
-                                child: _buildFeatureCard(
-                                  "Mood Tracker",
-                                  "Track and analyze your mood patterns",
-                                  "/moodtracker",
-                                  Color(0xFF20E4B5),
-                                  Icons.insights_outlined,
+                              Transform.translate(
+                                offset: Offset(0, 50 * (1 - _animationController.value)),
+                                child: Opacity(
+                                  opacity: _animationController.value * 0.7,
+                                  child: _buildFeatureCard(
+                                    "Mood Tracker",
+                                    "Track and analyze your mood patterns",
+                                    "/moodtracker",
+                                    Color(0xFF20E4B5),
+                                    Icons.insights_outlined,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
                       },
                     ),
@@ -317,12 +319,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Widget _buildFeatureCard(String title, String subtitle, String route, Color accentColor, IconData icon) {
+    final cardWidth = (MediaQuery.of(context).size.width - 64 - 32) / 3; // Calculate based on screen width
+
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);
       },
       child: Container(
-        width: 150,
+        width: cardWidth,
         height: 150,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -354,26 +358,27 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 12),
             Text(
               title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF2D3748),
                 letterSpacing: 0.2,
               ),
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 6),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
                 subtitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: Color(0xFF718096),
-                  height: 1.3,
+                  height: 1.2,
                 ),
               ),
             ),
