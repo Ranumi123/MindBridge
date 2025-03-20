@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
+import '../therapist_dashboard/doctor_list_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -40,20 +41,23 @@ class BottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildNavItem('assets/icons/home.svg', 'Home', 0),
-          _buildNavItem('assets/icons/therapist.svg', 'Therapist', 1),
-          _buildNavItem('assets/icons/feed.svg', 'Feed', 2),
-          _buildNavItem('assets/icons/settings.svg', 'Settings', 3),
+          _buildNavItem(context, 'assets/icons/home.svg', 'Home', 0),
+          _buildNavItem(context, 'assets/icons/therapist.svg', 'Therapist', 1),
+          _buildNavItem(context, 'assets/icons/feed.svg', 'Feed', 2),
+          _buildNavItem(context, 'assets/icons/settings.svg', 'Settings', 3),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(String iconPath, String label, int index) {
+  Widget _buildNavItem(BuildContext context, String iconPath, String label, int index) {
     bool isSelected = selectedIndex == index;
 
     return GestureDetector(
-      onTap: () => onItemTapped(index),
+      onTap: () {
+        // Let the parent widget handle the navigation logic
+        onItemTapped(index);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
