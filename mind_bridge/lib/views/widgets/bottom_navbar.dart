@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:math' as math;
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -14,7 +15,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      height: 65,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -35,13 +36,15 @@ class BottomNavBar extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem('assets/icons/home.svg', 'Home', 0),
-          _buildNavItem('assets/icons/feed.svg', 'Feed', 1),
-          _buildNavItem('assets/icons/profile.svg', 'Profile', 2),
+          _buildNavItem('assets/icons/search.svg', 'Explore', 1),
+          _buildNavItem('assets/icons/community.svg', 'Community', 2),
+          _buildNavItem('assets/icons/settings.svg', 'Settings', 3),
+          _buildNavItem('assets/icons/profile.svg', 'Profile', 4),
         ],
       ),
     );
@@ -53,28 +56,107 @@ class BottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onItemTapped(index),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 26,
-            height: 26,
-            colorFilter: ColorFilter.mode(
-              isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-              BlendMode.srcIn,
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 56,
+            height: 40,
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (isSelected)
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: 1.0,
+                    child: Container(
+                      width: 45,
+                      height: 3,
+                      margin: const EdgeInsets.only(top: 32),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                _buildIcon(iconPath, index),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
               color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              fontSize: 12,
+              fontSize: 10,
+              fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIcon(String iconPath, int index) {
+    bool isSelected = selectedIndex == index;
+    Widget icon;
+
+    switch (index) {
+      case 0: // Home
+        icon = Icon(
+          Icons.home_rounded,
+          size: 24,
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+        );
+        break;
+      case 1: // Search/Explore
+        icon = Icon(
+          Icons.search_rounded,
+          size: 24,
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+        );
+        break;
+      case 2: // Community
+        icon = Icon(
+          Icons.people_alt_rounded,
+          size: 24,
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+        );
+        break;
+      case 3: // Settings
+        icon = Icon(
+          Icons.settings_rounded,
+          size: 24,
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+        );
+        break;
+      case 4: // Profile
+        icon = Icon(
+          Icons.person_rounded,
+          size: 24,
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+        );
+        break;
+      default:
+        icon = SvgPicture.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+          colorFilter: ColorFilter.mode(
+            isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+            BlendMode.srcIn,
+          ),
+        );
+    }
+
+    return AnimatedScale(
+      scale: isSelected ? 1.1 : 1.0,
+      duration: const Duration(milliseconds: 200),
+      child: icon,
     );
   }
 }
