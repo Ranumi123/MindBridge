@@ -637,7 +637,7 @@ class AppointmentScreen extends StatelessWidget {
                     backgroundColor: Colors.white,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.asset('assets/images/profile.jpg'),
+                      child: Image.asset('assets/images/d_profile.jpg'),
                     ),
                   ),
                 ],
@@ -733,29 +733,29 @@ class AppointmentScreen extends StatelessWidget {
                       const SizedBox(height: 24),
 
                       // Specialist Section
-                      const Text(
-                        'Find a doctor with specialist',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildSpecialistButton(
-                            'General Practitioner',
-                            Icons.medical_services,
-                          ),
-                          _buildSpecialistButton(
-                            'Dental Surgeon',
-                            Icons.medical_information,
-                          ),
-                        ],
-                      ),
+                      // const Text(
+                      //   'Find a doctor with specialist',
+                      //   style: TextStyle(
+                      //     fontSize: 18,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 16),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     _buildSpecialistButton(
+                      //       'General Practitioner',
+                      //       Icons.medical_services,
+                      //     ),
+                      //     _buildSpecialistButton(
+                      //       'Dental Surgeon',
+                      //       Icons.medical_information,
+                      //     ),
+                      //   ],
+                      // ),
 
-                      const SizedBox(height: 24),
+                      // const SizedBox(height: 24),
 
                       // Top Doctor Section
                       Row(
@@ -777,7 +777,7 @@ class AppointmentScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       _buildTopDoctorCard(
                         context,
-                        'Dr. Jonathan',
+                        'Dr. Smith',
                         'Pediatrician',
                         'assets/images/doctor3.png',
                       ),
@@ -842,37 +842,6 @@ class AppointmentScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecialistButton(String title, IconData icon) {
-    return Container(
-      width: 160,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: const Color(0xFF5D5FEF)),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTopDoctorCard(
     BuildContext context,
     String name,
@@ -884,12 +853,11 @@ class AppointmentScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (context) => DoctorProfileScreen(
-                  name: name,
-                  specialty: specialty,
-                  imagePath: imagePath,
-                ),
+            builder: (context) => DoctorProfileScreen(
+              name: name,
+              specialty: specialty,
+              imagePath: imagePath,
+            ),
           ),
         );
       },
