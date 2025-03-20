@@ -1,3 +1,4 @@
+// Therapist Card Widget
 import 'package:flutter/material.dart';
 import '../models/therapist_model.dart';
 import '../therapist_dashboard/therapist_detail_screen.dart';
@@ -18,7 +19,8 @@ class TherapistCard extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => TherapistDetailScreen(therapist: therapist)),
+            MaterialPageRoute(
+                builder: (_) => TherapistDetailScreen(therapist: therapist)),
           );
         },
       ),
