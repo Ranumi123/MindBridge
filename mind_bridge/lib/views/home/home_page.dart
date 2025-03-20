@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
 import '../feed-page/meditation_list_screen.dart';
-import '../therapist_dashboard/doctor_list_screen.dart';
+import '../therapist_dashboard/appointment_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => DoctorListScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => AppointmentScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var begin = Offset(1.0, 0.0);
             var end = Offset.zero;

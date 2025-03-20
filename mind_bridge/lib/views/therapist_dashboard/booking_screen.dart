@@ -1,172 +1,172 @@
-import 'package:flutter/material.dart';
-import '../models/therapist_model.dart';
+// import 'package:flutter/material.dart';
+// import '../models/therapist_model.dart';
 
-class BookingScreen extends StatefulWidget {
-  final Therapist therapist;
+// class BookingScreen extends StatefulWidget {
+//   final Therapist therapist;
 
-  BookingScreen({required this.therapist});
+//   BookingScreen({required this.therapist});
 
-  @override
-  _BookingScreenState createState() => _BookingScreenState();
-}
+//   @override
+//   _BookingScreenState createState() => _BookingScreenState();
+// }
 
-class _BookingScreenState extends State<BookingScreen> {
-  final _formKey = GlobalKey<FormState>();
+// class _BookingScreenState extends State<BookingScreen> {
+//   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController fullNameController = TextEditingController();
-  TextEditingController dobController = TextEditingController();
-  TextEditingController contactController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  String? selectedGender;
-  String? selectedCommunication;
-  String? selectedTime;
-  String? selectedPlan;
+//   TextEditingController fullNameController = TextEditingController();
+//   TextEditingController dobController = TextEditingController();
+//   TextEditingController contactController = TextEditingController();
+//   TextEditingController dateController = TextEditingController();
+//   String? selectedGender;
+//   String? selectedCommunication;
+//   String? selectedTime;
+//   String? selectedPlan;
 
-  final List<String> genderOptions = ['Male', 'Female', 'Other'];
-  final List<String> communicationOptions = ['Call', 'Chat', 'Video'];
-  final List<String> timeOptions = ['10:00 AM', '02:00 PM', '06:00 PM'];
-  final List<String> pricingPlans = [
-    "Basic Plan - \$50",
-    "Standard Plan - \$80",
-    "Premium Plan - \$120"
-  ];
+//   final List<String> genderOptions = ['Male', 'Female', 'Other'];
+//   final List<String> communicationOptions = ['Call', 'Chat', 'Video'];
+//   final List<String> timeOptions = ['10:00 AM', '02:00 PM', '06:00 PM'];
+//   final List<String> pricingPlans = [
+//     "Basic Plan - \$50",
+//     "Standard Plan - \$80",
+//     "Premium Plan - \$120"
+//   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: Text('Book ${widget.therapist.name}'),
-          backgroundColor: Colors.teal),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField(fullNameController, 'Full Name', true),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: dobController,
-                decoration: InputDecoration(
-                    labelText: 'Date of Birth', border: OutlineInputBorder()),
-                readOnly: true,
-                onTap: () => _selectDate(context, dobController),
-                validator: (value) =>
-                    value!.isEmpty ? 'Enter your date of birth' : null,
-              ),
-              SizedBox(height: 10),
-              _buildDropdown('Gender (Optional)', genderOptions, selectedGender,
-                  (value) {
-                setState(() => selectedGender = value);
-              }),
-              SizedBox(height: 10),
-              _buildTextField(contactController, 'Email or Phone Number', true),
-              SizedBox(height: 10),
-              _buildDropdown('Preferred Communication', communicationOptions,
-                  selectedCommunication, (value) {
-                setState(() => selectedCommunication = value);
-              }),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: dateController,
-                decoration: InputDecoration(
-                    labelText: 'Preferred Date', border: OutlineInputBorder()),
-                readOnly: true,
-                onTap: () => _selectDate(context, dateController),
-                validator: (value) =>
-                    value!.isEmpty ? 'Select a preferred date' : null,
-              ),
-              SizedBox(height: 10),
-              _buildDropdown('Preferred Time', timeOptions, selectedTime,
-                  (value) {
-                setState(() => selectedTime = value);
-              }),
-              SizedBox(height: 10),
-              Text("Select a Pricing Plan",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              _buildPricingPlans(),
-              SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _confirmBooking,
-                  child: Text('Confirm Booking'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    textStyle: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//           title: Text('Book ${widget.therapist.name}'),
+//           backgroundColor: Colors.teal),
+//       body: SingleChildScrollView(
+//         padding: EdgeInsets.all(16),
+//         child: Form(
+//           key: _formKey,
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               _buildTextField(fullNameController, 'Full Name', true),
+//               SizedBox(height: 10),
+//               TextFormField(
+//                 controller: dobController,
+//                 decoration: InputDecoration(
+//                     labelText: 'Date of Birth', border: OutlineInputBorder()),
+//                 readOnly: true,
+//                 onTap: () => _selectDate(context, dobController),
+//                 validator: (value) =>
+//                     value!.isEmpty ? 'Enter your date of birth' : null,
+//               ),
+//               SizedBox(height: 10),
+//               _buildDropdown('Gender (Optional)', genderOptions, selectedGender,
+//                   (value) {
+//                 setState(() => selectedGender = value);
+//               }),
+//               SizedBox(height: 10),
+//               _buildTextField(contactController, 'Email or Phone Number', true),
+//               SizedBox(height: 10),
+//               _buildDropdown('Preferred Communication', communicationOptions,
+//                   selectedCommunication, (value) {
+//                 setState(() => selectedCommunication = value);
+//               }),
+//               SizedBox(height: 10),
+//               TextFormField(
+//                 controller: dateController,
+//                 decoration: InputDecoration(
+//                     labelText: 'Preferred Date', border: OutlineInputBorder()),
+//                 readOnly: true,
+//                 onTap: () => _selectDate(context, dateController),
+//                 validator: (value) =>
+//                     value!.isEmpty ? 'Select a preferred date' : null,
+//               ),
+//               SizedBox(height: 10),
+//               _buildDropdown('Preferred Time', timeOptions, selectedTime,
+//                   (value) {
+//                 setState(() => selectedTime = value);
+//               }),
+//               SizedBox(height: 10),
+//               Text("Select a Pricing Plan",
+//                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+//               _buildPricingPlans(),
+//               SizedBox(height: 20),
+//               SizedBox(
+//                 width: double.infinity,
+//                 child: ElevatedButton(
+//                   onPressed: _confirmBooking,
+//                   child: Text('Confirm Booking'),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: Colors.teal,
+//                     padding: EdgeInsets.symmetric(vertical: 12),
+//                     textStyle: TextStyle(fontSize: 18),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-  Widget _buildTextField(
-      TextEditingController controller, String label, bool isRequired) {
-    return TextFormField(
-      controller: controller,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
-      validator: (value) =>
-          (isRequired && value!.isEmpty) ? 'Enter your $label' : null,
-    );
-  }
+//   Widget _buildTextField(
+//       TextEditingController controller, String label, bool isRequired) {
+//     return TextFormField(
+//       controller: controller,
+//       decoration:
+//           InputDecoration(labelText: label, border: OutlineInputBorder()),
+//       validator: (value) =>
+//           (isRequired && value!.isEmpty) ? 'Enter your $label' : null,
+//     );
+//   }
 
-  Widget _buildDropdown(String label, List<String> options,
-      String? selectedValue, ValueChanged<String?> onChanged) {
-    return DropdownButtonFormField<String>(
-      value: selectedValue,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
-      items: options.map((option) {
-        return DropdownMenuItem(value: option, child: Text(option));
-      }).toList(),
-      onChanged: onChanged,
-      validator: (value) => value == null ? 'Please select $label' : null,
-    );
-  }
+//   Widget _buildDropdown(String label, List<String> options,
+//       String? selectedValue, ValueChanged<String?> onChanged) {
+//     return DropdownButtonFormField<String>(
+//       value: selectedValue,
+//       decoration:
+//           InputDecoration(labelText: label, border: OutlineInputBorder()),
+//       items: options.map((option) {
+//         return DropdownMenuItem(value: option, child: Text(option));
+//       }).toList(),
+//       onChanged: onChanged,
+//       validator: (value) => value == null ? 'Please select $label' : null,
+//     );
+//   }
 
-  Widget _buildPricingPlans() {
-    return Column(
-      children: pricingPlans.map((plan) {
-        return RadioListTile<String>(
-          title: Text(plan),
-          value: plan,
-          groupValue: selectedPlan,
-          onChanged: (value) {
-            setState(() => selectedPlan = value!);
-          },
-        );
-      }).toList(),
-    );
-  }
+//   Widget _buildPricingPlans() {
+//     return Column(
+//       children: pricingPlans.map((plan) {
+//         return RadioListTile<String>(
+//           title: Text(plan),
+//           value: plan,
+//           groupValue: selectedPlan,
+//           onChanged: (value) {
+//             setState(() => selectedPlan = value!);
+//           },
+//         );
+//       }).toList(),
+//     );
+//   }
 
-  Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        controller.text = "${picked.toLocal()}".split(' ')[0];
-      });
-    }
-  }
+//   Future<void> _selectDate(
+//       BuildContext context, TextEditingController controller) async {
+//     DateTime? picked = await showDatePicker(
+//       context: context,
+//       initialDate: DateTime.now(),
+//       firstDate: DateTime(2020),
+//       lastDate: DateTime(2100),
+//     );
+//     if (picked != null) {
+//       setState(() {
+//         controller.text = "${picked.toLocal()}".split(' ')[0];
+//       });
+//     }
+//   }
 
-  void _confirmBooking() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Booking Confirmed for ${widget.therapist.name}!"),
-        backgroundColor: Colors.green,
-      ));
-    }
-  }
-}
+//   void _confirmBooking() {
+//     if (_formKey.currentState!.validate()) {
+//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text("Booking Confirmed for ${widget.therapist.name}!"),
+//         backgroundColor: Colors.green,
+//       ));
+//     }
+//   }
+// }
