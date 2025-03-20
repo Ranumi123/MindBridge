@@ -43,8 +43,9 @@ dependencies:
   url_launcher: ^6.2.5
   flutter_gif: ^0.0.4
 
-
-
+  # Added for mood tracker functionality
+  fl_chart: ^0.65.0 # For chart visualizations
+  shared_preferences: ^2.2.2 # For local storage
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
