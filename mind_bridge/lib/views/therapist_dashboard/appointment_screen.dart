@@ -637,7 +637,7 @@ class AppointmentScreen extends StatelessWidget {
                     backgroundColor: Colors.white,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.asset('assets/images/profile.jpg'),
+                      child: Image.asset('assets/images/d_profile.jpg'),
                     ),
                   ),
                 ],
@@ -736,6 +736,16 @@ class AppointmentScreen extends StatelessWidget {
                               'DR. JAMES',
                               'assets/images/doctor2.png',
                             ),
+                            const SizedBox(width: 16),
+                            _buildPopularDoctorCard(
+                              'DR. JAMES',
+                              'assets/images/doctor2.png',
+                            ),
+                            const SizedBox(width: 16),
+                            _buildPopularDoctorCard(
+                              'DR. JAMES',
+                              'assets/images/doctor2.png',
+                            ),
                           ],
                         ),
                       ),
@@ -810,7 +820,7 @@ class AppointmentScreen extends StatelessWidget {
                         context,
                         'Dr. Jensen',
                         'Neurologist',
-                        'assets/images/doctor5.png',
+                        'assets/images/doctor6.png',
                       ),
                       const SizedBox(height: 12),
                       _buildTopDoctorCard(
