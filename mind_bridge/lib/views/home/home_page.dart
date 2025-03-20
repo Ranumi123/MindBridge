@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
+import '../feed-page/meditation_list_screen.dart'; // Add this import
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +19,11 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (index == 1) {
-      Navigator.pushNamed(context, '/chatforum');
+      // Changed to navigate to MeditationListScreen instead of chat forum
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MeditationListScreen()),
+      );
     } else if (index == 2) {
       Navigator.pushNamed(context, '/moodtracker');
     }
@@ -27,14 +32,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.black),
-          onPressed: () {},
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF4B9FE1), // Blue primary color
+                Color(0xFF1EBBD7), // Teal accent color
+                Color(0xFF20E4B5), // Tertiary color
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
         ),
+        elevation: 2,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
@@ -78,23 +91,20 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 35),
 
-              // Feature Section
+              // Feature Section with custom PNG cards
               Wrap(
                 spacing: 20,
                 runSpacing: 20,
                 alignment: WrapAlignment.center,
                 children: [
                   FeatureCard(
-                      title: "Chatbot",
-                      imagePath: "assets/images/chatbot.png",
+                      cardImagePath: "assets/images/chatbot_card.png",
                       route: "/chatbot"),
                   FeatureCard(
-                      title: "Chat Forum",
-                      imagePath: "assets/images/chat_forum.png",
+                      cardImagePath: "assets/images/chatforum_card.png",
                       route: "/chatforum"),
                   FeatureCard(
-                      title: "Mood Tracker",
-                      imagePath: "assets/images/mood_tracker.png",
+                      cardImagePath: "assets/images/moodtracker_card.png",
                       route: "/moodtracker"),
                 ],
               ),

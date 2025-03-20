@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/bottom_navbar.dart';
-import 'gif_screen.dart';
+import '../mood_tracker/gif_screen.dart';
 
 class MoodTrackerPage extends StatefulWidget {
   const MoodTrackerPage({super.key});
@@ -9,184 +8,279 @@ class MoodTrackerPage extends StatefulWidget {
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
 }
 
-class _MoodTrackerPageState extends State<MoodTrackerPage>
-    with SingleTickerProviderStateMixin {
+class _MoodTrackerPageState extends State<MoodTrackerPage> {
   final TextEditingController _textController = TextEditingController();
-  String? selectedMood;
-  final List<Map<String, String>> moodOptions = [
-    {"image": "assets/images/Happy.jpg", "label": "Happy"},
-    {"image": "assets/images/Calm.jpg", "label": "Calm"},
-    {"image": "assets/images/Relaxed.png", "label": "Relaxed"},
-    {"image": "assets/images/Focus.jpg", "label": "Focused"}
-  ];
-  int _selectedIndex = 0;
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  bool showThumbsUp = false;
+  String selectedMood = "Happy"; // Default mood
 
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
-    );
-  }
+  // Map to store mood emojis
+  final Map<String, IconData> moodEmojis = {
+    "Happy": Icons.sentiment_very_satisfied,
+    "Calm": Icons.sentiment_satisfied,
+    "Relaxed": Icons.sentiment_satisfied_alt,
+    "Sad": Icons.sentiment_dissatisfied,
+    "Angry": Icons.mood_bad,
+  };
 
-  void _saveMood() {
-    if (selectedMood == null && _textController.text.trim().isEmpty) return;
+  // Colors for different moods
+  final Map<String, Color> moodColors = {
+    "Happy": Colors.amber,
+    "Calm": Colors.blue,
+    "Relaxed": Colors.green,
+    "Sad": Colors.grey,
+    "Angry": Colors.red,
+  };
 
-    setState(() {
-      showThumbsUp = true;
-    });
-    _animationController.forward();
-
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        showThumbsUp = false;
-      });
-      _animationController.reset();
-    });
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Mood saved!")));
-
-    setState(() {
-      selectedMood = null;
-      _textController.clear();
-    });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // Mock data for mood statistics
+  final Map<String, int> weeklyMoods = {
+    "Mon":
+        2, // 0 = No data, 1 = Sad, 2 = Calm, 3 = Happy, 4 = Angry, 5 = Relaxed
+    "Tue": 0,
+    "Wed": 3,
+    "Thu": 3,
+    "Fri": 2,
+    "Sat": 0,
+    "Sun": 1,
+  };
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
+      backgroundColor: moodColors[selectedMood]!.withOpacity(0.1),
       appBar: AppBar(
-        title: Text("Mood Tracker"),
-        backgroundColor: Color(0xFF2DABCA),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black54),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text("Mood",
+            style:
+                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.05, vertical: screenHeight * 0.03),
-        child: Column(
-          children: [
-            Text("How are you feeling today?",
-                style: TextStyle(
-                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold)),
-            SizedBox(height: screenHeight * 0.02),
-            Wrap(
-              spacing: screenWidth * 0.03,
-              runSpacing: screenHeight * 0.015,
-              alignment: WrapAlignment.center,
-              children: moodOptions
-                  .map((mood) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () =>
-                                setState(() => selectedMood = mood['label']),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: Size(70, 70),
-                              shape: CircleBorder(),
-                              backgroundColor: selectedMood == mood['label']
-                                  ? Color(0xFF3CDFCA)
-                                  : Colors.white,
-                              side: BorderSide(
-                                  color: selectedMood == mood['label']
-                                      ? Colors.blueAccent
-                                      : Colors.transparent,
-                                  width: 2),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  mood['image']!,
-                                  fit: BoxFit.cover,
-                                  width: 70,
-                                  height: 70,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(mood['label']!, style: TextStyle(fontSize: 12)),
-                        ],
-                      ))
-                  .toList(),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            Text("Express yourself in words ✨",
-                style: TextStyle(
-                    fontSize: screenWidth * 0.045,
-                    fontWeight: FontWeight.bold)),
-            SizedBox(height: screenHeight * 0.01),
-            Container(
-              width: screenWidth * 0.9,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
+      body: Column(
+        children: [
+          // Emoji display
+          Expanded(
+            flex: 5,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(75),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      moodEmojis[selectedMood]!,
+                      size: 80,
+                      color: moodColors[selectedMood],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    selectedMood,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
-              child: TextField(
-                controller: _textController,
-                style: TextStyle(color: Colors.black),
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none),
-                  hintText: "Type your feelings here...",
+            ),
+          ),
+
+          // Mood selection button
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.brown.shade800,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.mood, color: Colors.white),
+              onPressed: () {
+                _showMoodSelectionDialog();
+              },
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Mood Statistics
+          Expanded(
+            flex: 4,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
-                maxLines: 1,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Mood Statistics",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.more_horiz),
+                        onPressed: () {
+                          // Show more options
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Weekly chart
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: weeklyMoods.entries.map((entry) {
+                        final day = entry.key;
+                        final moodValue = entry.value;
+
+                        // Height calculation - 0 means no data
+                        final double barHeight =
+                            moodValue == 0 ? 10 : 20.0 * moodValue;
+
+                        // Color based on mood value
+                        Color barColor =
+                            Colors.grey.shade300; // Default for no data
+                        if (moodValue > 0) {
+                          final List<Color> colors = [
+                            Colors.grey.shade300, // No data
+                            Colors.grey, // Sad
+                            Colors.green, // Calm
+                            Colors.amber, // Happy
+                            Colors.red, // Angry
+                            Colors.blue, // Relaxed
+                          ];
+                          barColor = colors[moodValue];
+                        }
+
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              width: 30,
+                              height: barHeight,
+                              decoration: BoxDecoration(
+                                color: barColor,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: moodValue > 0
+                                  ? Center(
+                                      child: Icon(
+                                        [
+                                          Icons.sentiment_very_dissatisfied,
+                                          Icons.sentiment_dissatisfied,
+                                          Icons.sentiment_satisfied,
+                                          Icons.sentiment_very_satisfied,
+                                          Icons.mood_bad
+                                        ][moodValue - 1],
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(day,
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.grey.shade600)),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
-            ElevatedButton(onPressed: _saveMood, child: Text("Submit")),
-            SizedBox(height: screenHeight * 0.02),
-            if (showThumbsUp)
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: Container(
-                  width: screenWidth * 0.5,
-                  height: screenWidth * 0.5,
-                  child: Image.asset('assets/gifs/thumbs_up.gif',
-                      fit: BoxFit.contain),
-                ),
-              ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+          ),
+        ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  void _showMoodSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("How are you feeling today?"),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            children: [
+              "Happy",
+              "Calm",
+              "Relaxed",
+              "Sad",
+              "Angry",
+            ]
+                .map((mood) => GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedMood = mood;
+                        });
+                        Navigator.of(context).pop();
+
+                        // Show confirmation and navigate to animation
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Mood '$mood' saved!")),
+                        );
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GifScreen(
+                              mood: mood,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            moodEmojis[mood]!,
+                            size: 40,
+                            color: moodColors[mood],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(mood),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+      ),
+    );
   }
 }

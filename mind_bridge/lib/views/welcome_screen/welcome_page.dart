@@ -1,165 +1,446 @@
 import 'package:flutter/material.dart';
-import '../login_page/login_page.dart'; // Import your LoginPage
-import '../signup_page/signup_page.dart'; // Import your SignupPage
+import 'dart:ui' as ui;
+import '../login_page/login_page.dart';
+import '../signup_page/signup_page.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({Key? key}) : super(key: key);
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+
+    // Create a scale animation that goes from 0.9 to 1.05 and back
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 0.9, end: 1.05)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 1.05, end: 0.98)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 25,
+      ),
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: 0.98, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 25,
+      ),
+    ]).animate(_animationController);
+
+    // Start the animation and make it repeat in reverse
+    _animationController.forward();
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        _animationController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Container(
-        color: Color(0xFFF5F5F5), // Light background color
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              // App Logo/Icon
-              Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Color(0xFF5B3618), // Brown background
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.psychology_alt, // Mental health related icon
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, const Color(0xFFF0F8FF)], // Subtle gradient background
+            stops: const [0.0, 1.0],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Main content
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    // Top section with text (professional layout)
+                    Column(
+                      children: [
+                        // Logo with gradient text and blur effect
+                        ShaderMask(
+                          shaderCallback: (Rect bounds) {
+                            return const LinearGradient(
+                              colors: [
+                                Color(0xFF4B9FE1), // Blue shade
+                                Color(0xFF1EBBD7), // Teal shade
+                                Color(0xFF20E4B5), // Mint green shade
+                              ],
+                              stops: [0.0, 0.5, 1.0],
+                            ).createShader(bounds);
+                          },
+                          child: const Text(
+                            'mind bridge',
+                            style: TextStyle(
+                              fontSize: 42, // Slightly larger for better readability
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                              color: Colors.white, // This will be overridden by the shader
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black12,
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 16), // Consistent spacing
 
-              // Welcome Text
-              Text(
-                'Welcome to Mind Bridge',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF5B3618), // Brown color for heading
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              // Mental Health UI Kit text
-              Text(
-                'Your Mental Health Companion!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF5B3618), // Brown color for heading
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              SizedBox(height: 12),
-
-              // Description text
-              Text(
-                '',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              SizedBox(height: 40),
-
-              // Image from assets folder
-              Container(
-                width: 350, // Adjust the width as needed
-                height: 350, // Adjust the height as needed
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                      100), // Optional: Add rounded corners
-                ),
-                child: Image.asset(
-                  'assets/imgbg2.png', // Path to your image
-                  fit: BoxFit.cover, // Adjust the image fit
-                ),
-              ),
-
-              SizedBox(height: 50),
-
-              // Get Started Button (Navigates to SignupPage)
-              Container(
-                width: double.infinity,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Color(0xFF5B3618), // Brown background
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigate to the SignupPage
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SignupPage()), // Use SignupPage
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                        // Tagline with professional styling
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: const Text(
+                            'Your Mental Health Companion',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF4A6572),
+                              letterSpacing: 0.5,
+                              fontWeight: FontWeight.w600, // Slightly bolder for emphasis
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Get Started',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+
+                    // Center section with animated image (zoom effect)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 20),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Simple subtle glow without animation
+                                Opacity(
+                                  opacity: 0.2,
+                                  child: Container(
+                                    width: screenSize.width * 0.95,
+                                    height: screenSize.width * 0.95,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: RadialGradient(
+                                        colors: [
+                                          const Color(0xFF4B9FE1).withOpacity(0.5),
+                                          const Color(0xFF20E4B5).withOpacity(0.0),
+                                        ],
+                                        stops: const [0.1, 1.0],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Main image with glass morphism effect and scale animation
+                                AnimatedBuilder(
+                                  animation: _scaleAnimation,
+                                  builder: (context, child) {
+                                    return Transform.scale(
+                                      scale: _scaleAnimation.value,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          // Add interactive feedback on tap
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: const Text("Let's get started on your journey!"),
+                                              backgroundColor: const Color(0xFF1EBBD7),
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              duration: const Duration(seconds: 2),
+                                            ),
+                                          );
+
+                                          // Restart animation on tap for extra interactivity
+                                          _animationController.reset();
+                                          _animationController.forward();
+                                        },
+                                        child: MouseRegion(
+                                          onEnter: (_) => setState(() {}),
+                                          onExit: (_) => setState(() {}),
+                                          child: AnimatedContainer(
+                                            duration: const Duration(milliseconds: 300),
+                                            width: screenSize.width * 0.9,
+                                            height: screenSize.width * 0.9,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(40),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(40),
+                                              child: Stack(
+                                                children: [
+                                                  // Background blur with increased transparency
+                                                  BackdropFilter(
+                                                    filter: ui.ImageFilter.blur(
+                                                      sigmaX: 5,
+                                                      sigmaY: 5,
+                                                    ),
+                                                    child: Container(
+                                                      color: Colors.white.withOpacity(0.05),
+                                                    ),
+                                                  ),
+
+                                                  // Interactive gradient overlay with more subtle styling
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                        colors: [
+                                                          Colors.white.withOpacity(0.25),
+                                                          Colors.white.withOpacity(0.05),
+                                                        ],
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(40),
+                                                      border: Border.all(
+                                                        color: Colors.white.withOpacity(0.2),
+                                                        width: 1,
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  // The image
+                                                  Center(
+                                                    child: Hero(
+                                                      tag: 'welcomeImage',
+                                                      child: Container(
+                                                        width: screenSize.width * 0.85,
+                                                        height: screenSize.width * 0.85,
+                                                        padding: const EdgeInsets.all(10),
+                                                        child: Image.asset(
+                                                          'assets/images/2.png',
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.white),
-                    ],
-                  ),
+                    ),
+
+                    // Bottom section with stylized interactive buttons - professionally spaced
+                    Column(
+                      children: [
+                        // Get Started Button with clean, professional styling
+                        Container(
+                          width: double.infinity,
+                          height: 58,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFF4B9FE1), // Blue
+                                Color(0xFF1EBBD7), // Teal
+                                Color(0xFF20E4B5), // Mint green
+                              ],
+                              stops: [0.0, 0.5, 1.0],
+                            ),
+                            borderRadius: BorderRadius.circular(29),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF1EBBD7).withOpacity(0.3),
+                                blurRadius: 15,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(29),
+                              splashColor: Colors.white.withOpacity(0.3),
+                              highlightColor: Colors.white.withOpacity(0.2),
+                              hoverColor: Colors.white.withOpacity(0.1),
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) {
+                                      return SignupPage();
+                                    },
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      var curve = Curves.easeOutQuint;
+                                      var curveTween = CurveTween(curve: curve);
+                                      var begin = const Offset(0.0, 1.0);
+                                      var end = Offset.zero;
+                                      var tween = Tween(begin: begin, end: end).chain(curveTween);
+                                      var offsetAnimation = animation.drive(tween);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration: const Duration(milliseconds: 700),
+                                  ),
+                                );
+                              },
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Get Started',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.arrow_forward_rounded,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 22), // Professional spacing
+
+                        // Sign In Link with cleaner styling
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.03),
+                                blurRadius: 8,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            hoverColor: Colors.black.withOpacity(0.03),
+                            splashColor: Colors.white.withOpacity(0.2),
+                            highlightColor: Colors.white.withOpacity(0.1),
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) {
+                                    return LoginPage();
+                                  },
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    var curve = Curves.easeOutQuint;
+                                    var curveTween = CurveTween(curve: curve);
+                                    var tween = Tween(begin: 0.0, end: 1.0).chain(curveTween);
+                                    var fadeAnimation = animation.drive(tween);
+                                    return FadeTransition(
+                                      opacity: fadeAnimation,
+                                      child: child,
+                                    );
+                                  },
+                                  transitionDuration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'Already have an account? ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF4A6572),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Sign In',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF1EBBD7),
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: const Color(0xFF1EBBD7).withOpacity(0.3),
+                                      decorationThickness: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-
-              SizedBox(height: 20),
-
-              // Already have an account? Sign In (Navigates to LoginPage)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Already have an account? ',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      // Navigate to the LoginPage
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
