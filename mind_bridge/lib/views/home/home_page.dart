@@ -125,281 +125,189 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          // Subtle gradient background
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF39B0E5).withOpacity(0.9), // Slightly muted blue
-              Color(0xFF1ED4B5).withOpacity(0.85), // Slightly muted turquoise
-            ],
+      body: Stack(
+        children: [
+          // Main background
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF39B0E5),
+                  Color(0xFF1ED4B5),
+                ],
+              ),
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            // Top curved shape
-            Positioned(
-              top: -100,
-              right: -150,
-              child: Container(
-                height: 300,
-                width: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 50,
-                      spreadRadius: 10,
-                    ),
-                  ],
-                ),
+
+          // Top image with curved bottom
+          Container(
+            height: MediaQuery.of(context).size.height * 0.45,
+            width: double.infinity,
+            child: ClipPath(
+              clipper: BottomCurveClipper(),
+              child: Image.asset(
+                'assets/images/homeimg2.png',
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            // Bottom curved shape
-            Positioned(
-              bottom: -80,
-              left: -100,
-              child: Container(
-                height: 250,
-                width: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 50,
-                      spreadRadius: 10,
+          // Content
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Space for the top image
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+
+                    // Hero Card
+                    FadeTransition(
+                      opacity: _fadeInAnimation,
+                      child: Container(
+                        width: screenSize.width,
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 15,
+                              offset: Offset(0, 8),
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "MindBridge",
+                              style: TextStyle(
+                                color: Color(0xFF39B0E5),
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Welcome to your mental health journey!",
+                              style: TextStyle(
+                                color: Color(0xFF1E2D3D),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
 
-            // Main content
-            SafeArea(
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 15),
+                    SizedBox(height: 35),
 
-                      // Hero Banner with professional design
-                      FadeTransition(
-                        opacity: _fadeInAnimation,
-                        child: Center(
-                          child: Container(
-                            width: screenSize.width * 0.95,
-                            height: 220,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 8),
-                                  spreadRadius: 2,
+                    // Service text heading with professional styling
+                    FadeTransition(
+                      opacity: _fadeInAnimation,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 4.0, bottom: 16.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Services",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white.withOpacity(0.5),
+                                      Colors.white.withOpacity(0),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Feature Cards
+                    AnimatedBuilder(
+                      animation: _animationController,
+                      builder: (context, child) {
+                        return Wrap(
+                          spacing: 20,
+                          runSpacing: 20,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            Transform.translate(
+                              offset: Offset(0, 50 * (1 - _animationController.value)),
+                              child: Opacity(
+                                opacity: _animationController.value,
+                                child: _buildFeatureCard(
+                                  "AI Chatbot",
+                                  "Talk to our AI about your feelings",
+                                  "/chatbot",
                                   Color(0xFF4B9FE1),
+                                  Icons.smart_toy_outlined,
+                                ),
+                              ),
+                            ),
+                            Transform.translate(
+                              offset: Offset(0, 50 * (1 - _animationController.value)),
+                              child: Opacity(
+                                opacity: _animationController.value * 0.85,
+                                child: _buildFeatureCard(
+                                  "Community",
+                                  "Connect with others on similar journeys",
+                                  "/chatforum",
+                                  Color(0xFF1EBBD7),
+                                  Icons.forum_outlined,
+                                ),
+                              ),
+                            ),
+                            Transform.translate(
+                              offset: Offset(0, 50 * (1 - _animationController.value)),
+                              child: Opacity(
+                                opacity: _animationController.value * 0.7,
+                                child: _buildFeatureCard(
+                                  "Mood Tracker",
+                                  "Track and analyze your mood patterns",
+                                  "/moodtracker",
                                   Color(0xFF20E4B5),
-                                ],
+                                  Icons.insights_outlined,
+                                ),
                               ),
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Stack(
-                                children: [
-                                  // Abstract curved shape in top right
-                                  Positioned(
-                                    top: -20,
-                                    right: -20,
-                                    child: Container(
-                                      height: 100,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(0.1),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Abstract curved shape in bottom left
-                                  Positioned(
-                                    bottom: -40,
-                                    left: -40,
-                                    child: Container(
-                                      height: 120,
-                                      width: 120,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(0.1),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Meditation figure
-                                  Positioned(
-                                    right: -20,
-                                    bottom: 0,
-                                    child: Container(
-                                      width: 170,
-                                      height: 200,
-                                      child: Image.asset(
-                                        'assets/images/homepageimg.png',
-                                        fit: BoxFit.contain,
-                                        color: Colors.white.withOpacity(0.9),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Text content
-                                  Positioned(
-                                    top: 35,
-                                    left: 25,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "MindBridge",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 0.5,
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          width: screenSize.width * 0.5,
-                                          child: Text(
-                                            "Welcome to your\nmental health journey!",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                              height: 1.3,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: 35),
-
-                      // Service text heading with professional styling
-                      FadeTransition(
-                        opacity: _fadeInAnimation,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 4.0, bottom: 16.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Services",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Container(
-                                  height: 1,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.white.withOpacity(0.5),
-                                        Colors.white.withOpacity(0),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Feature Cards with professional design and animation
-                      AnimatedBuilder(
-                        animation: _animationController,
-                        builder: (context, child) {
-                          return Wrap(
-                            spacing: 20,
-                            runSpacing: 20,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              Transform.translate(
-                                offset: Offset(0, 50 * (1 - _animationController.value)),
-                                child: Opacity(
-                                  opacity: _animationController.value,
-                                  child: _buildProfessionalFeatureCard(
-                                    "AI Chatbot",
-                                    "Talk to our AI about your feelings",
-                                    "/chatbot",
-                                    Color(0xFF4B9FE1),
-                                    Icons.smart_toy_outlined,
-                                  ),
-                                ),
-                              ),
-                              Transform.translate(
-                                offset: Offset(0, 50 * (1 - _animationController.value)),
-                                child: Opacity(
-                                  opacity: _animationController.value * 0.85,
-                                  child: _buildProfessionalFeatureCard(
-                                    "Community",
-                                    "Connect with others on similar journeys",
-                                    "/chatforum",
-                                    Color(0xFF1EBBD7),
-                                    Icons.forum_outlined,
-                                  ),
-                                ),
-                              ),
-                              Transform.translate(
-                                offset: Offset(0, 50 * (1 - _animationController.value)),
-                                child: Opacity(
-                                  opacity: _animationController.value * 0.7,
-                                  child: _buildProfessionalFeatureCard(
-                                    "Mood Tracker",
-                                    "Track and analyze your mood patterns",
-                                    "/moodtracker",
-                                    Color(0xFF20E4B5),
-                                    Icons.insights_outlined,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
@@ -408,14 +316,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildProfessionalFeatureCard(String title, String subtitle, String route, Color accentColor, IconData icon) {
+  Widget _buildFeatureCard(String title, String subtitle, String route, Color accentColor, IconData icon) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);
       },
       child: Container(
         width: 150,
-        height: 170,
+        height: 150,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Colors.white,
@@ -426,78 +334,47 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               offset: Offset(0, 5),
               spreadRadius: 1,
             ),
-            BoxShadow(
-              color: accentColor.withOpacity(0.1),
-              blurRadius: 16,
-              offset: Offset(0, 3),
-              spreadRadius: 1,
-            ),
           ],
         ),
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Curved accent on the top
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 6,
-                decoration: BoxDecoration(
+            Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Icon(
+                  icon,
+                  size: 28,
                   color: accentColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
                 ),
               ),
             ),
-
-            // Card content
+            SizedBox(height: 16),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF2D3748),
+                letterSpacing: 0.2,
+              ),
+            ),
+            SizedBox(height: 8),
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        icon,
-                        size: 28,
-                        color: accentColor,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF2D3748),
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    child: Text(
-                      subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF718096),
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF718096),
+                  height: 1.3,
+                ),
               ),
             ),
           ],
@@ -505,4 +382,27 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
   }
+}
+
+// Curved bottom clipper for the top image
+class BottomCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, size.height - 50);
+
+    // Create a curved bottom
+    path.quadraticBezierTo(
+        size.width / 2,
+        size.height,
+        size.width,
+        size.height - 50
+    );
+
+    path.lineTo(size.width, 0);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
