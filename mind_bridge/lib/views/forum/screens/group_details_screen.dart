@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'group_chat_screen.dart';
 import 'group_selection_screen.dart';  // Import this to use the ChatGroup class
 
-class GroupDetailsScreen extends StatelessWidget {
+class GroupDetailsScreen extends StatefulWidget {
   final ChatGroup group;
 
   const GroupDetailsScreen({super.key, required this.group});
+
+  @override
+  State<GroupDetailsScreen> createState() => _GroupDetailsScreenState();
+}
+
+class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
+  bool _isAnonymous = false;
 
   // Add method to leave the group
   void _leaveGroup(BuildContext context) {
@@ -13,7 +20,7 @@ class GroupDetailsScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Leave Group'),
-        content: Text('Are you sure you want to leave "${group.name}"?'),
+        content: Text('Are you sure you want to leave "${widget.group.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -24,7 +31,7 @@ class GroupDetailsScreen extends StatelessWidget {
               Navigator.of(context).pop();
               Navigator.of(context).pop(); // Go back to group selection
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('You left "${group.name}"')),
+                SnackBar(content: Text('You left "${widget.group.name}"')),
               );
             },
             child: const Text('LEAVE'),
@@ -35,10 +42,15 @@ class GroupDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Define app color scheme
+  static const Color primaryColor = Color(0xFF4B9FE1); // Blue
+  static const Color accentColor = Color(0xFF1EBBD7); // Teal
+  static const Color tertiaryColor = Color(0xFF20E4B5); // Turquoise
+
   @override
   Widget build(BuildContext context) {
     // Parse members string to get current and max members
-    final membersParts = group.members.split('/');
+    final membersParts = widget.group.members.split('/');
     final currentMembers = int.parse(membersParts[0]);
     
     // Generate a list of members - handle empty lists safely
@@ -50,15 +62,15 @@ class GroupDetailsScreen extends StatelessWidget {
     }
     
     // Use provided member list if it exists and is not empty
-    if (group.membersList.isNotEmpty) {
-      memberList = group.membersList;
+    if (widget.group.membersList.isNotEmpty) {
+      memberList = widget.group.membersList;
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(group.name),
+        title: Text(widget.group.name),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: primaryColor,
         actions: [
           // Add option to leave group
           PopupMenuButton<String>(
@@ -91,9 +103,9 @@ class GroupDetailsScreen extends StatelessWidget {
             Center(
               child: CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.teal.shade200,
+                backgroundColor: accentColor,
                 child: Text(
-                  group.name.isNotEmpty ? group.name[0] : '?',
+                  widget.group.name.isNotEmpty ? widget.group.name[0] : '?',
                   style: const TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -106,7 +118,7 @@ class GroupDetailsScreen extends StatelessWidget {
 
             // Group Name
             Text(
-              group.name,
+              widget.group.name,
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -114,7 +126,7 @@ class GroupDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Group Description
+            // Group Description with Anonymous Mode Button
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -122,12 +134,54 @@ class GroupDetailsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.grey.shade300),
               ),
-              child: Text(
-                group.description,
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black87,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.group.description,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Anonymous Mode Toggle
+                  Row(
+                    children: [
+                      Switch(
+                        value: _isAnonymous,
+                        onChanged: (value) {
+                          setState(() {
+                            _isAnonymous = value;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(_isAnonymous 
+                                ? 'Anonymous mode enabled. Your identity will be hidden in chat.'
+                                : 'Anonymous mode disabled. Your real username will be visible.'),
+                              backgroundColor: _isAnonymous ? tertiaryColor : primaryColor,
+                            ),
+                          );
+                        },
+                        activeColor: tertiaryColor,
+                        activeTrackColor: tertiaryColor.withOpacity(0.5),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Anonymous Mode',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.privacy_tip_outlined,
+                        color: _isAnonymous ? tertiaryColor : Colors.grey,
+                      )
+                    ],
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),
@@ -135,10 +189,10 @@ class GroupDetailsScreen extends StatelessWidget {
             // Members count and limit
             Row(
               children: [
-                const Icon(Icons.people, color: Colors.teal),
+                Icon(Icons.people, color: primaryColor),
                 const SizedBox(width: 8),
                 Text(
-                  'Members: ${group.members}',
+                  'Members: ${widget.group.members}',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -164,14 +218,14 @@ class GroupDetailsScreen extends StatelessWidget {
                   final isCurrentUser = index == 0;
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: isCurrentUser ? Colors.teal : Colors.grey.shade300,
+                      backgroundColor: isCurrentUser ? primaryColor : Colors.grey.shade300,
                       child: Icon(
                         Icons.person,
                         color: isCurrentUser ? Colors.white : Colors.grey.shade700,
                       ),
                     ),
                     title: Text(
-                      memberList[index],
+                      isCurrentUser && _isAnonymous ? "Anonymous (You)" : memberList[index],
                       style: TextStyle(
                         fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -192,14 +246,17 @@ class GroupDetailsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => GroupChatScreen(group: group),
+                          builder: (context) => GroupChatScreen(
+                            group: widget.group,
+                            isAnonymous: _isAnonymous,
+                          ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      backgroundColor: Colors.teal,
+                      backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
