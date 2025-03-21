@@ -1,3 +1,5 @@
+// Modified HomePage class
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/bottom_navbar.dart';
@@ -133,6 +135,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      extendBody: true, // This allows the body to extend behind the bottom navigation bar
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -161,221 +164,234 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          // Main background
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF39B0E5),
-                  Color(0xFF1ED4B5),
-                ],
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF39B0E5),
+              Color(0xFF1ED4B5),
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Top image with curved bottom
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.45,
+                width: double.infinity,
+                child: ClipPath(
+                  clipper: BottomCurveClipper(),
+                  child: Image.asset(
+                    'assets/images/homeimg2.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
-          ),
 
-          // Top image with curved bottom
-          Container(
-            height: MediaQuery.of(context).size.height * 0.45,
-            width: double.infinity,
-            child: ClipPath(
-              clipper: BottomCurveClipper(),
-              child: Image.asset(
-                'assets/images/homeimg2.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+            // Content
+            SafeArea(
+              bottom: false, // Important: Don't add bottom padding for the safe area
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 80), // Add extra bottom padding for content
+                  child: Column(
+                    children: [
+                      // Space for the top image
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.2),
 
-          // Content
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
-                child: Column(
-                  children: [
-                    // Space for the top image
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-
-                    // Hero Card
-                    FadeTransition(
-                      opacity: _fadeInAnimation,
-                      child: Container(
-                        width: screenSize.width,
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 15,
-                              offset: Offset(0, 8),
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  _displayText,
-                                  style: TextStyle(
-                                    color: Color(0xFF39B0E5),
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                AnimatedOpacity(
-                                  opacity: (_currentIndex < _fullText.length && _currentIndex % 2 == 0) ? 1.0 : 0.0,
-                                  duration: Duration(milliseconds: 500),
-                                  child: Text(
-                                    "|",
+                      // Hero Card
+                      FadeTransition(
+                        opacity: _fadeInAnimation,
+                        child: Container(
+                          width: screenSize.width,
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 15,
+                                offset: Offset(0, 8),
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    _displayText,
                                     style: TextStyle(
                                       color: Color(0xFF39B0E5),
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "Welcome to your mental health journey!",
-                              style: TextStyle(
-                                color: Color(0xFF1E2D3D),
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                height: 1.3,
+                                  AnimatedOpacity(
+                                    opacity: (_currentIndex < _fullText.length && _currentIndex % 2 == 0) ? 1.0 : 0.0,
+                                    duration: Duration(milliseconds: 500),
+                                    child: Text(
+                                      "|",
+                                      style: TextStyle(
+                                        color: Color(0xFF39B0E5),
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 10),
+                              Text(
+                                "Welcome to your mental health journey!",
+                                style: TextStyle(
+                                  color: Color(0xFF1E2D3D),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                    SizedBox(height: 35),
+                      SizedBox(height: 35),
 
-                    // Service text heading with professional styling
-                    FadeTransition(
-                      opacity: _fadeInAnimation,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Services",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
+                      // Service text heading with professional styling
+                      FadeTransition(
+                        opacity: _fadeInAnimation,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Services",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.white.withOpacity(0.5),
-                                      Colors.white.withOpacity(0),
-                                    ],
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Container(
+                                  height: 1,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.white.withOpacity(0.5),
+                                        Colors.white.withOpacity(0),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                    // Feature Cards - 2-1 layout (2 on top, 1 in middle below)
-                    AnimatedBuilder(
-                      animation: _animationController,
-                      builder: (context, child) {
-                        return Column(
-                          children: [
-                            // First row - 2 cards
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Transform.translate(
-                                  offset: Offset(0, 50 * (1 - _animationController.value)),
-                                  child: Opacity(
-                                    opacity: _animationController.value,
-                                    child: _buildFeatureCard(
-                                      "AI Chatbot",
-                                      "Talk to our AI about your feelings",
-                                      "/chatbot",
-                                      Color(0xFF4B9FE1),
-                                      Icons.smart_toy_outlined,
+                      // Feature Cards - 2-1 layout (2 on top, 1 in middle below)
+                      AnimatedBuilder(
+                        animation: _animationController,
+                        builder: (context, child) {
+                          return Column(
+                            children: [
+                              // First row - 2 cards
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Transform.translate(
+                                    offset: Offset(0, 50 * (1 - _animationController.value)),
+                                    child: Opacity(
+                                      opacity: _animationController.value,
+                                      child: _buildFeatureCard(
+                                        "AI Chatbot",
+                                        "Talk to our AI about your feelings",
+                                        "/chatbot",
+                                        Color(0xFF4B9FE1),
+                                        Icons.smart_toy_outlined,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: 20),
-                                Transform.translate(
-                                  offset: Offset(0, 50 * (1 - _animationController.value)),
-                                  child: Opacity(
-                                    opacity: _animationController.value * 0.85,
-                                    child: _buildFeatureCard(
-                                      "Community",
-                                      "Connect with others on similar journeys",
-                                      "/chatforum",
-                                      Color(0xFF1EBBD7),
-                                      Icons.forum_outlined,
+                                  SizedBox(width: 20),
+                                  Transform.translate(
+                                    offset: Offset(0, 50 * (1 - _animationController.value)),
+                                    child: Opacity(
+                                      opacity: _animationController.value * 0.85,
+                                      child: _buildFeatureCard(
+                                        "Community",
+                                        "Connect with others on similar journeys",
+                                        "/chatforum",
+                                        Color(0xFF1EBBD7),
+                                        Icons.forum_outlined,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
 
-                            SizedBox(height: 20),
+                              SizedBox(height: 20),
 
-                            // Second row - 1 card centered
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Transform.translate(
-                                  offset: Offset(0, 50 * (1 - _animationController.value)),
-                                  child: Opacity(
-                                    opacity: _animationController.value * 0.7,
-                                    child: _buildFeatureCard(
-                                      "Mood Tracker",
-                                      "Track and analyze your mood patterns",
-                                      "/moodtracker",
-                                      Color(0xFF20E4B5),
-                                      Icons.insights_outlined,
+                              // Second row - 1 card centered
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Transform.translate(
+                                    offset: Offset(0, 50 * (1 - _animationController.value)),
+                                    child: Opacity(
+                                      opacity: _animationController.value * 0.7,
+                                      child: _buildFeatureCard(
+                                        "Mood Tracker",
+                                        "Track and analyze your mood patterns",
+                                        "/moodtracker",
+                                        Color(0xFF20E4B5),
+                                        Icons.insights_outlined,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
+      // Use a Theme to adjust the visual properties of the BottomNavigationBar
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          // This makes the navigation bar transparent
+          canvasColor: Colors.transparent,
+          // This removes the shadow from the navigation bar
+          shadowColor: Colors.transparent,
+        ),
+        child: BottomNavBar(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
+        ),
       ),
     );
   }
