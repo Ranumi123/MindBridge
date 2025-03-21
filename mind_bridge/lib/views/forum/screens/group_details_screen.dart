@@ -146,40 +146,53 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                   ),
                   const SizedBox(height: 12),
                   // Anonymous Mode Toggle
-                  Row(
-                    children: [
-                      Switch(
-                        value: _isAnonymous,
-                        onChanged: (value) {
-                          setState(() {
-                            _isAnonymous = value;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(_isAnonymous 
-                                ? 'Anonymous mode enabled. Your identity will be hidden in chat.'
-                                : 'Anonymous mode disabled. Your real username will be visible.'),
-                              backgroundColor: _isAnonymous ? tertiaryColor : primaryColor,
-                            ),
-                          );
-                        },
-                        activeColor: tertiaryColor,
-                        activeTrackColor: tertiaryColor.withOpacity(0.5),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _isAnonymous ? Colors.black.withOpacity(0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _isAnonymous ? Colors.black54 : Colors.grey.shade300,
+                        width: 1,
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Anonymous Mode',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    child: Row(
+                      children: [
+                        Switch(
+                          value: _isAnonymous,
+                          onChanged: (value) {
+                            setState(() {
+                              _isAnonymous = value;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(_isAnonymous 
+                                  ? 'Anonymous mode enabled. Your identity will be hidden in chat.'
+                                  : 'Anonymous mode disabled. Your real username will be visible.'),
+                                backgroundColor: _isAnonymous ? Colors.black87 : primaryColor,
+                              ),
+                            );
+                          },
+                          activeColor: Colors.black87,
+                          activeTrackColor: Colors.grey.shade500,
                         ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.privacy_tip_outlined,
-                        color: _isAnonymous ? tertiaryColor : Colors.grey,
-                      )
-                    ],
+                        const SizedBox(width: 8),
+                        Text(
+                          'Anonymous Mode',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: _isAnonymous ? Colors.black87 : Colors.grey.shade700,
+                          ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.privacy_tip_outlined,
+                          color: _isAnonymous ? Colors.black87 : Colors.grey.shade400,
+                          size: 24,
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),
