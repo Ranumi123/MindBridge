@@ -345,20 +345,22 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: tertiaryColor,
+                            color: Colors.black87,
                             borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white38, width: 1),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.privacy_tip_outlined, size: 12, color: Colors.white),
+                              Icon(Icons.visibility_off, size: 12, color: Colors.white),
                               SizedBox(width: 2),
                               Text(
-                                'Anonymous',
+                                'ANONYMOUS',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                             ],
@@ -466,7 +468,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         vertical: 8,
                       ),
                       prefixIcon: widget.isAnonymous 
-                          ? const Icon(Icons.privacy_tip_outlined, color: tertiaryColor)
+                          ? const Icon(Icons.visibility_off, color: Colors.black87)
                           : null,
                     ),
                     textCapitalization: TextCapitalization.sentences,
