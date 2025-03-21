@@ -1,4 +1,4 @@
-// Combined MindBridge and Chat Forum Server
+// MindBridge Server - Mental Health AI Assistant
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -33,60 +33,6 @@ const datasetPath = path.join(__dirname, 'datasets', 'Suicide_Ideation_Dataset(T
 let suicideDataset = [];
 let suicidalPatterns = [];
 let initialized = false;
-
-// Chat forum in-memory data (will be moved to MongoDB later)
-let chatGroups = [
-  {
-    id: '1',
-    name: 'Depression Support',
-    members: '0/10',
-    description: 'A safe space to discuss depression and support each other',
-    membersList: []
-  },
-  {
-    id: '2',
-    name: 'Anxiety Management',
-    members: '0/8',
-    description: 'Share anxiety coping strategies and experiences',
-    membersList: []
-  }
-];
-
-let messages = {
-  '1': [
-    {
-      id: '1',
-      message: 'Welcome to Depression Support group!',
-      sender: 'Admin',
-      timestamp: new Date().toISOString(),
-      isMe: false
-    }
-  ],
-  '2': [
-    {
-      id: '1',
-      message: 'Welcome to Anxiety Management group!',
-      sender: 'Admin',
-      timestamp: new Date().toISOString(),
-      isMe: false
-    }
-  ]
-};
-
-// Helper function to generate IDs
-function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
-// Helper function to update member count
-function updateMembersCount(groupId) {
-  const group = chatGroups.find(g => g.id === groupId);
-  if (group) {
-    const parts = group.members.split('/');
-    const maxMembers = parseInt(parts[1]);
-    group.members = `${group.membersList.length}/${maxMembers}`;
-  }
-}
 
 // Load and process suicide dataset
 async function loadSuicideDataset() {
@@ -305,90 +251,13 @@ async function storeChatMessage(userId, message, reply, status) {
   }
 }
 
-// Store forum messages in MongoDB - IMPROVED VERSION
-async function storeForumMessage(groupId, message) {
-  try {
-    // Make sure DB is initialized
-    const db = getDB();
-    
-    // Make sure message has the right format for MongoDB
-    const messageToStore = {
-      groupId,
-      ...message,
-      // Convert string timestamp to Date object if it's not already
-      timestamp: message.timestamp ? new Date(message.timestamp) : new Date()
-    };
-    
-    // Insert the message and wait for the operation to complete
-    const result = await db.collection('forumMessages').insertOne(messageToStore);
-    
-    // Log success to verify in the console
-    console.log(`Forum message stored in MongoDB with ID: ${result.insertedId}`);
-    return result;
-  } catch (error) {
-    console.error("Error storing forum message:", error);
-    // Throw the error so calling function can handle it if needed
-    throw error;
-  }
-}
-
-// Initialize forum groups in database
-async function initializeForumGroups() {
-  try {
-    const db = getDB();
-    
-    // Check if groups collection exists and has data
-    const existingGroups = await db.collection('chatGroups')
-      .find({})
-      .toArray();
-    
-    if (existingGroups && existingGroups.length > 0) {
-      console.log(`Found ${existingGroups.length} existing chat groups in database`);
-      // Optionally sync in-memory groups with DB groups
-      chatGroups = existingGroups;
-    } else {
-      // Store the initial groups in the database
-      const result = await db.collection('chatGroups').insertMany(chatGroups);
-      console.log(`Initialized ${result.insertedCount} chat groups in database`);
-    }
-    
-    // Now initialize messages for each group
-    for (const group of chatGroups) {
-      const groupMessages = messages[group.id] || [];
-      
-      // Check if this group already has messages in the database
-      const existingMessages = await db.collection('forumMessages')
-        .find({ groupId: group.id })
-        .toArray();
-      
-      if (existingMessages && existingMessages.length === 0 && groupMessages.length > 0) {
-        // Store initial messages for this group
-        const messagePromises = groupMessages.map(msg => 
-          db.collection('forumMessages').insertOne({
-            groupId: group.id,
-            ...msg,
-            timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
-          })
-        );
-        
-        await Promise.all(messagePromises);
-        console.log(`Initialized ${groupMessages.length} messages for group ${group.id}`);
-      } else {
-        console.log(`Group ${group.id} already has ${existingMessages.length} messages in database`);
-      }
-    }
-  } catch (error) {
-    console.error("Error initializing forum groups in database:", error);
-  }
-}
-
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 
 // Health check route
 app.get("/", (req, res) => {
-  res.send("Server is running!");
+  res.send("MindBridge Server is running!");
 });
 
 // AI Chat route
@@ -458,241 +327,6 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// Group forum routes
-
-// Get all chat groups
-app.get('/groups', (req, res) => {
-  res.json(chatGroups);
-});
-
-// Get a specific group by ID
-app.get('/groups/:groupId', (req, res) => {
-  const { groupId } = req.params;
-  const group = chatGroups.find(g => g.id === groupId);
-  
-  if (!group) {
-    return res.status(404).json({ error: 'Group not found' });
-  }
-  
-  res.json(group);
-});
-
-// Get messages for a specific group - IMPROVED VERSION
-app.get('/groups/:groupId/messages', async (req, res) => {
-  const { groupId } = req.params;
-  
-  // Check if group exists in memory
-  if (!messages[groupId]) {
-    return res.status(404).json({ error: 'Group not found' });
-  }
-  
-  try {
-    // Get database connection
-    const db = getDB();
-    
-    // Ping database to verify connection
-    const isConnected = await pingDatabase();
-    if (!isConnected) {
-      console.warn("Database connection issue, falling back to in-memory messages");
-      return res.json(messages[groupId]);
-    }
-    
-    // Try to fetch from MongoDB
-    const dbMessages = await db.collection('forumMessages')
-      .find({ groupId })
-      .sort({ timestamp: 1 })
-      .toArray();
-    
-    console.log(`Retrieved ${dbMessages.length} messages from MongoDB for group ${groupId}`);
-    
-    // If we have messages in the database, return those
-    if (dbMessages && dbMessages.length > 0) {
-      return res.json(dbMessages);
-    } else {
-      // If no messages in DB, store the in-memory messages in DB for future use
-      const storePromises = messages[groupId].map(msg => storeForumMessage(groupId, msg).catch(err => console.error(err)));
-      await Promise.allSettled(storePromises);
-      console.log(`Initialized DB with ${messages[groupId].length} in-memory messages for group ${groupId}`);
-    }
-  } catch (error) {
-    console.error("Error fetching messages from MongoDB:", error);
-    // Fall back to in-memory messages if database fetch fails
-  }
-  
-  res.json(messages[groupId]);
-});
-
-// Send a message to a group - IMPROVED VERSION
-app.post('/groups/:groupId/messages', async (req, res) => {
-  const { groupId } = req.params;
-  const { message, sender = 'You', userId } = req.body || {};
-  
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
-  }
-  
-  if (!messages[groupId]) {
-    return res.status(404).json({ error: 'Group not found' });
-  }
-  
-  // Check for harmful content
-  const { harmful, type } = await detectHarmfulText(message);
-  
-  if (harmful) {
-    if (type === 'suicidal') {
-      // For forum posts, we handle suicidal content differently
-      // Still store the message but flag it for moderators
-      const moderationNote = "⚠️ This message contains concerning content. A moderator has been notified.";
-      
-      const newMessage = {
-        id: generateId(),
-        message: message,
-        sender,
-        timestamp: new Date().toISOString(),
-        isMe: sender === 'You',
-        flagged: true,
-        moderationNote
-      };
-      
-      messages[groupId].push(newMessage);
-      
-      try {
-        // Store in MongoDB and wait for completion
-        await storeForumMessage(groupId, newMessage);
-        console.log("Flagged message stored in MongoDB");
-        
-        // Notify emergency contacts if userId is provided
-        if (userId) {
-          await notifyEmergencyContacts(userId);
-        }
-      } catch (dbError) {
-        console.error("Failed to store flagged message in MongoDB:", dbError);
-        // Continue with response even if DB storage fails
-      }
-      
-      return res.status(201).json({
-        ...newMessage,
-        warning: "Your message contains concerning content. Resources are available if you need help."
-      });
-    } else {
-      return res.status(400).json({ error: 'Your message contains inappropriate content and cannot be posted.' });
-    }
-  }
-  
-  const newMessage = {
-    id: generateId(),
-    message,
-    sender,
-    timestamp: new Date().toISOString(),
-    isMe: sender === 'You'
-  };
-  
-  // Add to in-memory storage
-  messages[groupId].push(newMessage);
-  
-  try {
-    // Store in MongoDB and wait for completion
-    await storeForumMessage(groupId, newMessage);
-    console.log("Message successfully stored in MongoDB");
-  } catch (dbError) {
-    console.error("Failed to store message in MongoDB:", dbError);
-    // Continue with response even if DB storage fails
-  }
-  
-  res.status(201).json(newMessage);
-});
-
-// Join a group
-app.post('/groups/:groupId/join', (req, res) => {
-  const { groupId } = req.params;
-  const { username } = req.body || {};
-  
-  if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
-  }
-  
-  const group = chatGroups.find(g => g.id === groupId);
-  
-  if (!group) {
-    return res.status(404).json({ error: 'Group not found' });
-  }
-  
-  const parts = group.members.split('/');
-  const currentMembers = parseInt(parts[0]);
-  const maxMembers = parseInt(parts[1]);
-  
-  if (currentMembers >= maxMembers) {
-    return res.status(400).json({ error: 'Group is full' });
-  }
-  
-  // Check if user is already in the group
-  if (group.membersList.includes(username)) {
-    return res.status(400).json({ error: 'User is already a member of this group' });
-  }
-  
-  group.membersList.push(username);
-  updateMembersCount(groupId);
-  
-  res.status(200).json({ message: 'Successfully joined the group', group });
-});
-
-// Leave a group
-app.post('/groups/:groupId/leave', (req, res) => {
-  const { groupId } = req.params;
-  const { username } = req.body || {};
-  
-  if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
-  }
-  
-  const group = chatGroups.find(g => g.id === groupId);
-  
-  if (!group) {
-    return res.status(404).json({ error: 'Group not found' });
-  }
-  
-  const userIndex = group.membersList.indexOf(username);
-  
-  if (userIndex === -1) {
-    return res.status(400).json({ error: 'User is not a member of this group' });
-  }
-  
-  group.membersList.splice(userIndex, 1);
-  updateMembersCount(groupId);
-  
-  res.status(200).json({ message: 'Successfully left the group', group });
-});
-
-// Create a new group
-app.post('/groups', (req, res) => {
-  const { name, description } = req.body || {};
-  
-  if (!name) {
-    return res.status(400).json({ error: 'Group name is required' });
-  }
-  
-  const newGroup = {
-    id: generateId(),
-    name,
-    members: '0/10',
-    description: description || '',
-    membersList: []
-  };
-  
-  chatGroups.push(newGroup);
-  messages[newGroup.id] = [
-    {
-      id: generateId(),
-      message: `Welcome to ${newGroup.name}!`,
-      sender: 'Admin',
-      timestamp: new Date().toISOString(),
-      isMe: false
-    }
-  ];
-  
-  res.status(201).json(newGroup);
-});
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -711,9 +345,6 @@ app.use((err, req, res, next) => {
     
     // Then load the dataset
     await loadSuicideDataset();
-    
-    // Initialize forum groups in database
-    await initializeForumGroups();
   } catch (error) {
     console.error("Initialization error:", error);
     process.exit(1);
@@ -722,5 +353,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`MindBridge server running on http://localhost:${PORT}`);
 });

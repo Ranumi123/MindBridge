@@ -108,7 +108,10 @@ function getDB() {
   return db;
 }
 
-// Helper function to verify database connectivity
+/**
+ * Verify database connectivity
+ * @returns {Promise<boolean>} Whether the database is reachable
+ */
 async function pingDatabase() {
   try {
     if (!db) {
@@ -124,6 +127,7 @@ async function pingDatabase() {
   }
 }
 
+// Export all the needed functions
 module.exports = {
   connectToMongoDB,
   getDB,
