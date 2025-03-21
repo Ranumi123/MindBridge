@@ -48,12 +48,18 @@ class MessageModel {
 // Define ChatBubble widget directly in this file
 class ChatBubble extends StatelessWidget {
   final MessageModel message;
+  final bool isAnonymous;
 
-  const ChatBubble({super.key, required this.message});
+  const ChatBubble({
+    super.key, 
+    required this.message,
+    this.isAnonymous = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final anonymousColor = const Color(0xFF6E01A1); // Deep purple
     
     return Align(
       alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -66,8 +72,8 @@ class ChatBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: message.isMe 
-                ? const Color(0xFFDCF8C6) // Light green for sent messages
-                : Colors.white, // White for received messages
+                ? (message.sender == 'Anonymous' ? anonymousColor.withOpacity(0.3) : const Color(0xFFDCF8C6))
+                : Colors.white,
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
@@ -84,19 +90,37 @@ class ChatBubble extends StatelessWidget {
               if (!message.isMe)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    message.sender,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                      color: Colors.blue.shade800,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        message.sender,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: message.sender == 'Anonymous' ? anonymousColor : Colors.blue.shade800,
+                        ),
+                      ),
+                      if (message.sender == 'Anonymous') ...[
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.visibility_off,
+                          size: 12,
+                          color: anonymousColor,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               
               Text(
                 message.message,
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: message.isMe && message.sender == 'Anonymous' 
+                      ? const Color(0xFF4A0072) // Darker purple color
+                      : Colors.black,
+                ),
               ),
               
               Row(
@@ -121,7 +145,9 @@ class ChatBubble extends StatelessWidget {
                           Icon(
                             Icons.done_all,
                             size: 14,
-                            color: Colors.blue.shade600,
+                            color: message.sender == 'Anonymous' 
+                                ? anonymousColor 
+                                : Colors.blue.shade600,
                           ),
                         ],
                       ],
@@ -165,6 +191,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   static const Color primaryColor = Color(0xFF4B9FE1); // Blue
   static const Color accentColor = Color(0xFF1EBBD7); // Teal
   static const Color tertiaryColor = Color(0xFF20E4B5); // Turquoise
+  
+  // Define anonymous mode colors
+  static const Color anonymousColor = Color(0xFF6E01A1); // Deep purple
+  static const Color anonymousDarkColor = Color(0xFF4A0072); // Darker purple for text
 
   @override
   void initState() {
@@ -304,20 +334,22 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryColor,
+        backgroundColor: widget.isAnonymous ? anonymousColor : primaryColor,
         leadingWidth: 40,
         title: Row(
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: accentColor,
-              child: Text(
-                widget.group.name.isNotEmpty ? widget.group.name[0] : '?',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              backgroundColor: widget.isAnonymous ? anonymousColor.withOpacity(0.7) : accentColor,
+              child: widget.isAnonymous
+                  ? const Icon(Icons.visibility_off, color: Colors.white)
+                  : Text(
+                      widget.group.name.isNotEmpty ? widget.group.name[0] : '?',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -345,7 +377,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.black87,
+                            color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.white38, width: 1),
                           ),
@@ -405,22 +437,46 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               decoration: BoxDecoration(
                 // Light pattern background
                 color: Colors.grey.shade200,
-                image: const DecorationImage(
-                  image: NetworkImage('https://i.pinimg.com/originals/97/c0/07/97c00759d90d786d9b6096d274ad3e07.png'),
+                image: DecorationImage(
+                  image: const NetworkImage('https://i.pinimg.com/originals/97/c0/07/97c00759d90d786d9b6096d274ad3e07.png'),
                   repeat: ImageRepeat.repeat,
-                  opacity: 0.2,
+                  opacity: widget.isAnonymous ? 0.1 : 0.2,
+                  colorFilter: widget.isAnonymous
+                      ? ColorFilter.mode(anonymousColor.withOpacity(0.05), BlendMode.overlay)
+                      : null,
                 ),
               ),
               child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: widget.isAnonymous ? anonymousColor : primaryColor,
+                      ),
+                    )
                   : _messages.isEmpty
                       ? Center(
-                          child: Text(
-                            'No messages yet. Say hello!',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade600,
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                widget.isAnonymous ? Icons.visibility_off : Icons.chat_bubble_outline,
+                                size: 48,
+                                color: widget.isAnonymous 
+                                    ? anonymousColor.withOpacity(0.5)
+                                    : Colors.grey.shade400,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                widget.isAnonymous
+                                    ? 'No messages yet. Say hello anonymously!'
+                                    : 'No messages yet. Say hello!',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: widget.isAnonymous
+                                      ? anonymousColor.withOpacity(0.7)
+                                      : Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       : ListView.builder(
@@ -428,7 +484,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           padding: const EdgeInsets.all(10.0),
                           itemCount: _messages.length,
                           itemBuilder: (context, index) {
-                            return ChatBubble(message: _messages[index]);
+                            return ChatBubble(
+                              message: _messages[index],
+                              isAnonymous: widget.isAnonymous,
+                            );
                           },
                         ),
             ),
@@ -443,7 +502,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 // Attachment button
                 IconButton(
                   icon: const Icon(Icons.attach_file),
-                  color: Colors.grey.shade600,
+                  color: widget.isAnonymous ? anonymousColor.withOpacity(0.6) : Colors.grey.shade600,
                   onPressed: () {},
                 ),
                 
@@ -456,40 +515,64 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       hintText: widget.isAnonymous 
                           ? 'Type as Anonymous' 
                           : 'Type a message',
-                      hintStyle: TextStyle(color: Colors.grey.shade500),
+                      hintStyle: TextStyle(
+                        color: widget.isAnonymous 
+                            ? anonymousColor.withOpacity(0.6)  
+                            : Colors.grey.shade500,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor: Colors.grey.shade100,
+                      fillColor: widget.isAnonymous
+                          ? anonymousColor.withOpacity(0.05)
+                          : Colors.grey.shade100,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
                       prefixIcon: widget.isAnonymous 
-                          ? const Icon(Icons.visibility_off, color: Colors.black87)
+                          ? const Icon(Icons.visibility_off, color: anonymousColor)
+                          : null,
+                      enabledBorder: widget.isAnonymous
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide(color: anonymousColor.withOpacity(0.3)),
+                            )
+                          : null,
+                      focusedBorder: widget.isAnonymous
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: const BorderSide(color: anonymousColor),
+                            )
                           : null,
                     ),
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
                     maxLines: 4,
                     onSubmitted: (_) => _sendMessage(),
+                    style: TextStyle(
+                      color: widget.isAnonymous ? anonymousDarkColor : null,
+                    ),
                   ),
                 ),
                 
                 // Send button
                 IconButton(
                   icon: _isSending
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
+                            color: widget.isAnonymous ? anonymousColor : primaryColor,
                           ),
                         )
-                      : const Icon(Icons.send),
-                  color: primaryColor,
+                      : Icon(
+                          Icons.send,
+                          color: widget.isAnonymous ? anonymousColor : primaryColor,
+                        ),
                   onPressed: _isSending ? null : _sendMessage,
                 ),
               ],
