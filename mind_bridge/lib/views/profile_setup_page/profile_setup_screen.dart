@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.white, Colors.lightBlue.shade50],
+            colors: [Colors.white, Colors.teal.shade50], // Changed to match your teal theme
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -40,13 +40,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
+                      color: Colors.teal, // Changed to match your teal theme
                     ),
                   ),
                   centerTitle: true,
                   elevation: 0,
                   backgroundColor: Colors.transparent,
-                  iconTheme: IconThemeData(color: Colors.blueAccent),
+                  iconTheme: const IconThemeData(color: Colors.teal), // Changed to match your teal theme
                 ),
 
                 const SizedBox(height: 20),
@@ -56,11 +56,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   tag: 'profile-picture',
                   child: CircleAvatar(
                     radius: 60,
-                    backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                    backgroundColor: Colors.teal.withOpacity(0.1), // Changed to match your teal theme
                     child: ClipOval(
                       child: CachedNetworkImage(
                         imageUrl:
-                            'https://via.placeholder.com/150', // Replace with user's profile picture URL
+                        'https://via.placeholder.com/150', // Replace with user's profile picture URL
                         fit: BoxFit.cover,
                         width: 120,
                         height: 120,
@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: GoogleFonts.poppins(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
+                    color: Colors.teal, // Changed to match your teal theme
                   ),
                 ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.5),
 
@@ -104,28 +104,52 @@ class _ProfilePageState extends State<ProfilePage> {
                   });
                 }),
                 _buildPreferenceSwitch('Anonymous Mode', anonymousMode,
-                    (newValue) {
-                  setState(() {
-                    anonymousMode = newValue;
-                  });
-                }),
+                        (newValue) {
+                      setState(() {
+                        anonymousMode = newValue;
+                      });
+                    }),
 
                 const SizedBox(height: 30),
 
                 // Privacy Settings Section
                 _buildSectionTitle('Privacy Settings'),
                 _buildPreferenceSwitch('Allow Data Sharing', allowDataSharing,
-                    (newValue) {
-                  setState(() {
-                    allowDataSharing = newValue;
-                  });
-                }),
+                        (newValue) {
+                      setState(() {
+                        allowDataSharing = newValue;
+                      });
+                    }),
                 _buildPreferenceSwitch('Enable Encryption', enableEncryption,
-                    (newValue) {
-                  setState(() {
-                    enableEncryption = newValue;
-                  });
-                }),
+                        (newValue) {
+                      setState(() {
+                        enableEncryption = newValue;
+                      });
+                    }),
+
+                const SizedBox(height: 30),
+
+                // Link to Privacy Settings Page
+                Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      'Advanced Privacy Settings',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios, color: Colors.teal),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/privacy_settings');
+                    },
+                  ),
+                ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.5),
 
                 const SizedBox(height: 30),
 
@@ -135,14 +159,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Navigate to edit profile page
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.teal, // Changed to match your teal theme
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     elevation: 5,
-                    shadowColor: Colors.blueAccent.withOpacity(0.3),
+                    shadowColor: Colors.teal.withOpacity(0.3), // Changed to match your teal theme
                   ),
                   child: Text(
                     'Edit Profile',
@@ -169,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
         style: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.blueAccent,
+          color: Colors.teal, // Changed to match your teal theme
         ),
       ),
     ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.5);
@@ -193,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         value: value,
         onChanged: onChanged,
-        activeColor: Colors.blueAccent,
+        activeColor: Colors.teal, // Changed to match your teal theme
         inactiveTrackColor: Colors.grey.shade300,
       ),
     ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.5);
