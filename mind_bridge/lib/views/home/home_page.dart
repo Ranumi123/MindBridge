@@ -1,4 +1,4 @@
-// Modified HomePage class
+// Modified HomePage class with ProfilePage integration
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +6,7 @@ import '../widgets/bottom_navbar.dart';
 import '../widgets/feature_card.dart';
 import '../feed-page/meditation_list_screen.dart';
 import '../therapist_dashboard/appointment_screen.dart';
+import '../profile_setup_page/profile_setup_screen.dart'; // Import the ProfilePage
 import 'dart:async';
 
 class HomePage extends StatefulWidget {
@@ -125,8 +126,20 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ),
       );
     } else if (index == 3) {
-      // Settings icon navigation
-      Navigator.pushNamed(context, '/settings');
+      // Profile icon navigation with slide up transition
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var begin = Offset(0.0, 1.0);
+            var end = Offset.zero;
+            var curve = Curves.easeInOut;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
+        ),
+      );
     }
   }
 
