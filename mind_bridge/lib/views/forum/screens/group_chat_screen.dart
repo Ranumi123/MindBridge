@@ -139,8 +139,13 @@ class ChatBubble extends StatelessWidget {
 
 class GroupChatScreen extends StatefulWidget {
   final ChatGroup group;
+  final bool isAnonymous;
 
-  const GroupChatScreen({super.key, required this.group});
+  const GroupChatScreen({
+    super.key, 
+    required this.group, 
+    this.isAnonymous = false,
+  });
 
   @override
   State<GroupChatScreen> createState() => _GroupChatScreenState();
@@ -155,6 +160,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   List<MessageModel> _messages = [];
   bool _isLoading = true;
   bool _isSending = false;
+
+  // Define app color scheme
+  static const Color primaryColor = Color(0xFF4B9FE1); // Blue
+  static const Color accentColor = Color(0xFF1EBBD7); // Teal
+  static const Color tertiaryColor = Color(0xFF20E4B5); // Turquoise
 
   @override
   void initState() {
@@ -221,11 +231,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     // Clear text field immediately for better UX
     _messageController.clear();
     
-    // Add optimistic message to the UI
+    // Add optimistic message to the UI with anonymous sender if enabled
     final optimisticMessage = MessageModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       message: messageText,
-      sender: 'You',
+      sender: widget.isAnonymous ? 'Anonymous' : 'You',
       timestamp: DateTime.now(),
       isMe: true,
     );
@@ -294,13 +304,13 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
+        backgroundColor: primaryColor,
         leadingWidth: 40,
         title: Row(
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: Colors.teal.shade200,
+              backgroundColor: accentColor,
               child: Text(
                 widget.group.name.isNotEmpty ? widget.group.name[0] : '?',
                 style: const TextStyle(
@@ -321,12 +331,41 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    widget.group.members,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        widget.group.members,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      if (widget.isAnonymous) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: tertiaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.privacy_tip_outlined, size: 12, color: Colors.white),
+                              SizedBox(width: 2),
+                              Text(
+                                'Anonymous',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
@@ -412,7 +451,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     controller: _messageController,
                     focusNode: _focusNode,
                     decoration: InputDecoration(
-                      hintText: 'Type a message',
+                      hintText: widget.isAnonymous 
+                          ? 'Type as Anonymous' 
+                          : 'Type a message',
                       hintStyle: TextStyle(color: Colors.grey.shade500),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
@@ -424,6 +465,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         horizontal: 16,
                         vertical: 8,
                       ),
+                      prefixIcon: widget.isAnonymous 
+                          ? const Icon(Icons.privacy_tip_outlined, color: tertiaryColor)
+                          : null,
                     ),
                     textCapitalization: TextCapitalization.sentences,
                     minLines: 1,
@@ -443,7 +487,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           ),
                         )
                       : const Icon(Icons.send),
-                  color: Colors.teal,
+                  color: primaryColor,
                   onPressed: _isSending ? null : _sendMessage,
                 ),
               ],
