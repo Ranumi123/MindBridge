@@ -728,22 +728,22 @@ class AppointmentScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 16),
                             _buildPopularDoctorCard(
-                              'DR. JAMES',
+                              'DR. Perera',
                               'assets/images/doctor2.png',
                             ),
                             const SizedBox(width: 16),
                             _buildPopularDoctorCard(
-                              'DR. JAMES',
+                              'DR. Shiromi',
                               'assets/images/doctor2.png',
                             ),
                             const SizedBox(width: 16),
                             _buildPopularDoctorCard(
-                              'DR. JAMES',
+                              'DR. Kalum',
                               'assets/images/doctor2.png',
                             ),
                             const SizedBox(width: 16),
                             _buildPopularDoctorCard(
-                              'DR. JAMES',
+                              'DR. Mano',
                               'assets/images/doctor2.png',
                             ),
                           ],
