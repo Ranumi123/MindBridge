@@ -818,14 +818,14 @@ class AppointmentScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       _buildTopDoctorCard(
                         context,
-                        'Dr. Jensen',
+                        'Dr. Subash',
                         'Neurologist',
                         'assets/images/doctor6.png',
                       ),
                       const SizedBox(height: 12),
                       _buildTopDoctorCard(
                         context,
-                        'Dr. Jensen',
+                        'Dr. Jehan',
                         'Neurologist',
                         'assets/images/doctor5.png',
                       ),
