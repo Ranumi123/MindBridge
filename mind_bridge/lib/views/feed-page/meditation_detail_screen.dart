@@ -1,16 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/bottom_navbar.dart';
+import '../therapist_dashboard/appointment_screen.dart';
+import '../home/home_page.dart';
+import 'meditation_list_screen.dart';
+import '../profile_setup_page/profile_setup_screen.dart';
 
-class MeditationDetailScreen extends StatelessWidget {
+class MeditationDetailScreen extends StatefulWidget {
   final Map<String, dynamic> meditation;
 
   const MeditationDetailScreen({super.key, required this.meditation});
 
   @override
+  State<MeditationDetailScreen> createState() => _MeditationDetailScreenState();
+}
+
+class _MeditationDetailScreenState extends State<MeditationDetailScreen> {
+  int _selectedIndex = 2; // Set to 2 for meditation tab
+
+  // Function to handle bottom navigation
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AppointmentScreen(),
+            ));
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MeditationListScreen()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                ProfilePage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              var begin = Offset(0.0, 1.0);
+              var end = Offset.zero;
+              var curve = Curves.easeInOut;
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              return SlideTransition(
+                  position: animation.drive(tween), child: child);
+            },
+          ),
+        );
+        break;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(meditation['title'] ?? 'Meditation'),
+        title: Text(widget.meditation['title'] ?? 'Meditation'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -34,7 +94,7 @@ class MeditationDetailScreen extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  meditation['image'] ?? '',
+                  widget.meditation['image'] ?? '',
                   width: double.infinity,
                   height: 200,
                   fit: BoxFit.cover,
@@ -55,7 +115,7 @@ class MeditationDetailScreen extends StatelessWidget {
 
               // Meditation Title
               Text(
-                meditation['title'] ?? 'No Title',
+                widget.meditation['title'] ?? 'No Title',
                 style:
                     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
@@ -63,7 +123,7 @@ class MeditationDetailScreen extends StatelessWidget {
 
               // Meditation Author
               Text(
-                'By ${meditation['author'] ?? 'Unknown'}',
+                'By ${widget.meditation['author'] ?? 'Unknown'}',
                 style:
                     const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
               ),
@@ -73,15 +133,15 @@ class MeditationDetailScreen extends StatelessWidget {
               Row(
                 children: [
                   Chip(
-                    label: Text(meditation['category'] ?? 'Unknown'),
+                    label: Text(widget.meditation['category'] ?? 'Unknown'),
                     backgroundColor: const Color(0xFF1EBBD7)
-                        .withValues(alpha: 0.2), // Teal with transparency
+                        .withOpacity(0.2), // Fixed to use withOpacity
                   ),
                   const SizedBox(width: 10),
                   Chip(
-                    label: Text(meditation['duration'] ?? 'Unknown'),
-                    backgroundColor: const Color(0xFF20E4B5).withValues(
-                        alpha: 0.2), // Greenish accent with transparency
+                    label: Text(widget.meditation['duration'] ?? 'Unknown'),
+                    backgroundColor: const Color(0xFF20E4B5)
+                        .withOpacity(0.2), // Fixed to use withOpacity
                   ),
                 ],
               ),
@@ -89,7 +149,7 @@ class MeditationDetailScreen extends StatelessWidget {
 
               // Meditation Description
               Text(
-                meditation['description'] ?? 'No description available.',
+                widget.meditation['description'] ?? 'No description available.',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 30),
@@ -123,7 +183,7 @@ class MeditationDetailScreen extends StatelessWidget {
                     label: const Text("Play Meditation",
                         style: TextStyle(color: Colors.white)),
                     onPressed: () async {
-                      final url = meditation['url'];
+                      final url = widget.meditation['url'];
                       if (url != null && url.isNotEmpty) {
                         final Uri uri = Uri.parse(url);
                         if (await canLaunchUrl(uri)) {
@@ -148,7 +208,10 @@ class MeditationDetailScreen extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
   }
 }
-//update
