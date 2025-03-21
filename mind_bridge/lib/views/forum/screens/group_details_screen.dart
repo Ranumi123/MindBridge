@@ -46,6 +46,9 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   static const Color primaryColor = Color(0xFF4B9FE1); // Blue
   static const Color accentColor = Color(0xFF1EBBD7); // Teal
   static const Color tertiaryColor = Color(0xFF20E4B5); // Turquoise
+  
+  // Define anonymous mode colors
+  static const Color anonymousColor = Color(0xFF6E01A1); // Deep purple
 
   @override
   Widget build(BuildContext context) {
@@ -146,40 +149,54 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                   ),
                   const SizedBox(height: 12),
                   // Anonymous Mode Toggle
-                  Row(
-                    children: [
-                      Switch(
-                        value: _isAnonymous,
-                        onChanged: (value) {
-                          setState(() {
-                            _isAnonymous = value;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(_isAnonymous 
-                                ? 'Anonymous mode enabled. Your identity will be hidden in chat.'
-                                : 'Anonymous mode disabled. Your real username will be visible.'),
-                              backgroundColor: _isAnonymous ? tertiaryColor : primaryColor,
-                            ),
-                          );
-                        },
-                        activeColor: tertiaryColor,
-                        activeTrackColor: tertiaryColor.withOpacity(0.5),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _isAnonymous ? anonymousColor.withOpacity(0.15) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _isAnonymous ? anonymousColor : Colors.grey.shade300,
+                        width: 1.5,
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Anonymous Mode',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    child: Row(
+                      children: [
+                        Switch(
+                          value: _isAnonymous,
+                          onChanged: (value) {
+                            setState(() {
+                              _isAnonymous = value;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(_isAnonymous 
+                                  ? 'Anonymous mode enabled. Your identity will be hidden in chat.'
+                                  : 'Anonymous mode disabled. Your real username will be visible.'),
+                                backgroundColor: _isAnonymous ? anonymousColor : primaryColor,
+                              ),
+                            );
+                          },
+                          activeColor: anonymousColor,
+                          activeTrackColor: anonymousColor.withOpacity(0.5),
+                          inactiveThumbColor: Colors.grey.shade400,
                         ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.privacy_tip_outlined,
-                        color: _isAnonymous ? tertiaryColor : Colors.grey,
-                      )
-                    ],
+                        const SizedBox(width: 8),
+                        Text(
+                          'Anonymous Mode',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: _isAnonymous ? anonymousColor : Colors.grey.shade700,
+                          ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.visibility_off,
+                          color: _isAnonymous ? anonymousColor : Colors.grey.shade400,
+                          size: 24,
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -218,19 +235,31 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                   final isCurrentUser = index == 0;
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: isCurrentUser ? primaryColor : Colors.grey.shade300,
+                      backgroundColor: isCurrentUser 
+                          ? (_isAnonymous ? anonymousColor : primaryColor)
+                          : Colors.grey.shade300,
                       child: Icon(
-                        Icons.person,
-                        color: isCurrentUser ? Colors.white : Colors.grey.shade700,
+                        isCurrentUser && _isAnonymous 
+                            ? Icons.visibility_off
+                            : Icons.person,
+                        color: Colors.white,
                       ),
                     ),
                     title: Text(
                       isCurrentUser && _isAnonymous ? "Anonymous (You)" : memberList[index],
                       style: TextStyle(
                         fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
+                        color: isCurrentUser && _isAnonymous ? anonymousColor : null,
                       ),
                     ),
-                    subtitle: isCurrentUser ? const Text('You (Admin)') : null,
+                    subtitle: isCurrentUser 
+                        ? Text(
+                            _isAnonymous ? 'Anonymous Mode Active' : 'You (Admin)',
+                            style: TextStyle(
+                              color: _isAnonymous ? anonymousColor : null,
+                            ),
+                          ) 
+                        : null,
                   );
                 },
               ),
@@ -256,13 +285,22 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      backgroundColor: primaryColor,
+                      backgroundColor: _isAnonymous ? anonymousColor : primaryColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Enter Chat'),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_isAnonymous) ...[
+                          const Icon(Icons.visibility_off, size: 20),
+                          const SizedBox(width: 8),
+                        ],
+                        const Text('Enter Chat'),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
