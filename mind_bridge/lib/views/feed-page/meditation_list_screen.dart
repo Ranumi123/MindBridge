@@ -7,6 +7,7 @@ import '../therapist_dashboard/appointment_screen.dart';
 import '../profile_setup_page/profile_setup_screen.dart';
 import '../feed-page/meditation_detail_screen.dart';
 import '../home/home_page.dart';
+import 'dart:math' as Math;
 
 class MeditationListScreen extends StatefulWidget {
   const MeditationListScreen({super.key});
@@ -23,22 +24,33 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
   String selectedFilter = "All"; // Added filter state
 
   // ✅ Backend API URL (Updated to match backend endpoint)
-  final String apiUrl =
-      "http://localhost:5001/api/feed"; //Dinura has to update this link
+  final String apiUrl = "http://localhost:5001/api/feed";
 
-  // ✅ Function to Fetch Meditations from Backend
+  @override
+  void initState() {
+    super.initState();
+    fetchMeditations();
+  }
+
+  // ✅ Function to Fetch Meditations from Backend - Simplified without auth
   Future<void> fetchMeditations() async {
     try {
+      print("Fetching meditations from: $apiUrl");
       final response = await http.get(Uri.parse(apiUrl));
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body.substring(0, Math.min(100, response.body.length))}...");
+
       if (response.statusCode == 200) {
         setState(() {
           meditations = json.decode(response.body);
           isLoading = false;
         });
       } else {
-        throw Exception("Failed to load meditations");
+        throw Exception("Failed to load meditations: ${response.statusCode}");
       }
     } catch (e) {
+      print("Error fetching meditations: $e");
       setState(() {
         isLoading = false;
         errorMessage = "Could not load data. Using offline data.";
@@ -66,9 +78,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       "category": "Sleep",
       "author": "Satvic Yoga",
       "image":
-          "https://cdn.pixabay.com/photo/2024/04/19/22/25/man-8707406_1280.png",
+      "https://cdn.pixabay.com/photo/2024/04/19/22/25/man-8707406_1280.png",
       "description":
-          "A deep relaxation yoga practice that helps calm the nervous system and promote deep sleep.",
+      "A deep relaxation yoga practice that helps calm the nervous system and promote deep sleep.",
       "url": "https://youtu.be/uPSml_JQGVY?si=uAuuvPDMDQlV7az4"
     },
     {
@@ -77,9 +89,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       "category": "Sleep",
       "author": "Lauren Gale",
       "image":
-          "https://images.pexels.com/photos/8263101/pexels-photo-8263101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/8263101/pexels-photo-8263101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       "description":
-          "A long, guided meditation session to help you relax and fall into a deep and peaceful sleep.",
+      "A long, guided meditation session to help you relax and fall into a deep and peaceful sleep.",
       "url": "https://youtu.be/gnmlcfZdnBg?si=A1-zDZKzwSmkWp5v"
     },
     {
@@ -88,9 +100,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       "category": "Sleep",
       "author": "Ally Boothroyd",
       "image":
-          "https://images.pexels.com/photos/289586/pexels-photo-289586.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/289586/pexels-photo-289586.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       "description":
-          "This 30-minute guided sleep meditation combines gentle pranayama, deep relaxation, and ocean wave sounds to help you fall asleep quickly and overcome insomnia.",
+      "This 30-minute guided sleep meditation combines gentle pranayama, deep relaxation, and ocean wave sounds to help you fall asleep quickly and overcome insomnia.",
       "url": "https://youtu.be/1G2he0jYOl0?si=b0HrMUXJoqycxjPd"
     },
     {
@@ -99,9 +111,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       "category": "Sleep",
       "author": "Tone It Up",
       "image":
-          "https://images.pexels.com/photos/8261185/pexels-photo-8261185.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/8261185/pexels-photo-8261185.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       "description":
-          "This evening meditation promotes relaxation, gratitude, and stress release, facilitating a peaceful transition into sleep and setting a positive tone for the next day.",
+      "This evening meditation promotes relaxation, gratitude, and stress release, facilitating a peaceful transition into sleep and setting a positive tone for the next day.",
       "url": "https://youtu.be/PZqvrttn7-c?si=TL0g5ApoQLeyDnsv"
     },
     {
@@ -110,9 +122,9 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       "category": "Yoga",
       "author": "Adriene",
       "image":
-          "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       "description":
-          "This 21-minute breath-focused morning flow combines core activation, mobility exercises, and mindful movement to cultivate a peaceful mind, strong body, and positive mindset for the day ahead.",
+      "This 21-minute breath-focused morning flow combines core activation, mobility exercises, and mindful movement to cultivate a peaceful mind, strong body, and positive mindset for the day ahead.",
       "url": "https://youtu.be/LqXZ628YNj4?si=xt_7MZQOyGHjODUX"
     },
     {
@@ -122,16 +134,10 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       "author": "Declutter The Mind",
       "image": "https://i.imgur.com/M5qCCV4_d.webp?maxwidth=760&fidelity=grand",
       "description":
-          "This 10-minute voice-only guided meditation uses breath awareness and mindfulness to enhance concentration, clarity, and focus for improved productivity in work, school, or daily life.",
+      "This 10-minute voice-only guided meditation uses breath awareness and mindfulness to enhance concentration, clarity, and focus for improved productivity in work, school, or daily life.",
       "url": "https://youtu.be/ausxoXBrmWs?si=SXMNeKsuMVvtOfxK"
     }
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchMeditations();
-  }
 
   // ✅ Function to Open YouTube Links
   void _launchYouTube(String url) async {
@@ -175,7 +181,7 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
               var end = Offset.zero;
               var curve = Curves.easeInOut;
               var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
               return SlideTransition(
                   position: animation.drive(tween), child: child);
             },
@@ -203,145 +209,162 @@ class _MeditationListScreenState extends State<MeditationListScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : errorMessage.isNotEmpty
-              ? Center(
-                  child: Text(errorMessage,
-                      style: const TextStyle(color: Colors.red)))
-              : Column(
-                  children: [
-                    // Filter Bar - ADDED FROM SECOND CODE
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: ["All", "Sleep", "Meditation", "Yoga"]
-                            .map((filter) {
-                          return ChoiceChip(
-                            label: Text(filter,
-                                style: const TextStyle(color: Colors.white)),
-                            selected: selectedFilter == filter,
-                            selectedColor: const Color(0xFF1EBBD7),
-                            backgroundColor: Colors.grey[800],
-                            onSelected: (bool selected) {
-                              setState(() {
-                                selectedFilter = filter;
-                              });
-                            },
-                          );
-                        }).toList(),
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(errorMessage,
+                style: const TextStyle(color: Colors.red)),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isLoading = true;
+                  errorMessage = "";
+                });
+                fetchMeditations();
+              },
+              child: const Text("Try Again"),
+            ),
+          ],
+        ),
+      )
+          : Column(
+        children: [
+          // Filter Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                vertical: 10, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: ["All", "Sleep", "Meditation", "Yoga"]
+                  .map((filter) {
+                return ChoiceChip(
+                  label: Text(filter,
+                      style: const TextStyle(color: Colors.white)),
+                  selected: selectedFilter == filter,
+                  selectedColor: const Color(0xFF1EBBD7),
+                  backgroundColor: Colors.grey[800],
+                  onSelected: (bool selected) {
+                    setState(() {
+                      selectedFilter = filter;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+
+          // Meditation List - UPDATED TO USE FILTERED RESULTS
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredMeditations.length,
+              itemBuilder: (context, index) {
+                final meditation = filteredMeditations[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navigate to MeditationDetailScreen when tapping the text
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MeditationDetailScreen(
+                                  meditation: meditation),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
-
-                    // Meditation List - UPDATED TO USE FILTERED RESULTS
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: filteredMeditations.length,
-                        itemBuilder: (context, index) {
-                          final meditation = filteredMeditations[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: GestureDetector(
-                              onTap: () {
-                                // Navigate to MeditationDetailScreen when tapping the text
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        MeditationDetailScreen(
-                                            meditation: meditation),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  children: [
-                                    // Thumbnail (Tappable to Open YouTube)
-                                    GestureDetector(
-                                      onTap: () =>
-                                          _launchYouTube(meditation["url"]!),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child: Image.network(
-                                              meditation["image"]!,
-                                              width: 120,
-                                              height: 80,
-                                              fit: BoxFit.cover,
-                                              loadingBuilder: (context, child,
-                                                  loadingProgress) {
-                                                if (loadingProgress == null)
-                                                  return child;
-                                                return const Center(
-                                                    child:
-                                                        CircularProgressIndicator());
-                                              },
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Container(
-                                                  width: 120,
-                                                  height: 80,
-                                                  color: Colors.grey.shade300,
-                                                  child: const Center(
-                                                    child: Icon(
-                                                        Icons
-                                                            .image_not_supported,
-                                                        size: 50,
-                                                        color: Colors.grey),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          const Icon(Icons.play_circle_fill,
-                                              color: Colors.white, size: 40),
-                                        ],
-                                      ),
-                                    ),
-
-                                    // Meditation Info (Tappable to Open Details)
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              meditation["title"]!,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              "${meditation["duration"]} • ${meditation["author"]}",
-                                              style: TextStyle(
-                                                  color: Colors.grey[600]),
-                                            ),
-                                          ],
+                      child: Row(
+                        children: [
+                          // Thumbnail (Tappable to Open YouTube)
+                          GestureDetector(
+                            onTap: () =>
+                                _launchYouTube(meditation["url"]!),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius:
+                                  BorderRadius.circular(8),
+                                  child: Image.network(
+                                    meditation["image"]!,
+                                    width: 120,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child,
+                                        loadingProgress) {
+                                      if (loadingProgress == null)
+                                        return child;
+                                      return const Center(
+                                          child:
+                                          CircularProgressIndicator());
+                                    },
+                                    errorBuilder:
+                                        (context, error, stackTrace) {
+                                      return Container(
+                                        width: 120,
+                                        height: 80,
+                                        color: Colors.grey.shade300,
+                                        child: const Center(
+                                          child: Icon(
+                                              Icons
+                                                  .image_not_supported,
+                                              size: 50,
+                                              color: Colors.grey),
                                         ),
-                                      ),
-                                    ),
-                                  ],
+                                      );
+                                    },
+                                  ),
                                 ),
+                                const Icon(Icons.play_circle_fill,
+                                    color: Colors.white, size: 40),
+                              ],
+                            ),
+                          ),
+
+                          // Meditation Info (Tappable to Open Details)
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    meditation["title"]!,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    "${meditation["duration"]} • ${meditation["author"]}",
+                                    style: TextStyle(
+                                        color: Colors.grey[600]),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavBar(
           selectedIndex: _selectedIndex, onItemTapped: _onItemTapped),
     );
   }
 }
+

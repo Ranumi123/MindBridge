@@ -1,4 +1,4 @@
-// MindBridge Server - Mental Health AI Assistant
+// MindBridge Server - Mental Health AI Assistant with Feed Functionality
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -9,12 +9,33 @@ const toxicity = require('@tensorflow-models/toxicity');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Import MongoDB connection
+// Import MongoDB connections
 const { connectToMongoDB, getDB, pingDatabase } = require('./db');
+const connectFeedDB = require("./config/feed-db");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
+const feedRoutes = require("./routes/feed-page-routes");
+
+// Import middleware
+const jwt = require('jsonwebtoken');
+
+const authMiddleware = (req, res, next) => {
+  const token = req.header('Authorization');
+  
+  if (!token) {
+    return res.status(401).json({ msg: 'No token, authorization denied' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+    req.user = decoded.userId;
+    next();
+  } catch (error) {
+    res.status(401).json({ msg: 'Invalid token' });
+  }
+};
 
 const app = express();
 
@@ -43,7 +64,9 @@ async function loadSuicideDataset() {
   try {
     // Check if the file exists
     if (!await fileExists(datasetPath)) {
-      console.error("Dataset file not found at:", datasetPath);
+      console.warn("Dataset file not found at:", datasetPath);
+      console.warn("Continuing without suicide dataset...");
+      initialized = true;
       return false;
     }
 
@@ -68,6 +91,8 @@ async function loadSuicideDataset() {
     return true;
   } catch (error) {
     console.error("Error loading suicide dataset:", error);
+    console.warn("Continuing without suicide dataset...");
+    initialized = true;
     return false;
   }
 }
@@ -94,7 +119,7 @@ function parseDataset(records, tweetIndex, suicideIndex) {
     .filter(record => record.trim())
     .map(record => {
       const columns = record.split(',');
-      return { Tweet: columns[tweetIndex].trim(), Suicide: columns[suicideIndex].trim() };
+      return { Tweet: columns[tweetIndex]?.trim() || '', Suicide: columns[suicideIndex]?.trim() || '' };
     });
 }
 
@@ -109,17 +134,19 @@ function extractSuicidePatterns() {
   
   suicidalPatterns = [...baseIndicators];
 
-  suicideDataset.forEach(item => {
-    if (item.Suicide.toLowerCase().includes("suicide") || item.Suicide.toLowerCase().includes("potential")) {
-      baseIndicators.forEach(indicator => {
-        if (item.Tweet.toLowerCase().includes(indicator) && !suicidalPatterns.includes(indicator)) {
-          suicidalPatterns.push(indicator);
-        }
-      });
-    }
-  });
+  if (suicideDataset && suicideDataset.length > 0) {
+    suicideDataset.forEach(item => {
+      if (item.Suicide.toLowerCase().includes("suicide") || item.Suicide.toLowerCase().includes("potential")) {
+        baseIndicators.forEach(indicator => {
+          if (item.Tweet.toLowerCase().includes(indicator) && !suicidalPatterns.includes(indicator)) {
+            suicidalPatterns.push(indicator);
+          }
+        });
+      }
+    });
+  }
 
-  console.log(`Extracted ${suicidalPatterns.length} suicide patterns from dataset`);
+  console.log(`Using ${suicidalPatterns.length} suicide patterns for detection`);
 }
 
 // Detect harmful content
@@ -147,6 +174,8 @@ async function detectHarmfulText(text) {
 
 // Detect suicidal content in text
 function detectSuicidalContent(text) {
+  if (!text) return { isSuicidal: false };
+  
   const textLower = text.toLowerCase();
   
   for (const phrase of suicidalPatterns) {
@@ -253,15 +282,20 @@ async function storeChatMessage(userId, message, reply, status) {
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/profile", profileRoutes);
+
+// Protected routes with authMiddleware
+app.use("/api/profile", authMiddleware, profileRoutes);
+
+// MODIFIED: Remove authentication from feed routes
+app.use("/api/feed", feedRoutes); // No authMiddleware applied here
 
 // Health check route
 app.get("/", (req, res) => {
-  res.send("MindBridge Server is running!");
+  res.send("MindBridge Server with Feed functionality is running!");
 });
 
-// AI Chat route
-app.post('/chat', async (req, res) => {
+// AI Chat route - protected
+app.post('/chat', authMiddleware, async (req, res) => {
   try {
     const { message, userId } = req.body;
 
@@ -336,12 +370,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Initialize MongoDB and the dataset when server starts
+// Initialize MongoDB connections and the dataset when server starts
 (async function() {
   try {
-    // Connect to MongoDB first
-    await connectToMongoDB();
-    console.log("MongoDB connection established");
+    // Connect to both MongoDB databases
+    await connectToMongoDB(); // Main MindBridge DB
+    await connectFeedDB();    // Feed DB
+    console.log("MongoDB connections established");
     
     // Then load the dataset
     await loadSuicideDataset();
@@ -353,5 +388,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-  console.log(`MindBridge server running on http://localhost:${PORT}`);
+  console.log(`Integrated MindBridge server running on http://localhost:${PORT}`);
 });

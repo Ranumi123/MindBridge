@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/dinurawanigasekara/Development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/dinurawanigasekara/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/dinurawanigasekara/Desktop/mind_bridge_11.0/MindBridge/mind_bridge/android/app/.cxx/Debug/4o25j5j4/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/dinurawanigasekara/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/dinurawanigasekara/Desktop/mind_bridge_11.0/MindBridge/mind_bridge/android/app/.cxx/Debug/4o25j5j4/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

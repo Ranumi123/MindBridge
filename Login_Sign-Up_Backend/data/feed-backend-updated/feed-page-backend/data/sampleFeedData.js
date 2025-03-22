@@ -1,0 +1,57 @@
+module.exports = [
+    {
+      title: "Yoga Nidra For Sleep",
+      author: "Satvic Yoga",
+      category: "Sleep",
+      duration: "18 min",
+      description: "A deep relaxation yoga practice to calm the nervous system.",
+      image: "https://cdn.pixabay.com/photo/2024/04/19/22/25/man-8707406_1280.png",
+      url: "https://youtu.be/uPSml_JQGVY?si=uAuuvPDMDQlV7az4",
+    },
+    {
+      title: "Deep Sleep Guided Meditation",
+      author: "Lauren Gale",
+      category: "Sleep",
+      duration: "120 min",
+      description: "A long guided meditation session for peaceful sleep.",
+      image: "https://images.pexels.com/photos/8263101/pexels-photo-8263101.jpeg",
+      url: "https://youtu.be/gnmlcfZdnBg?si=A1-zDZKzwSmkWp5v",
+    },
+    {
+      title: "Breathing Into Sleep",
+      author: "Ally Boothroyd",
+      category: "Sleep",
+      duration: "30 min",
+      description: "A 30-minute guided sleep meditation with pranayama & deep relaxation.",
+      image: "https://images.pexels.com/photos/289586/pexels-photo-289586.jpeg",
+      url: "https://youtu.be/1G2he0jYOl0?si=b0HrMUXJoqycxjPd",
+    },
+    {
+      title: "Peaceful Sleep Meditation",
+      author: "Tone It Up",
+      category: "Sleep",
+      duration: "7 min",
+      description: "An evening meditation for relaxation and stress release before sleep.",
+      image: "https://images.pexels.com/photos/8261185/pexels-photo-8261185.jpeg",
+      url: "https://youtu.be/PZqvrttn7-c?si=TL0g5ApoQLeyDnsv",
+    },
+    {
+      title: "Morning Yoga Flow",
+      author: "Adriene",
+      category: "Yoga",
+      duration: "22 min",
+      description: "A breath-focused morning flow for a peaceful mind & strong body.",
+      image: "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
+      url: "https://youtu.be/LqXZ628YNj4?si=xt_7MZQOyGHjODUX",
+    },
+    {
+      title: "Meditation for Focus",
+      author: "Declutter The Mind",
+      category: "Meditation",
+      duration: "10 min",
+      description: "A 10-minute voice-only guided meditation to enhance focus & clarity.",
+      image: "https://i.imgur.com/M5qCCV4_d.webp",
+      url: "https://youtu.be/ausxoXBrmWs?si=SXMNeKsuMVvtOfxK",
+    }
+  ];
+  
