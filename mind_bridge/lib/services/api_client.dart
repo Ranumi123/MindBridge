@@ -88,7 +88,7 @@ class MessageModel {
 }
 
 class ApiClient {
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl = 'http://localhost:5001';
   
   // Mock data for groups and messages when server isn't available
   final List<ChatGroup> _mockGroups = [
