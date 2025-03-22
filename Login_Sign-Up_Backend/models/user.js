@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const usersCollection = () => getDB().collection('users');
 
 async function createUser(userData) {
-  const { email, password, name } = userData;
+  const { email, password, name, phone, emergencyContact } = userData;
   
   // Check if user already exists
   const existingUser = await usersCollection().findOne({ email });
@@ -26,6 +26,7 @@ async function createUser(userData) {
     emergencyContacts: [],
     profile: {
       bio: '',
+      phone: phone || '', // Add phone field
     },
     preferences: {
       enableNotifications: true,
@@ -37,6 +38,16 @@ async function createUser(userData) {
     },
     profilePicture: "https://via.placeholder.com/150"
   };
+  
+  // Add emergency contact if provided
+  if (emergencyContact) {
+    newUser.emergencyContacts.push({
+      name: "Primary Emergency Contact",
+      phone: emergencyContact,
+      relationship: "Not specified",
+      isPrimary: true
+    });
+  }
   
   // Insert into database
   const result = await usersCollection().insertOne(newUser);
@@ -74,11 +85,33 @@ async function updateEmergencyContacts(userId, contacts) {
   return updateUser(userId, { emergencyContacts: contacts });
 }
 
+async function addEmergencyContact(userId, contact) {
+  // Convert string ID to ObjectId if necessary
+  const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+  
+  return usersCollection().updateOne(
+    { _id: id },
+    { $push: { emergencyContacts: contact } }
+  );
+}
+
+async function updatePhone(userId, phone) {
+  // Convert string ID to ObjectId if necessary
+  const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+  
+  return usersCollection().updateOne(
+    { _id: id },
+    { $set: { "profile.phone": phone } }
+  );
+}
+
 module.exports = {
   createUser,
   findUserById,
   findUserByEmail,
   verifyPassword,
   updateUser,
-  updateEmergencyContacts
+  updateEmergencyContacts,
+  addEmergencyContact,
+  updatePhone
 };

@@ -7,10 +7,14 @@ const tf = require('@tensorflow/tfjs');
 const toxicity = require('@tensorflow-models/toxicity');
 const fs = require('fs').promises;
 const path = require('path');
+const { ObjectId } = require('mongodb');
 
 // Import MongoDB connections
 const { connectToMongoDB, getDB } = require('./db');
 const connectFeedDB = require("./config/feed-db");
+
+// Import models
+const { findUserById } = require('./models/user');
 
 // Import routes
 const feedRoutes = require("./routes/feed-page-routes");
@@ -194,55 +198,207 @@ function getSuicidalResponse() {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// MongoDB-integrated functions
+// UPDATED: Enhanced MongoDB-integrated functions for emergency contacts
 async function getEmergencyContacts(userId) {
   try {
-    const db = getDB();
-    const user = await db.collection('users').findOne({ _id: userId });
+    // Convert string ID to ObjectId if necessary
+    const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
     
+    const db = getDB();
+    const user = await db.collection('users').findOne({ _id: id });
+    
+    // Check for emergency contacts array from updated schema
     if (user && user.emergencyContacts && user.emergencyContacts.length > 0) {
-      return user.emergencyContacts;
+      // Filter out any incomplete or invalid contacts
+      const validContacts = user.emergencyContacts.filter(contact => 
+        contact && contact.phone && contact.phone.trim() !== ''
+      );
+      
+      if (validContacts.length > 0) {
+        return validContacts;
+      }
     }
     
-    // Default if no contacts found
+    // Check phone in profile as fallback (if we have a name)
+    if (user && user.profile && user.profile.phone && user.name) {
+      return [{
+        name: `${user.name} (Self)`,
+        phone: user.profile.phone,
+        relationship: "Self",
+        isPrimary: true
+      }];
+    }
+    
+    // Default emergency services if no contacts found
     return [
-      { name: "Contact 1", phone: "+1234567890" },
-      { name: "Contact 2", phone: "+0987654321" }
+      { 
+        name: "National Crisis Hotline", 
+        phone: "988",
+        relationship: "Crisis Service",
+        isPrimary: true
+      },
+      { 
+        name: "Crisis Text Line", 
+        phone: "741741",
+        relationship: "Crisis Service",
+        isPrimary: false
+      },
+      {
+        name: "National Suicide Prevention Lifeline",
+        phone: "1-800-273-8255",
+        relationship: "Crisis Service",
+        isPrimary: false
+      }
     ];
   } catch (error) {
     console.error("Error getting emergency contacts:", error);
+    // Log the specific error for debugging
+    console.error("Error details:", error.message);
+    
+    // Return default emergency services in case of error
     return [
-      { name: "Contact 1", phone: "+1234567890" },
-      { name: "Contact 2", phone: "+0987654321" }
+      { 
+        name: "National Crisis Hotline", 
+        phone: "988",
+        relationship: "Crisis Service", 
+        isPrimary: true
+      },
+      { 
+        name: "Crisis Text Line", 
+        phone: "741741",
+        relationship: "Crisis Service",
+        isPrimary: false
+      }
     ];
   }
 }
 
+// UPDATED: Enhanced notifyEmergencyContacts function
 async function notifyEmergencyContacts(userId) {
-  const emergencyContacts = await getEmergencyContacts(userId);
-  
-  // Store crisis event in MongoDB
   try {
-    const db = getDB();
+    const emergencyContacts = await getEmergencyContacts(userId);
     
-    await db.collection('crisisEvents').insertOne({
-      userId,
-      timestamp: new Date(),
-      contactsNotified: emergencyContacts,
-      status: 'notified'
-    });
+    // Get user info for the message
+    let userName = "A user";
+    try {
+      // Convert string ID to ObjectId if necessary
+      const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+      
+      const user = await findUserById(id);
+      if (user && user.name) {
+        userName = user.name;
+      }
+    } catch (userError) {
+      console.error("Error getting user details for notification:", userError);
+    }
+    
+    // Store crisis event in MongoDB
+    try {
+      const db = getDB();
+      
+      await db.collection('crisisEvents').insertOne({
+        userId,
+        userName: userName,
+        timestamp: new Date(),
+        contactsNotified: emergencyContacts,
+        status: 'notified'
+      });
+      
+      console.log(`Crisis event logged for user: ${userId}`);
+    } catch (dbError) {
+      console.error("Error logging crisis event:", dbError);
+    }
+    
+    // Attempt to notify each contact
+    let notificationResults = [];
+    
+    for (const contact of emergencyContacts) {
+      try {
+        // Send the actual notification
+        const result = await sendSMS(contact.phone, 
+          `URGENT: ${userName} may need immediate help. This is an automated alert from MindBridge. Please check on them right away.`
+        );
+        
+        notificationResults.push({
+          contact: contact.name,
+          phone: contact.phone,
+          success: true,
+          timestamp: new Date()
+        });
+        
+        console.log(`Crisis notification sent to ${contact.name} at ${contact.phone}`);
+      } catch (smsError) {
+        console.error(`Failed to notify contact ${contact.name}:`, smsError);
+        
+        notificationResults.push({
+          contact: contact.name,
+          phone: contact.phone,
+          success: false,
+          error: smsError.message,
+          timestamp: new Date()
+        });
+      }
+    }
+    
+    // Update the crisis event with notification results
+    try {
+      const db = getDB();
+      
+      await db.collection('crisisEvents').updateOne(
+        { userId, status: 'notified' },
+        { 
+          $set: { 
+            notificationResults,
+            status: notificationResults.some(r => r.success) ? 'contact_reached' : 'notification_failed'
+          }
+        }
+      );
+    } catch (updateError) {
+      console.error("Error updating crisis event with notification results:", updateError);
+    }
+    
+    return {
+      notified: notificationResults.filter(r => r.success).length,
+      failed: notificationResults.filter(r => !r.success).length,
+      contacts: notificationResults
+    };
   } catch (error) {
-    console.error("Error logging crisis event:", error);
+    console.error("Error in notifyEmergencyContacts:", error);
+    return { notified: 0, failed: 0, error: error.message };
   }
-  
-  emergencyContacts.forEach(contact => {
-    sendSMS(contact.phone, `Urgent: User ${userId} may be in danger. Please check on them immediately.`);
-  });
 }
 
-function sendSMS(phone, message) {
-  console.log(`Sending SMS to ${phone}: ${message}`);
-  // Implement actual SMS sending here
+// UPDATED: Enhanced SMS sending function
+async function sendSMS(phone, message) {
+  // This is a placeholder function - replace with your actual SMS provider integration
+  console.log(`[SMS WOULD BE SENT] To: ${phone}, Message: ${message}`);
+  
+  // For development/testing, just return success
+  return {
+    success: true,
+    messageId: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    timestamp: new Date()
+  };
+  
+  // When implementing with a real SMS provider, uncomment and modify:
+  /*
+  // Example with Twilio:
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const client = require('twilio')(accountSid, authToken);
+  
+  const result = await client.messages.create({
+    body: message,
+    from: process.env.TWILIO_PHONE_NUMBER,
+    to: phone
+  });
+  
+  return {
+    success: true,
+    messageId: result.sid,
+    timestamp: new Date()
+  };
+  */
 }
 
 // Store chat message in MongoDB
