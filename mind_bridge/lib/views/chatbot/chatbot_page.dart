@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/message_model.dart';
-import '../widgets/chat_bubble.dart';
-import '../widgets/loading_indicator.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
+
+// Message model
+class Message {
+  final String role; // 'user' or 'bot'
+  final String content;
+  final DateTime timestamp;
+
+  Message({
+    required this.role,
+    required this.content,
+    required this.timestamp,
+  });
+}
 
 class ChatbotPage extends StatefulWidget {
   @override
@@ -18,7 +28,7 @@ class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin
   final List<Message> _messages = [];
   bool _isLoading = false;
   bool _isBackendAvailable = true; // Set to true to connect to the backend
-  String _backendUrl = 'http://172.20.10.2:5001/chat'; // Update with your backend URL
+  String _backendUrl = 'http://192.168.1.2:5001/chat'; // Update with your backend URL
 
   // Animation controllers
   late AnimationController _sendButtonController;
@@ -84,7 +94,7 @@ class _ChatbotPageState extends State<ChatbotPage> with TickerProviderStateMixin
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'message': message,
-            'userId': '12345'
+            'userId': '12345', // You can remove this if not needed
           }),
         );
 

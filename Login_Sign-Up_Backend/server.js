@@ -1,4 +1,3 @@
-// MindBridge Server - Mental Health AI Assistant with Feed Functionality
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -10,32 +9,11 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // Import MongoDB connections
-const { connectToMongoDB, getDB, pingDatabase } = require('./db');
+const { connectToMongoDB, getDB } = require('./db');
 const connectFeedDB = require("./config/feed-db");
 
 // Import routes
-const authRoutes = require("./routes/authRoutes");
-const profileRoutes = require("./routes/profileRoutes");
 const feedRoutes = require("./routes/feed-page-routes");
-
-// Import middleware
-const jwt = require('jsonwebtoken');
-
-const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization');
-  
-  if (!token) {
-    return res.status(401).json({ msg: 'No token, authorization denied' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
-    req.user = decoded.userId;
-    next();
-  } catch (error) {
-    res.status(401).json({ msg: 'Invalid token' });
-  }
-};
 
 const app = express();
 
@@ -281,21 +259,15 @@ async function storeChatMessage(userId, message, reply, status) {
 }
 
 // Routes
-app.use("/api/auth", authRoutes);
-
-// Protected routes with authMiddleware
-app.use("/api/profile", authMiddleware, profileRoutes);
-
-// MODIFIED: Remove authentication from feed routes
-app.use("/api/feed", feedRoutes); // No authMiddleware applied here
+app.use("/api/feed", feedRoutes); // Feed routes
 
 // Health check route
 app.get("/", (req, res) => {
   res.send("MindBridge Server with Feed functionality is running!");
 });
 
-// AI Chat route - protected
-app.post('/chat', authMiddleware, async (req, res) => {
+// AI Chat route (no authentication)
+app.post('/chat', async (req, res) => {
   try {
     const { message, userId } = req.body;
 
