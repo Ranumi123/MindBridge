@@ -14,12 +14,16 @@ const connectFeedDB = require("./config/feed-db");
 
 // Import routes
 const feedRoutes = require("./routes/feed-page-routes");
+// Import authentication routes
+const authRoutes = require("./routes/authRoutes"); 
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+// Add URL-encoded parser for form submissions
+app.use(express.urlencoded({ extended: true }));
 
 // Google Generative AI Setup
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
@@ -260,10 +264,12 @@ async function storeChatMessage(userId, message, reply, status) {
 
 // Routes
 app.use("/api/feed", feedRoutes); // Feed routes
+// Add authentication routes
+app.use("/api/auth", authRoutes); // Auth routes
 
 // Health check route
 app.get("/", (req, res) => {
-  res.send("MindBridge Server with Feed functionality is running!");
+  res.send("MindBridge Server with Feed and Auth functionality is running!");
 });
 
 // AI Chat route (no authentication)
