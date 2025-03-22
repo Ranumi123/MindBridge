@@ -1,159 +1,71 @@
-import 'dart:convert';
+// services/auth_service.dart
+
 import 'package:http/http.dart' as http;
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:convert';
 
 class AuthService {
-  // Dynamically set the base URL based on the platform
-  static String get baseUrl {
-    if (kIsWeb) {
-      // For web (Chrome) use localhost
-      return "http://localhost:5001/api/auth";
-    } else if (Platform.isAndroid) {
-      // For Android emulator
-      return "http://10.0.2.2:5001/api/auth";
-    } else {
-      // For iOS and other platforms
-      return "http://localhost:5001/api/auth";
-    }
-  }
+  // API base URL - update this with your actual backend URL
+  static const String baseUrl = 'http://localhost:5001/api/auth';
+  // For Android emulator, use: 'http://10.0.2.2:5001/api/auth'
+  // For iOS simulator, use: 'http://localhost:5001/api/auth'
+  // For real device testing, use your actual server IP/domain
 
-  static String get profileBaseUrl {
-    if (kIsWeb) {
-      return "http://localhost:5001/api/profile";
-    } else if (Platform.isAndroid) {
-      return "http://10.0.2.2:5001/api/profile";
-    } else {
-      return "http://localhost:5001/api/profile";
-    }
-  }
-
-  // Login
-  static Future<http.Response> login(String email, String password) async {
-    print('Attempting login with email: $email');
-    print('Using base URL: $baseUrl');
-
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/login'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'email': email,
-          'password': password,
-        }),
-      );
-      print('Login response status code: ${response.statusCode}');
-      print('Login response body: ${response.body}');
-      return response;
-    } catch (e) {
-      print('Exception during login: $e');
-      // Create a fake response to handle the error in the UI
-      return http.Response('{"msg": "Connection error: $e"}', 500);
-    }
-  }
-
-  // Signup
+  // Signup method with additional parameters
   static Future<http.Response> signup(
-      String name, String email, String password) async {
-    print('Attempting signup for: $name, $email');
-    print('Using base URL: $baseUrl');
+      String name,
+      String email,
+      String password,
+      [String? phone, String? emergencyContact]
+      ) async {
+    // Print what we're sending to the API for debugging
+    print('Sending signup data: Name: $name, Email: $email, Phone: $phone, EmergencyContact: ${emergencyContact ?? "Not provided"}');
 
-    try {
-      print('Connecting to: $baseUrl/signup');
-      final response = await http.post(
-        Uri.parse('$baseUrl/signup'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'name': name,
-          'email': email,
-          'password': password,
-        }),
-      );
-      print('Signup response status code: ${response.statusCode}');
-      print('Signup response body: ${response.body}');
-      return response;
-    } catch (e) {
-      print('Exception during signup: $e');
-      // Create a fake response to handle the error in the UI
-      return http.Response('{"msg": "Connection error: $e"}', 500);
+    // Create the request body
+    final Map<String, dynamic> requestBody = {
+      'name': name,
+      'email': email,
+      'password': password,
+    };
+
+    // Add phone if provided
+    if (phone != null && phone.isNotEmpty) {
+      requestBody['phone'] = phone;
     }
+
+    // Add emergency contact if provided
+    if (emergencyContact != null && emergencyContact.isNotEmpty) {
+      requestBody['emergencyContact'] = emergencyContact;
+    }
+
+    print('Final request body: ${jsonEncode(requestBody)}');
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/signup'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    print('Signup response status: ${response.statusCode}');
+    print('Signup response body: ${response.body}');
+
+    return response;
   }
 
-  // Fetch Profile
-  static Future<http.Response> fetchProfile(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$profileBaseUrl'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      return response;
-    } catch (e) {
-      print('Exception during fetch profile: $e');
-      return http.Response('{"msg": "Connection error: $e"}', 500);
-    }
+  // Login method
+  static Future<http.Response> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    print('Login response status: ${response.statusCode}');
+
+    return response;
   }
 
-  // Update Profile
-  static Future<http.Response> updateProfile(
-      String token, Map<String, dynamic> profileData) async {
-    try {
-      final response = await http.put(
-        Uri.parse('$profileBaseUrl'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(profileData),
-      );
-      return response;
-    } catch (e) {
-      print('Exception during update profile: $e');
-      return http.Response('{"msg": "Connection error: $e"}', 500);
-    }
-  }
-
-  // Update Preferences
-  static Future<http.Response> updatePreferences(
-      String token, Map<String, dynamic> preferences) async {
-    try {
-      final response = await http.put(
-        Uri.parse('$profileBaseUrl/preferences'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(preferences),
-      );
-      return response;
-    } catch (e) {
-      print('Exception during update preferences: $e');
-      return http.Response('{"msg": "Connection error: $e"}', 500);
-    }
-  }
-
-  // Update Privacy Settings
-  static Future<http.Response> updatePrivacySettings(
-      String token, Map<String, dynamic> privacySettings) async {
-    try {
-      final response = await http.put(
-        Uri.parse('$profileBaseUrl/privacy-settings'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(privacySettings),
-      );
-      return response;
-    } catch (e) {
-      print('Exception during update privacy settings: $e');
-      return http.Response('{"msg": "Connection error: $e"}', 500);
-    }
-  }
+// Add other auth methods as needed
 }

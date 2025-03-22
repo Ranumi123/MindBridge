@@ -72,6 +72,13 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
     final phone = _phoneController.text;
     final emergencyContact = _emergencyContactController.text;
 
+    // Debug: Print collected values
+    print('SIGNUP DATA:');
+    print('Name: $name');
+    print('Email: $email');
+    print('Phone: $phone');
+    print('Emergency Contact: $emergencyContact');
+
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -86,19 +93,20 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
       return;
     }
 
-    // Store phone and emergency contact info in user metadata
-    // For now, we'll use the existing signup method and handle these new fields later
-    final response = await AuthService.signup(name, email, password);
+    // Debug: Print what we're sending to API
+    print('Calling AuthService.signup with phone and emergencyContact');
 
-    // TODO: Update AuthService to include phone and emergency contact information
-    // This could be done by either:
-    // 1. Updating the AuthService.signup method to accept additional parameters
-    // 2. Creating a separate method to update user profile after signup
-    // 3. Storing this information in a separate database collection
+    // Pass the phone and emergencyContact to the API
+    final response = await AuthService.signup(name, email, password, phone, emergencyContact);
+
+    // Debug: Print raw response
+    print('Response STATUS: ${response.statusCode}');
+    print('Response BODY: ${response.body}');
 
     if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
       print('Signup successful: ${responseData['msg']}');
+      print('User data returned: ${responseData['user']}');
       Navigator.pushReplacementNamed(context, '/login');
     } else {
       final responseData = jsonDecode(response.body);

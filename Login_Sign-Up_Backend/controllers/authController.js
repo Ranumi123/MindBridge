@@ -10,13 +10,8 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, password, phone, emergencyContact } = req.body;
     
-    // Log the incoming data to debug
-    console.log("Registration data received:", {
-      name,
-      email,
-      phone,
-      emergencyContact: emergencyContact ? "Provided" : "Not provided"
-    });
+    // Log raw incoming data
+    console.log("Raw signup data received:", req.body);
     
     // Validate input
     if (!name || !email || !password) {
@@ -33,24 +28,45 @@ exports.signup = async (req, res) => {
       password,
       // Initialize profile with phone if provided
       profile: {
+        bio: "",
         phone: phone || ""
       },
       // Initialize emergencyContacts array
       emergencyContacts: []
     };
     
-    // Handle emergency contact information
-    if (emergencyContact && emergencyContact.phone) {
-      // Format and add to emergencyContacts array
-      const formattedContact = {
-        name: emergencyContact.name || "Emergency Contact",
-        phone: emergencyContact.phone,
-        relationship: emergencyContact.relationship || "Not specified",
-        isPrimary: true
-      };
+    console.log("Phone value received:", phone);
+    
+    // Handle emergency contact information - support both string and object formats
+    if (emergencyContact) {
+      // Log the emergency contact data received
+      console.log("Emergency contact received:", typeof emergencyContact, emergencyContact);
       
-      userData.emergencyContacts.push(formattedContact);
-      console.log("Added emergency contact:", formattedContact);
+      // Handle different formats of emergency contact data
+      if (typeof emergencyContact === 'string' && emergencyContact.trim() !== '') {
+        // If it's just a string (phone number), format it as an object
+        const formattedContact = {
+          name: "Emergency Contact",
+          phone: emergencyContact.trim(),
+          relationship: "Not specified",
+          isPrimary: true
+        };
+        
+        userData.emergencyContacts.push(formattedContact);
+        console.log("Added emergency contact from string:", formattedContact);
+      } 
+      else if (typeof emergencyContact === 'object' && emergencyContact !== null && emergencyContact.phone) {
+        // If it's already an object with a phone property
+        const formattedContact = {
+          name: emergencyContact.name || "Emergency Contact",
+          phone: emergencyContact.phone,
+          relationship: emergencyContact.relationship || "Not specified",
+          isPrimary: true
+        };
+        
+        userData.emergencyContacts.push(formattedContact);
+        console.log("Added emergency contact from object:", formattedContact);
+      }
     }
     
     // Log the final user data being created
@@ -67,6 +83,7 @@ exports.signup = async (req, res) => {
     console.log("User registered successfully:", {
       id: newUser._id,
       name: newUser.name,
+      profile: newUser.profile,
       emergencyContacts: newUser.emergencyContacts ? 
         `${newUser.emergencyContacts.length} contact(s)` : 
         "No contacts found"
