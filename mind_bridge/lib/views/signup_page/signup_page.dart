@@ -16,6 +16,8 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emergencyContactController = TextEditingController();
 
   // Animation controller for staggered animations
   late AnimationController _animationController;
@@ -57,6 +59,8 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _phoneController.dispose();
+    _emergencyContactController.dispose();
     super.dispose();
   }
 
@@ -65,6 +69,8 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
+    final phone = _phoneController.text;
+    final emergencyContact = _emergencyContactController.text;
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -80,7 +86,15 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
       return;
     }
 
+    // Store phone and emergency contact info in user metadata
+    // For now, we'll use the existing signup method and handle these new fields later
     final response = await AuthService.signup(name, email, password);
+
+    // TODO: Update AuthService to include phone and emergency contact information
+    // This could be done by either:
+    // 1. Updating the AuthService.signup method to accept additional parameters
+    // 2. Creating a separate method to update user profile after signup
+    // 3. Storing this information in a separate database collection
 
     if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
@@ -328,6 +342,82 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
 
                           SizedBox(height: 16),
 
+                          // Phone number field
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+                                labelText: 'Phone Number',
+                                labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: Colors.transparent),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                prefixIcon: Icon(Icons.phone, color: Color(0xFF4B9FE1)),
+                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                hintText: '(123) 456-7890',
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 16),
+
+                          // Emergency contact field
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _emergencyContactController,
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+                                labelText: 'Emergency Contact',
+                                labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: Colors.transparent),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                prefixIcon: Icon(Icons.emergency, color: Color(0xFF4B9FE1)),
+                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                hintText: '(123) 456-7890',
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 16),
+
                           // Password field
                           Container(
                             decoration: BoxDecoration(
@@ -426,6 +516,49 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                     ),
 
                     SizedBox(height: 28),
+
+                    // Contact Information section title with animated icon
+                    AnimatedBuilder(
+                      animation: _animationController,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(0, _slideAnimation.value),
+                          child: Opacity(
+                            opacity: _fadeAnimation.value,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF1EBBD7).withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Color(0xFF1EBBD7).withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.security,
+                              color: Color(0xFF4B9FE1),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Your information is secure with us',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF4A6572),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
                     // Continue button with animation
                     AnimatedBuilder(
