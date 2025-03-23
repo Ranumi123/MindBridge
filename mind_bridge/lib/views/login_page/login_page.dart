@@ -12,7 +12,8 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   bool _isPasswordVisible = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -59,44 +60,63 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   }
 
   void _login() async {
-  final email = _emailController.text;
-  final password = _passwordController.text;
+    final email = _emailController.text;
+    final password = _passwordController.text;
 
-  final response = await AuthService.login(email, password);
+    try {
+      final response = await AuthService.login(email, password);
 
-  if (response.statusCode == 200) {
-    final responseData = jsonDecode(response.body);
-    print('Login successful: ${responseData['msg']}');
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        print('Login successful: ${responseData['msg']}');
 
-    // Save user data in SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', responseData['user']['id']);
-    await prefs.setString('user_email', responseData['user']['email']);
-    await prefs.setString('user_name', responseData['user']['name']);
-    await prefs.setString('user_phone', responseData['user']['phone'] ?? "");
+        // Save user data in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
 
-    // Navigate to Profile Page
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => ProfilePage()),
-    );
-  } else {
-    final responseData = jsonDecode(response.body);
-    print('Login failed: ${responseData['msg']}');
+        // Fix: Check for both id and userId in the response
+        final userId =
+            responseData['user']['userId'] ?? responseData['user']['id'];
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(responseData['msg']),
-        backgroundColor: Color(0xFF1EBBD7),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+        await prefs.setString('user_id', userId);
+        await prefs.setString('user_email', responseData['user']['email']);
+        await prefs.setString('user_name', responseData['user']['name']);
+        await prefs.setString(
+            'user_phone', responseData['user']['phone'] ?? "");
+
+        // Navigate to Profile Page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        final responseData = jsonDecode(response.body);
+        print('Login failed: ${responseData['msg']}');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(responseData['msg']),
+            backgroundColor: Color(0xFF1EBBD7),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Exception during login: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Connection error. Please try again.'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +169,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             left: 0,
             right: 0,
             child: Container(
-              height: screenSize.height * 0.4, // Slightly reduced height for better spacing
+              height: screenSize.height *
+                  0.4, // Slightly reduced height for better spacing
               child: Stack(
                 children: [
                   // Background wave with deeper curve
@@ -166,7 +187,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     top: 20,
                     right: 0,
                     child: CustomPaint(
-                      size: Size(screenSize.width * 0.6, screenSize.height * 0.15),
+                      size: Size(
+                          screenSize.width * 0.6, screenSize.height * 0.15),
                       painter: AccentCurvePainter(
                         color: Color(0xFF4B9FE1).withOpacity(0.15),
                         strokeWidth: 3,
@@ -180,7 +202,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: screenSize.height * 0.32, // Slightly adjusted for better fit
+                      height: screenSize.height *
+                          0.32, // Slightly adjusted for better fit
                       child: Image.asset(
                         'assets/images/loginimage2.png',
                         fit: BoxFit.contain,
@@ -276,7 +299,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back_ios, color: Color(0xFF4A6572)),
+                          icon: Icon(Icons.arrow_back_ios,
+                              color: Color(0xFF4A6572)),
                           onPressed: () => Navigator.pop(context),
                           padding: EdgeInsets.zero,
                           constraints: BoxConstraints(),
@@ -296,7 +320,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     ),
 
                     // Space for the larger image in the stack
-                    SizedBox(height: screenSize.height * 0.3), // Adjusted spacing
+                    SizedBox(
+                        height: screenSize.height * 0.3), // Adjusted spacing
 
                     // Enhanced welcome message section
                     Container(
@@ -321,7 +346,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
 
                           // Welcome message with gradient background card
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 20),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
@@ -405,16 +431,20 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.email, color: Color(0xFF4B9FE1)),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                prefixIcon:
+                                    Icon(Icons.email, color: Color(0xFF4B9FE1)),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -442,18 +472,23 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.lock, color: Color(0xFF4B9FE1)),
+                                prefixIcon:
+                                    Icon(Icons.lock, color: Color(0xFF4B9FE1)),
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                    _isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                     color: Color(0xFF4B9FE1),
                                   ),
                                   onPressed: () {
@@ -462,7 +497,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                     });
                                   },
                                 ),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -595,7 +631,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           TextButton(
                             onPressed: () {
                               // Navigate to the SignupPage
-                              Navigator.pushReplacementNamed(context, '/signup');
+                              Navigator.pushReplacementNamed(
+                                  context, '/signup');
                             },
                             child: Text(
                               'Sign Up',

@@ -9,15 +9,18 @@ class SignupPage extends StatefulWidget {
   _SignupPageState createState() => _SignupPageState();
 }
 
-class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateMixin {
+class _SignupPageState extends State<SignupPage>
+    with SingleTickerProviderStateMixin {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emergencyContactController = TextEditingController();
+  final TextEditingController _emergencyContactController =
+      TextEditingController();
 
   // Animation controller for staggered animations
   late AnimationController _animationController;
@@ -96,24 +99,54 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
     // Debug: Print what we're sending to API
     print('Calling AuthService.signup with phone and emergencyContact');
 
-    // Pass the phone and emergencyContact to the API
-    final response = await AuthService.signup(name, email, password, phone, emergencyContact);
+    try {
+      // Pass the phone and emergencyContact to the API
+      final response = await AuthService.signup(
+          name, email, password, phone, emergencyContact);
 
-    // Debug: Print raw response
-    print('Response STATUS: ${response.statusCode}');
-    print('Response BODY: ${response.body}');
+      // Debug: Print raw response
+      print('Response STATUS: ${response.statusCode}');
+      print('Response BODY: ${response.body}');
 
-    if (response.statusCode == 201) {
-      final responseData = jsonDecode(response.body);
-      print('Signup successful: ${responseData['msg']}');
-      print('User data returned: ${responseData['user']}');
-      Navigator.pushReplacementNamed(context, '/login');
-    } else {
-      final responseData = jsonDecode(response.body);
-      print('Signup failed: ${responseData['msg']}');
+      if (response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        print('Signup successful: ${responseData['msg']}');
+        print('User data returned: ${responseData['user']}');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Account created successfully! You can now log in.'),
+            backgroundColor: Color(0xFF20E4B5),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+
+        // Navigate to login page after a short delay
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pushReplacementNamed(context, '/login');
+        });
+      } else {
+        final responseData = jsonDecode(response.body);
+        print('Signup failed: ${responseData['msg']}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Signup failed: ${responseData['msg']}'),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Exception during signup: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Signup failed: ${responseData['msg']}'),
+          content: Text('An error occurred. Please try again.'),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -228,7 +261,8 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                     Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back_ios, color: Color(0xFF4A6572)),
+                          icon: Icon(Icons.arrow_back_ios,
+                              color: Color(0xFF4A6572)),
                           onPressed: () => Navigator.pop(context),
                           padding: EdgeInsets.zero,
                           constraints: BoxConstraints(),
@@ -297,16 +331,20 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.person, color: Color(0xFF4B9FE1)),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                prefixIcon: Icon(Icons.person,
+                                    color: Color(0xFF4B9FE1)),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -334,16 +372,20 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.email, color: Color(0xFF4B9FE1)),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                prefixIcon:
+                                    Icon(Icons.email, color: Color(0xFF4B9FE1)),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -371,16 +413,20 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.phone, color: Color(0xFF4B9FE1)),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                prefixIcon:
+                                    Icon(Icons.phone, color: Color(0xFF4B9FE1)),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                                 hintText: '(123) 456-7890',
                               ),
                             ),
@@ -409,16 +455,20 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.emergency, color: Color(0xFF4B9FE1)),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                prefixIcon: Icon(Icons.emergency,
+                                    color: Color(0xFF4B9FE1)),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                                 hintText: '(123) 456-7890',
                               ),
                             ),
@@ -447,18 +497,23 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.lock, color: Color(0xFF4B9FE1)),
+                                prefixIcon:
+                                    Icon(Icons.lock, color: Color(0xFF4B9FE1)),
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                    _isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                     color: Color(0xFF4B9FE1),
                                   ),
                                   onPressed: () {
@@ -467,7 +522,8 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                     });
                                   },
                                 ),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -495,27 +551,34 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                                 labelStyle: TextStyle(color: Color(0xFF4B9FE1)),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: Color(0xFF1EBBD7)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.lock, color: Color(0xFF4B9FE1)),
+                                prefixIcon:
+                                    Icon(Icons.lock, color: Color(0xFF4B9FE1)),
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                    _isConfirmPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                     color: Color(0xFF4B9FE1),
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                      _isConfirmPasswordVisible =
+                                          !_isConfirmPasswordVisible;
                                     });
                                   },
                                 ),
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -539,7 +602,8 @@ class _SignupPageState extends State<SignupPage> with SingleTickerProviderStateM
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 16),
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: Color(0xFF1EBBD7).withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
