@@ -20,6 +20,8 @@ const { findUserById } = require('./models/user');
 const feedRoutes = require("./routes/feed-page-routes");
 // Import authentication routes
 const authRoutes = require("./routes/authRoutes"); 
+// Import user routes for profile functionality
+const userRoutes = require("./routes/profileRoutes");
 
 const app = express();
 
@@ -420,12 +422,13 @@ async function storeChatMessage(userId, message, reply, status) {
 
 // Routes
 app.use("/api/feed", feedRoutes); // Feed routes
-// Add authentication routes
 app.use("/api/auth", authRoutes); // Auth routes
+app.use("/api/users", userRoutes); // User profile 
+// app.use("/api/profile", profileRoutes); // Profile routes
 
 // Health check route
 app.get("/", (req, res) => {
-  res.send("MindBridge Server with Feed and Auth functionality is running!");
+  res.send("MindBridge Server with Feed, Auth, and User Profile functionality is running!");
 });
 
 // AI Chat route (no authentication)
