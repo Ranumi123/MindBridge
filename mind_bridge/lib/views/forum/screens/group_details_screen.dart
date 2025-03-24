@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../models/chat_group_model.dart' as models; // Import model version with prefix
 import 'group_chat_screen.dart';
-import 'group_selection_screen.dart';  // Import this to use the ChatGroup class
+import 'group_selection_screen.dart' as screens;  // Import with prefix to avoid conflicts
 
 class GroupDetailsScreen extends StatefulWidget {
-  final ChatGroup group;
+  final models.ChatGroup group; // Using model version of ChatGroup
 
   const GroupDetailsScreen({super.key, required this.group});
 
@@ -276,7 +277,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => GroupChatScreen(
-                            group: widget.group,
+                            group: widget.group, // No conversion needed as it's already model version
                             isAnonymous: _isAnonymous,
                           ),
                         ),

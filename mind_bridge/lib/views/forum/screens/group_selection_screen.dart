@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/chat_group_model.dart' as models; // Import model version 
 import 'group_details_screen.dart';
 
 // Define ChatGroup class directly in this file to resolve the import error
@@ -273,11 +274,20 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen>
 
         // Navigate to Group Details Screen
         if (mounted) {
+          // Convert local ChatGroup to models.ChatGroup before passing to GroupDetailsScreen
+          final modelsGroup = models.ChatGroup(
+            id: group.id,
+            name: group.name,
+            members: group.members,
+            description: group.description,
+            membersList: group.membersList,
+          );
+          
           Navigator.push(
             context,
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
-                  GroupDetailsScreen(group: group),
+                  GroupDetailsScreen(group: modelsGroup), // Pass the converted model
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
                 var begin = const Offset(1.0, 0.0);

@@ -1,53 +1,13 @@
 import 'package:flutter/material.dart';
-import 'group_selection_screen.dart'; // Import to use ChatGroup and ChatRepository
+import 'toxic_words_filter.dart'; // Local import in the same directory
 
-// Define MessageModel class directly in this file
-class MessageModel {
-  final String id;
-  final String message;
-  final String sender;
-  final DateTime timestamp;
-  final bool isMe;
+// Import your models with relative paths and prefixes
+import '../../models/chat_group_model.dart' as models; // Using prefix to avoid ambiguity
+import '../../models/message_model_new.dart' as models; // Using prefix to avoid ambiguity
+import '../repositories/chat_repository.dart'; // Repository import
 
-  MessageModel({
-    required this.id,
-    required this.message,
-    required this.sender,
-    required this.timestamp,
-    this.isMe = false,
-  });
-
-  factory MessageModel.fromJson(Map<String, dynamic> json) {
-    return MessageModel(
-      id: json['id'],
-      message: json['message'],
-      sender: json['sender'],
-      timestamp: json['timestamp'] is String 
-          ? DateTime.parse(json['timestamp']) 
-          : json['timestamp'],
-      isMe: json['isMe'] ?? json['sender'] == 'You',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'message': message,
-      'sender': sender,
-      'timestamp': timestamp.toIso8601String(),
-      'isMe': isMe,
-    };
-  }
-
-  // Format the timestamp for display
-  String get formattedTime {
-    return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-// Define ChatBubble widget directly in this file
 class ChatBubble extends StatelessWidget {
-  final MessageModel message;
+  final models.MessageModel message; // Using the prefix to specify which MessageModel
   final bool isAnonymous;
 
   const ChatBubble({
@@ -164,7 +124,7 @@ class ChatBubble extends StatelessWidget {
 }
 
 class GroupChatScreen extends StatefulWidget {
-  final ChatGroup group;
+  final models.ChatGroup group; // Using the prefix to specify which ChatGroup
   final bool isAnonymous;
 
   const GroupChatScreen({
@@ -183,7 +143,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   
-  List<MessageModel> _messages = [];
+  List<models.MessageModel> _messages = []; // Using the prefix for the list type
   bool _isLoading = true;
   bool _isSending = false;
 
@@ -195,6 +155,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   // Define anonymous mode colors
   static const Color anonymousColor = Color(0xFF6E01A1); // Deep purple
   static const Color anonymousDarkColor = Color(0xFF4A0072); // Darker purple for text
+  
+  // Define warning color for toxic content
+  static const Color warningColor = Color(0xFFFF3D00); // Deep orange/red
 
   @override
   void initState() {
@@ -212,19 +175,20 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   Future<void> _loadMessages() async {
     try {
-      final messagesData = await _chatRepository.getMessages(widget.group.id);
-      final List<MessageModel> parsedMessages = [];
+      final repositoryMessages = await _chatRepository.getMessages(widget.group.id);
       
-      // Convert the dynamic messages to MessageModel objects
-      for (var msg in messagesData) {
-        if (msg is Map<String, dynamic>) {
-          parsedMessages.add(MessageModel.fromJson(msg));
-        }
-      }
+      // Convert repository MessageModel objects to models.MessageModel objects
+      final convertedMessages = repositoryMessages.map((repoMsg) => models.MessageModel(
+        id: repoMsg.id,
+        message: repoMsg.message,
+        sender: repoMsg.sender,
+        timestamp: repoMsg.timestamp,
+        isMe: repoMsg.isMe,
+      )).toList();
       
       if (mounted) {
         setState(() {
-          _messages = parsedMessages;
+          _messages = convertedMessages;
           _isLoading = false;
         });
         // Scroll to bottom after messages load
@@ -258,11 +222,19 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     final messageText = _messageController.text.trim();
     if (messageText.isEmpty) return;
 
+    // Check for toxic words before sending
+    final toxicCheck = ToxicWordsFilter.containsToxicWord(messageText);
+    if (toxicCheck['containsToxicWord']) {
+      // Show error dialog if toxic word is found
+      _showToxicWordWarning(toxicCheck['toxicWord']);
+      return;
+    }
+
     // Clear text field immediately for better UX
     _messageController.clear();
     
     // Add optimistic message to the UI with anonymous sender if enabled
-    final optimisticMessage = MessageModel(
+    final optimisticMessage = models.MessageModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       message: messageText,
       sender: widget.isAnonymous ? 'Anonymous' : 'You',
@@ -294,6 +266,50 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         });
       }
     }
+  }
+
+  // Show warning dialog for toxic words
+  void _showToxicWordWarning(String toxicWord) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: warningColor, size: 28),
+            const SizedBox(width: 8),
+            const Text('Inappropriate Content'),
+          ],
+        ),
+        content: RichText(
+          text: TextSpan(
+            style: TextStyle(color: Colors.black87, fontSize: 16),
+            children: [
+              TextSpan(
+                text: 'Your message contains inappropriate language ',
+              ),
+              TextSpan(
+                text: '("$toxicWord")',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(
+                text: '. Please be respectful and considerate of others in this community.',
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('EDIT MESSAGE'),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
   }
 
   // Add method to leave the group
