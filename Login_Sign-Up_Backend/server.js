@@ -22,6 +22,8 @@ const feedRoutes = require("./routes/feed-page-routes");
 const authRoutes = require("./routes/authRoutes"); 
 const userRoutes = require("./routes/profileRoutes");
 const moodRoutes = require("./routes/moodRoutes");
+const therapistRoutes = require('./routes/therapistRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 
 const app = express();
 
@@ -458,9 +460,24 @@ if (typeof moodRoutes === 'function') {
   console.error('Warning: moodRoutes is not a valid Express router');
 }
 
+// Add therapy appointment routes
+if (typeof therapistRoutes === 'function') {
+  app.use('/api/therapists', therapistRoutes);
+  console.log('Therapist routes registered');
+} else {
+  console.error('Warning: therapistRoutes is not a valid Express router');
+}
+
+if (typeof appointmentRoutes === 'function') {
+  app.use('/api/appointments', appointmentRoutes);
+  console.log('Appointment routes registered');
+} else {
+  console.error('Warning: appointmentRoutes is not a valid Express router');
+}
+
 // Health check route
 app.get("/", (req, res) => {
-  res.send("MindBridge Server with Feed, Auth, Profile, and Mood Tracker functionality is running!");
+  res.send("MindBridge Server with Feed, Auth, Profile, Mood Tracker, and Therapy Appointment functionality is running!");
 });
 
 // Health check route with DB status
@@ -487,6 +504,8 @@ app.get("/health", async (req, res) => {
         authAPI: 'running',
         userAPI: 'running',
         moodTrackerAPI: moodDbConnected ? 'running' : 'limited',
+        therapistAPI: 'running',
+        appointmentAPI: 'running'
       },
       timestamp: new Date().toISOString()
     });
@@ -653,6 +672,8 @@ let moodDbConnected = false;
       console.log('- Authentication API');
       console.log('- User Profiles API');
       console.log(`- Mood Tracker API (${moodDbConnected ? 'Available' : 'Limited'})`);
+      console.log('- Therapist API');
+      console.log('- Appointment API');
       console.log('- AI Chat');
       console.log('----------------------------------------------------');
     });
