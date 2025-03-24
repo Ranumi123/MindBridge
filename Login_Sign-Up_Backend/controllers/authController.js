@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const {
   createUser,
   findUserByEmail,
-  verifyPassword
+  verifyPassword,
+  generateUserId
 } = require('../models/user');
 
 // Signup Function
@@ -21,8 +22,12 @@ exports.signup = async (req, res) => {
       });
     }
     
+    // Generate a consistent userId based on email
+    const userId = generateUserId(email);
+    
     // Create user data object with required fields
     const userData = { 
+      userId, // Add the consistent userId
       name, 
       email, 
       password,
@@ -71,6 +76,7 @@ exports.signup = async (req, res) => {
     
     // Log the final user data being created
     console.log("Creating user with data:", {
+      userId: userData.userId,
       name: userData.name,
       email: userData.email,
       profile: userData.profile,
@@ -82,6 +88,7 @@ exports.signup = async (req, res) => {
     
     console.log("User registered successfully:", {
       id: newUser._id,
+      userId: newUser.userId,
       name: newUser.name,
       profile: newUser.profile,
       emergencyContacts: newUser.emergencyContacts ? 
@@ -95,6 +102,7 @@ exports.signup = async (req, res) => {
       msg: 'User registered successfully',
       user: {
         id: newUser._id,
+        userId: newUser.userId, // Include the consistent userId
         name: newUser.name,
         email: newUser.email,
         phone: newUser.profile?.phone || "",
@@ -168,9 +176,17 @@ exports.login = async (req, res) => {
     
     console.log("Login successful for:", email);
     
+    // Generate a consistent userId if it doesn't exist
+    if (!user.userId) {
+      user.userId = generateUserId(email);
+      console.log(`Generated missing userId ${user.userId} for user ${email}`);
+      // Note: In a real implementation, you would save this back to the database
+    }
+    
     // Log user data for debugging
     console.log("User profile data:", {
       name: user.name,
+      userId: user.userId,
       profile: user.profile || {},
       emergencyContacts: user.emergencyContacts ? 
         `${user.emergencyContacts.length} contact(s)` : 
@@ -180,7 +196,10 @@ exports.login = async (req, res) => {
     // Generate JWT token with fallback secret
     const secret = process.env.JWT_SECRET || 'your_jwt_secret';
     const token = jwt.sign(
-      { userId: user._id },
+      { 
+        userId: user._id,
+        consistentId: user.userId // Include consistentId in token
+      },
       secret,
       { expiresIn: '24h' }
     );
@@ -191,6 +210,7 @@ exports.login = async (req, res) => {
       token,
       user: {
         id: user._id,
+        userId: user.userId, // Include the consistent userId
         name: user.name,
         email: user.email,
         phone: user.profile?.phone || "",

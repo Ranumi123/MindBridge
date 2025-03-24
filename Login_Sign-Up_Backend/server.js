@@ -8,9 +8,10 @@ const toxicity = require('@tensorflow-models/toxicity');
 const fs = require('fs').promises;
 const path = require('path');
 const { ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
 
 // Import MongoDB connections
-const { connectToMongoDB, getDB } = require('./db');
+const { connectToMongoDB, getDB, connectWithMongoose, checkDatabase } = require('./db');
 const connectFeedDB = require("./config/feed-db");
 
 // Import models
@@ -18,17 +19,19 @@ const { findUserById } = require('./models/user');
 
 // Import routes
 const feedRoutes = require("./routes/feed-page-routes");
-// Import authentication routes
 const authRoutes = require("./routes/authRoutes"); 
-// Import user routes for profile functionality
 const userRoutes = require("./routes/profileRoutes");
+const moodRoutes = require("./routes/moodRoutes");
 
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
-// Add URL-encoded parser for form submissions
+app.use(cors({
+  origin: '*', // Allow all origins or specify your frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Google Generative AI Setup
@@ -42,6 +45,9 @@ const datasetPath = path.join(__dirname, 'datasets', 'Suicide_Ideation_Dataset(T
 let suicideDataset = [];
 let suicidalPatterns = [];
 let initialized = false;
+
+// In-memory store for moods when the database is not available
+const moodEntriesStore = [];
 
 // Load and process suicide dataset
 async function loadSuicideDataset() {
@@ -200,35 +206,47 @@ function getSuicidalResponse() {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// UPDATED: Enhanced MongoDB-integrated functions for emergency contacts
+// Enhanced MongoDB-integrated functions for emergency contacts
 async function getEmergencyContacts(userId) {
   try {
-    // Convert string ID to ObjectId if necessary
-    const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
-    
-    const db = getDB();
-    const user = await db.collection('users').findOne({ _id: id });
-    
-    // Check for emergency contacts array from updated schema
-    if (user && user.emergencyContacts && user.emergencyContacts.length > 0) {
-      // Filter out any incomplete or invalid contacts
-      const validContacts = user.emergencyContacts.filter(contact => 
-        contact && contact.phone && contact.phone.trim() !== ''
-      );
+    // Check if userId is in the consistent ID format
+    if (userId && typeof userId === 'string' && userId.startsWith('user_')) {
+      const db = getDB();
+      const user = await db.collection('users').findOne({ userId });
       
-      if (validContacts.length > 0) {
-        return validContacts;
+      if (user && user.emergencyContacts && user.emergencyContacts.length > 0) {
+        return user.emergencyContacts.filter(contact => 
+          contact && contact.phone && contact.phone.trim() !== ''
+        );
       }
-    }
-    
-    // Check phone in profile as fallback (if we have a name)
-    if (user && user.profile && user.profile.phone && user.name) {
-      return [{
-        name: `${user.name} (Self)`,
-        phone: user.profile.phone,
-        relationship: "Self",
-        isPrimary: true
-      }];
+    } else {
+      // Convert string ID to ObjectId if necessary
+      const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+      
+      const db = getDB();
+      const user = await db.collection('users').findOne({ _id: id });
+      
+      // Check for emergency contacts array from updated schema
+      if (user && user.emergencyContacts && user.emergencyContacts.length > 0) {
+        // Filter out any incomplete or invalid contacts
+        const validContacts = user.emergencyContacts.filter(contact => 
+          contact && contact.phone && contact.phone.trim() !== ''
+        );
+        
+        if (validContacts.length > 0) {
+          return validContacts;
+        }
+      }
+      
+      // Check phone in profile as fallback (if we have a name)
+      if (user && user.profile && user.profile.phone && user.name) {
+        return [{
+          name: `${user.name} (Self)`,
+          phone: user.profile.phone,
+          relationship: "Self",
+          isPrimary: true
+        }];
+      }
     }
     
     // Default emergency services if no contacts found
@@ -254,7 +272,6 @@ async function getEmergencyContacts(userId) {
     ];
   } catch (error) {
     console.error("Error getting emergency contacts:", error);
-    // Log the specific error for debugging
     console.error("Error details:", error.message);
     
     // Return default emergency services in case of error
@@ -275,7 +292,7 @@ async function getEmergencyContacts(userId) {
   }
 }
 
-// UPDATED: Enhanced notifyEmergencyContacts function
+// Enhanced notifyEmergencyContacts function
 async function notifyEmergencyContacts(userId) {
   try {
     const emergencyContacts = await getEmergencyContacts(userId);
@@ -283,10 +300,18 @@ async function notifyEmergencyContacts(userId) {
     // Get user info for the message
     let userName = "A user";
     try {
-      // Convert string ID to ObjectId if necessary
-      const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+      let user;
       
-      const user = await findUserById(id);
+      // Check if userId is in the consistent ID format
+      if (userId && typeof userId === 'string' && userId.startsWith('user_')) {
+        const db = getDB();
+        user = await db.collection('users').findOne({ userId });
+      } else {
+        // Convert string ID to ObjectId if necessary
+        const id = typeof userId === 'string' ? new ObjectId(userId) : userId;
+        user = await findUserById(id);
+      }
+      
       if (user && user.name) {
         userName = user.name;
       }
@@ -370,7 +395,7 @@ async function notifyEmergencyContacts(userId) {
   }
 }
 
-// UPDATED: Enhanced SMS sending function
+// Enhanced SMS sending function
 async function sendSMS(phone, message) {
   // This is a placeholder function - replace with your actual SMS provider integration
   console.log(`[SMS WOULD BE SENT] To: ${phone}, Message: ${message}`);
@@ -381,26 +406,6 @@ async function sendSMS(phone, message) {
     messageId: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     timestamp: new Date()
   };
-  
-  // When implementing with a real SMS provider, uncomment and modify:
-  /*
-  // Example with Twilio:
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const client = require('twilio')(accountSid, authToken);
-  
-  const result = await client.messages.create({
-    body: message,
-    from: process.env.TWILIO_PHONE_NUMBER,
-    to: phone
-  });
-  
-  return {
-    success: true,
-    messageId: result.sid,
-    timestamp: new Date()
-  };
-  */
 }
 
 // Store chat message in MongoDB
@@ -420,15 +425,78 @@ async function storeChatMessage(userId, message, reply, status) {
   }
 }
 
-// Routes
-app.use("/api/feed", feedRoutes); // Feed routes
-app.use("/api/auth", authRoutes); // Auth routes
-app.use("/api/users", userRoutes); // User profile 
-// app.use("/api/profile", profileRoutes); // Profile routes
+// Register routes
+// First, verify each route before registering
+console.log('Setting up routes...');
+
+// Check if our route files export valid Express routers
+if (typeof feedRoutes === 'function') {
+  app.use("/api/feed", feedRoutes);
+  console.log('Feed routes registered');
+} else {
+  console.error('Warning: feedRoutes is not a valid Express router');
+}
+
+if (typeof authRoutes === 'function') {
+  app.use("/api/auth", authRoutes);
+  console.log('Auth routes registered');
+} else {
+  console.error('Warning: authRoutes is not a valid Express router');
+}
+
+if (typeof userRoutes === 'function') {
+  app.use("/api/users", userRoutes);
+  console.log('User/profile routes registered');
+} else {
+  console.error('Warning: userRoutes is not a valid Express router');
+}
+
+if (typeof moodRoutes === 'function') {
+  app.use("/api/moods", moodRoutes);
+  console.log('Mood tracker routes registered');
+} else {
+  console.error('Warning: moodRoutes is not a valid Express router');
+}
 
 // Health check route
 app.get("/", (req, res) => {
-  res.send("MindBridge Server with Feed, Auth, and User Profile functionality is running!");
+  res.send("MindBridge Server with Feed, Auth, Profile, and Mood Tracker functionality is running!");
+});
+
+// Health check route with DB status
+app.get("/health", async (req, res) => {
+  try {
+    // Get database connection status
+    const dbStatus = await checkDatabase();
+    
+    // Check mood database connection
+    let moodDbConnected = false;
+    try {
+      const { isMoodDBConnected } = require('./config/mood-db');
+      moodDbConnected = isMoodDBConnected();
+    } catch (err) {
+      console.warn('Could not check mood DB connection:', err.message);
+    }
+    
+    res.status(200).json({ 
+      status: 'UP', 
+      services: {
+        main: 'running',
+        database: dbStatus ? 'connected' : 'disconnected',
+        feedAPI: 'running',
+        authAPI: 'running',
+        userAPI: 'running',
+        moodTrackerAPI: moodDbConnected ? 'running' : 'limited',
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // AI Chat route (no authentication)
@@ -508,22 +576,110 @@ app.use((err, req, res, next) => {
 });
 
 // Initialize MongoDB connections and the dataset when server starts
+// Global variable to track mood database connection state
+let moodDbConnected = false;
+
 (async function() {
   try {
-    // Connect to both MongoDB databases
-    await connectToMongoDB(); // Main MindBridge DB
-    await connectFeedDB();    // Feed DB
-    console.log("MongoDB connections established");
+    console.log('Starting server initialization...');
     
-    // Then load the dataset
+    // 1. Connect to main MindBridge DB
+    await connectToMongoDB();
+    console.log('Main database connected successfully');
+    
+    // 2. Connect to Feed DB
+    try {
+      await connectFeedDB();
+      console.log('Feed database connected successfully');
+    } catch (feedDbError) {
+      console.error('Failed to connect to feed database:', feedDbError.message);
+      console.warn('Server will start with limited feed functionality');
+    }
+    
+    // 3. Connect to Mongoose for ORM operations
+    try {
+      await connectWithMongoose();
+      console.log('Mongoose connected successfully');
+    } catch (mongooseError) {
+      console.error('Failed to connect with Mongoose:', mongooseError.message);
+      console.warn('Server will start with limited ORM functionality');
+    }
+    
+    // 4. Connect to Mood Tracker DB
+    try {
+      const { connectMoodDB } = require('./config/mood-db');
+      await connectMoodDB();
+      moodDbConnected = true;
+      console.log('Mood tracker database connected successfully');
+      
+      // Verify connectivity by testing the Mood model
+      const Mood = require('./models/mood-model');
+      if (typeof Mood.verifyConnection === 'function') {
+        const isConnected = await Mood.verifyConnection();
+        
+        if (isConnected) {
+          console.log('Mood model connection verified successfully');
+        } else {
+          console.error('Mood model connection verification failed');
+          console.warn('Server will continue but mood tracker functionality may be limited');
+        }
+      } else {
+        // If verifyConnection method is not available, try a simpler check
+        console.log('Verifying Mood model with basic check...');
+        try {
+          const count = await Mood.countDocuments({});
+          console.log(`Found ${count} mood documents in database`);
+          console.log('Mood model basic connection check passed');
+        } catch (countError) {
+          console.error('Mood model basic connection check failed:', countError.message);
+          console.warn('Server will continue but mood tracker functionality may be limited');
+        }
+      }
+    } catch (moodDbError) {
+      console.error('Failed to connect to mood tracker database:', moodDbError.message);
+      console.warn('Server will start with limited mood tracker functionality');
+    }
+    
+    // 5. Load the suicide detection dataset
     await loadSuicideDataset();
+    
+    // 6. Start the server
+    const PORT = process.env.PORT || 5001;
+    app.listen(PORT, () => {
+      console.log(`MindBridge server running on http://localhost:${PORT}`);
+      console.log('----------------------------------------------------');
+      console.log('Services available:');
+      console.log('- Feed API');
+      console.log('- Authentication API');
+      console.log('- User Profiles API');
+      console.log(`- Mood Tracker API (${moodDbConnected ? 'Available' : 'Limited'})`);
+      console.log('- AI Chat');
+      console.log('----------------------------------------------------');
+    });
   } catch (error) {
-    console.error("Initialization error:", error);
+    console.error('Critical initialization error:', error);
+    console.error('Server cannot start due to critical initialization failure');
     process.exit(1);
   }
 })();
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Integrated MindBridge server running on http://localhost:${PORT}`);
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down server gracefully...');
+  
+  // Close any open database connections
+  try {
+    if (mongoose.connection.readyState === 1) {
+      console.log('Closing mongoose connections...');
+      await mongoose.connection.close();
+    }
+    
+    // Close any other connections here
+    
+    console.log('All connections closed. Exiting process.');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error during shutdown:', err);
+    process.exit(1);
+  }
 });
