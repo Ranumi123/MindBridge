@@ -42,6 +42,7 @@ dependencies:
   flutter_svg: ^2.0.10  # (Latest version at the time of writing)
   url_launcher: ^6.2.5
   flutter_gif: ^0.0.4
+  table_calendar: ^3.0.9
 
   # Added for mood tracker functionality
   fl_chart: ^0.65.0 # For chart visualizations
