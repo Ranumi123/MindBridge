@@ -40,57 +40,72 @@ class _ProfilePageState extends State<ProfilePage>
 
   // Method to fetch user data
   Future<void> _fetchUserData() async {
-    try {
+  try {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Retrieve user data from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('user_id');
+    final userEmail = prefs.getString('user_email');
+    final userName = prefs.getString('user_name');
+    final userPhone = prefs.getString('user_phone');
+
+    // Debug: Print stored user details
+    print("Stored User Details:");
+    print("ID: $userId");
+    print("Email: $userEmail");
+    print("Name: $userName");
+    print("Phone: $userPhone");
+
+    if (userId == null && userEmail == null) {
+      throw Exception('User not logged in');
+    }
+
+    // Attempt to fetch user data from API
+    final response = await http.get(
+      Uri.parse('$apiBaseUrl/users/${userId ?? userEmail}'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      // Debug: Print API response
+      print("API Response: $data");
+
       setState(() {
-        isLoading = true;
-      });
-
-      // Retrieve user data from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getString('user_id');
-      final userEmail = prefs.getString('user_email');
-      final userName = prefs.getString('user_name');
-      final userPhone = prefs.getString('user_phone');
-
-      if (userId == null && userEmail == null) {
-        throw Exception('User not logged in');
-      }
-
-      // Check if API fetching fails, fallback to SharedPreferences
-      final response = await http.get(
-        Uri.parse('$apiBaseUrl/api/users/${userId ?? userEmail}'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          userData = data;
-          isLoading = false;
-        });
-      } else {
-        // Fallback to locally stored data if API request fails
-        setState(() {
-          userData = {
-            'id': userId,
-            'name': userName,
-            'email': userEmail,
-            'phone': userPhone,
-          };
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print('Error fetching user data: $e');
-      setState(() {
+        userData = data;
         isLoading = false;
       });
+    } else {
+      print("API Request Failed - Status Code: ${response.statusCode}");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load user data: $e')),
-      );
+      // Fallback to locally stored data if API request fails
+      setState(() {
+        userData = {
+          'id': userId,
+          'name': userName,
+          'email': userEmail,
+          'phone': userPhone?.isNotEmpty == true ? userPhone : "Not specified",
+        };
+        isLoading = false;
+      });
     }
+  } catch (e) {
+    print('Error fetching user data: $e');
+
+    setState(() {
+      isLoading = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to load user data: $e')),
+    );
   }
+}
+
 
   @override
   void dispose() {

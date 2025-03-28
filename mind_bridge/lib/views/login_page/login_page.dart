@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/auth_service.dart';
 import 'dart:convert';
 import '../privacy_settings_page/privacy_setting_page.dart';
@@ -57,37 +58,47 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   }
 
   void _login() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
+  final email = _emailController.text;
+  final password = _passwordController.text;
 
-    final response = await AuthService.login(email, password);
+  final response = await AuthService.login(email, password);
 
-    if (response['success']) {
-      // Login successful
-      print('Login successful: ${response['data']['msg']}');
+  if (response['success']) {
+    // Extract user data
+    final userData = response['data']['user'];
 
-      // Navigate to PrivacySettingsPage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => PrivacySettingsPage()),
-      );
-    } else {
-      // Login failed
-      print('Login failed: ${response['message']}');
+    // Store user details in SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_id', userData['id']);
+    await prefs.setString('user_email', userData['email']);
+    await prefs.setString('user_name', userData['name']);
+    await prefs.setString('user_phone', userData['phone'] ?? "");
 
-      // Show error message using a SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response['message']),
-          backgroundColor: Color(0xFF1EBBD7),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+    print('Login successful: ${response['data']['msg']}');
+
+    // Navigate to PrivacySettingsPage
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => PrivacySettingsPage()),
+    );
+  } else {
+    // Login failed
+    print('Login failed: ${response['message']}');
+
+    // Show error message using a SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(response['message']),
+        backgroundColor: Color(0xFF1EBBD7),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-      );
-    }
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

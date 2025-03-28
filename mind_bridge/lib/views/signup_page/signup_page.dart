@@ -17,10 +17,10 @@ class _SignupPageState extends State<SignupPage>
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emergencyContactController =
-  TextEditingController();
+      TextEditingController();
 
   // Animation controller for staggered animations
   late AnimationController _animationController;
@@ -99,7 +99,8 @@ class _SignupPageState extends State<SignupPage>
     try {
       // Call the AuthService.signup method with the correct number of parameters
       // We're creating a modified version that accepts both phone and emergency contact
-      final response = await AuthService.signup(name, email, password);
+      final response = await AuthService.signup(
+          name, email, password, phone, emergencyContact);
 
       if (response['success']) {
         // Signup successful
@@ -325,19 +326,19 @@ class _SignupPageState extends State<SignupPage>
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Colors.transparent),
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Color(0xFF1EBBD7)),
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon: Icon(Icons.person,
                                     color: Color(0xFF4B9FE1)),
                                 contentPadding:
-                                EdgeInsets.symmetric(vertical: 16),
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -366,19 +367,19 @@ class _SignupPageState extends State<SignupPage>
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Colors.transparent),
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Color(0xFF1EBBD7)),
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon:
-                                Icon(Icons.email, color: Color(0xFF4B9FE1)),
+                                    Icon(Icons.email, color: Color(0xFF4B9FE1)),
                                 contentPadding:
-                                EdgeInsets.symmetric(vertical: 16),
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -407,19 +408,19 @@ class _SignupPageState extends State<SignupPage>
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Colors.transparent),
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Color(0xFF1EBBD7)),
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon:
-                                Icon(Icons.phone, color: Color(0xFF4B9FE1)),
+                                    Icon(Icons.phone, color: Color(0xFF4B9FE1)),
                                 contentPadding:
-                                EdgeInsets.symmetric(vertical: 16),
+                                    EdgeInsets.symmetric(vertical: 16),
                                 hintText: '(123) 456-7890',
                               ),
                             ),
@@ -449,19 +450,19 @@ class _SignupPageState extends State<SignupPage>
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Colors.transparent),
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Color(0xFF1EBBD7)),
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon: Icon(Icons.emergency,
                                     color: Color(0xFF4B9FE1)),
                                 contentPadding:
-                                EdgeInsets.symmetric(vertical: 16),
+                                    EdgeInsets.symmetric(vertical: 16),
                                 hintText: '(123) 456-7890',
                               ),
                             ),
@@ -491,17 +492,17 @@ class _SignupPageState extends State<SignupPage>
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Colors.transparent),
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Color(0xFF1EBBD7)),
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon:
-                                Icon(Icons.lock, color: Color(0xFF4B9FE1)),
+                                    Icon(Icons.lock, color: Color(0xFF4B9FE1)),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _isPasswordVisible
@@ -516,7 +517,7 @@ class _SignupPageState extends State<SignupPage>
                                   },
                                 ),
                                 contentPadding:
-                                EdgeInsets.symmetric(vertical: 16),
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -545,17 +546,17 @@ class _SignupPageState extends State<SignupPage>
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Colors.transparent),
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide:
-                                  BorderSide(color: Color(0xFF1EBBD7)),
+                                      BorderSide(color: Color(0xFF1EBBD7)),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon:
-                                Icon(Icons.lock, color: Color(0xFF4B9FE1)),
+                                    Icon(Icons.lock, color: Color(0xFF4B9FE1)),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _isConfirmPasswordVisible
@@ -566,12 +567,12 @@ class _SignupPageState extends State<SignupPage>
                                   onPressed: () {
                                     setState(() {
                                       _isConfirmPasswordVisible =
-                                      !_isConfirmPasswordVisible;
+                                          !_isConfirmPasswordVisible;
                                     });
                                   },
                                 ),
                                 contentPadding:
-                                EdgeInsets.symmetric(vertical: 16),
+                                    EdgeInsets.symmetric(vertical: 16),
                               ),
                             ),
                           ),
@@ -596,7 +597,7 @@ class _SignupPageState extends State<SignupPage>
                       child: Container(
                         margin: EdgeInsets.only(bottom: 16),
                         padding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: Color(0xFF1EBBD7).withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
