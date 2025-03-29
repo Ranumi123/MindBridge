@@ -61,37 +61,37 @@ async function initializeDatabase() {
       // Create default chat groups matching the frontend expectations
       const defaultGroups = [
         {
-          name: 'Tech Talk',
+          name: 'Mind Haven',
           members: '0/10',
-          description: 'Discuss the latest tech trends and innovations. Share news about gadgets, software, and tech events!',
+          description: 'A peaceful space for mindfulness and mental wellness. Share experiences and support on your journey to peace.',
           membersList: [],
           createdAt: new Date()
         },
         {
-          name: 'Fitness Club',
+          name: 'Brighter Days',
           members: '0/10',
-          description: 'Stay fit and healthy with others! Share workout routines, nutrition tips, and fitness motivation.',
+          description: 'Focus on positivity and hope. Share uplifting stories and encouragement for brighter days ahead.',
           membersList: [],
           createdAt: new Date()
         },
         {
-          name: 'Book Lovers',
+          name: 'Safe Space Chat',
           members: '0/10',
-          description: 'Share and discuss your favorite books! From classics to contemporary, fiction to non-fiction.',
+          description: 'A judgment-free zone where you can express yourself openly. Support and understanding for all.',
           membersList: [],
           createdAt: new Date()
         },
         {
-          name: 'Gaming Zone',
+          name: 'Soulful Support',
           members: '0/10',
-          description: 'Talk about games and play together! PC, console, or mobile - all gamers welcome here.',
+          description: 'Deep conversations about life challenges and growth. Connect with others on a meaningful level.',
           membersList: [],
           createdAt: new Date()
         },
         {
-          name: 'Music Vibes',
+          name: 'Rise Together',
           members: '0/10',
-          description: 'Share your favorite music and artists! Discover new songs, discuss concerts, and connect through music.',
+          description: 'Community for motivation and overcoming obstacles. Share victories and encourage each other to rise.',
           membersList: [],
           createdAt: new Date()
         }
