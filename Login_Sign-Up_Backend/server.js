@@ -9,6 +9,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
+const http = require('http');
+const socketIo = require('socket.io');
 
 // Import MongoDB connections
 const { connectToMongoDB, getDB, connectWithMongoose, checkDatabase } = require('./db');
@@ -25,7 +27,18 @@ const moodRoutes = require("./routes/moodRoutes");
 const therapistRoutes = require('./routes/therapistRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 
+// Import community chat routes
+const chatGroupRoutes = require('./routes/chatGroupRoutes');
+const chatMessageRoutes = require('./routes/chatMessageRoutes');
+
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+});
 
 // Middleware
 app.use(cors({
@@ -35,6 +48,9 @@ app.use(cors({
 }));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Make io available to routes
+app.set('io', io);
 
 // Google Generative AI Setup
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
@@ -50,6 +66,82 @@ let initialized = false;
 
 // In-memory store for moods when the database is not available
 const moodEntriesStore = [];
+
+// Socket.io setup for real-time chat
+io.on('connection', (socket) => {
+  console.log('New client connected', socket.id);
+  
+  // Handle joining a chat group
+  socket.on('joinGroup', (groupId) => {
+    socket.join(groupId);
+    console.log(`Client joined chat group: ${groupId}`);
+  });
+  
+  // Handle leaving a chat group
+  socket.on('leaveGroup', (groupId) => {
+    socket.leave(groupId);
+    console.log(`Client left chat group: ${groupId}`);
+  });
+  
+  // Handle new messages
+  socket.on('newMessage', async (messageData) => {
+    try {
+      const db = getDB();
+      
+      // Check for toxic content
+      const ToxicWordsFilter = require('./middleware/toxicFilter');
+      const toxicCheck = ToxicWordsFilter.containsToxicWord(messageData.message);
+      
+      if (toxicCheck.containsToxicWord) {
+        socket.emit('messageError', { 
+          error: 'Your message contains inappropriate language',
+          toxicWord: toxicCheck.toxicWord
+        });
+        return;
+      }
+      
+      // Store message in database
+      const message = {
+        groupId: messageData.groupId,
+        message: messageData.message,
+        sender: messageData.sender,
+        isAnonymous: messageData.isAnonymous || false,
+        timestamp: new Date(),
+        isMe: false, // This will be set to true by the client for their own messages
+      };
+      
+      const result = await db.collection('chatMessages').insertOne(message);
+      
+      // Get the inserted message with ID
+      const insertedMessage = {
+        ...message,
+        _id: result.insertedId
+      };
+      
+      // Broadcast message to all clients in the group
+      io.to(messageData.groupId).emit('receiveMessage', insertedMessage);
+      
+      console.log(`Message sent to group ${messageData.groupId}`);
+    } catch (error) {
+      console.error("Error handling new message:", error);
+      socket.emit('messageError', { error: 'Failed to send message' });
+    }
+  });
+  
+  // Handle typing events
+  socket.on('typing', (data) => {
+    socket.to(data.groupId).emit('userTyping', {
+      userId: data.userId,
+      groupId: data.groupId,
+      isTyping: data.isTyping
+    });
+  });
+  
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('Client disconnected', socket.id);
+  });
+});
 
 // Load and process suicide dataset
 async function loadSuicideDataset() {
@@ -475,9 +567,16 @@ if (typeof appointmentRoutes === 'function') {
   console.error('Warning: appointmentRoutes is not a valid Express router');
 }
 
+// Add community chat routes
+app.use('/api/chat/groups', chatGroupRoutes);
+console.log('Chat group routes registered');
+
+app.use('/api/chat/messages', chatMessageRoutes);
+console.log('Chat message routes registered');
+
 // Health check route
 app.get("/", (req, res) => {
-  res.send("MindBridge Server with Feed, Auth, Profile, Mood Tracker, and Therapy Appointment functionality is running!");
+  res.send("MindBridge Server with Feed, Auth, Profile, Mood Tracker, Therapy Appointment, and Community Chat functionality is running!");
 });
 
 // Health check route with DB status
@@ -505,7 +604,8 @@ app.get("/health", async (req, res) => {
         userAPI: 'running',
         moodTrackerAPI: moodDbConnected ? 'running' : 'limited',
         therapistAPI: 'running',
-        appointmentAPI: 'running'
+        appointmentAPI: 'running',
+        communityChat: 'running' // Added community chat status
       },
       timestamp: new Date().toISOString()
     });
@@ -659,12 +759,22 @@ let moodDbConnected = false;
       console.warn('Server will start with limited mood tracker functionality');
     }
     
-    // 5. Load the suicide detection dataset
+    // 5. Initialize chat database collections
+    try {
+      const { initializeDatabase } = require('./models/initializeDB');
+      await initializeDatabase();
+      console.log('Chat database collections initialized successfully');
+    } catch (dbInitError) {
+      console.error('Failed to initialize chat database collections:', dbInitError.message);
+      console.warn('Server will start with limited chat functionality');
+    }
+    
+    // 6. Load the suicide detection dataset
     await loadSuicideDataset();
     
-    // 6. Start the server
+    // 7. Start the server
     const PORT = process.env.PORT || 5001;
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`MindBridge server running on http://localhost:${PORT}`);
       console.log('----------------------------------------------------');
       console.log('Services available:');
@@ -674,6 +784,7 @@ let moodDbConnected = false;
       console.log(`- Mood Tracker API (${moodDbConnected ? 'Available' : 'Limited'})`);
       console.log('- Therapist API');
       console.log('- Appointment API');
+      console.log('- Community Chat API');
       console.log('- AI Chat');
       console.log('----------------------------------------------------');
     });
@@ -695,7 +806,10 @@ process.on('SIGINT', async () => {
       await mongoose.connection.close();
     }
     
-    // Close any other connections here
+    // Close server
+    server.close(() => {
+      console.log('HTTP server closed');
+    });
     
     console.log('All connections closed. Exiting process.');
     process.exit(0);

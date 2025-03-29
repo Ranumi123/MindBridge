@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../chatbot/chatbot_page.dart';
 import '../profile_setup_page/profile_setup_screen.dart'; // Import the ProfilePage
-import '../forum/screens/chatforum_page.dart'; // Import the ChatForum screen
+
 
 class PrivacySettingsPage extends StatefulWidget {
   @override
@@ -234,10 +234,7 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
               // Add a new button to navigate to ChatForum
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatForum()),
-                  );
+
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade400,

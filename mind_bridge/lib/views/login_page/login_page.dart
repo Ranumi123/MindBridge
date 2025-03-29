@@ -6,6 +6,53 @@ import '../privacy_settings_page/privacy_setting_page.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
+// Add imports for chat services
+import 'package:mind_bridge/services/chat_api_service.dart';
+import 'package:mind_bridge/services/chat_socket_service.dart';
+
+// Singleton for managing chat services
+class ChatServiceManager {
+  static final ChatServiceManager _instance = ChatServiceManager._internal();
+
+  factory ChatServiceManager() {
+    return _instance;
+  }
+
+  ChatServiceManager._internal();
+
+  ChatApiService? _chatApiService;
+  ChatSocketService? _chatSocketService;
+
+  // Initialize services for a user
+  void initializeForUser(String username) {
+    // If socket service exists, disconnect it
+    _chatSocketService?.disconnect();
+
+    // Create or update API service for the current user
+    if (_chatApiService != null) {
+      _chatApiService!.updateCurrentUser(username);
+    } else {
+      _chatApiService = ChatApiService(currentUsername: username);
+    }
+
+    // Note: Socket service will be initialized when needed in chat screens
+  }
+
+  // Get the API service
+  ChatApiService getChatApiService(String username) {
+    if (_chatApiService == null || _chatApiService!.currentUsername != username) {
+      _chatApiService = ChatApiService(currentUsername: username);
+    }
+    return _chatApiService!;
+  }
+
+  // Clean up on logout
+  void cleanUp() {
+    _chatSocketService?.disconnect();
+    _chatSocketService = null;
+  }
+}
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -58,46 +105,52 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   }
 
   void _login() async {
-  final email = _emailController.text;
-  final password = _passwordController.text;
+    final email = _emailController.text;
+    final password = _passwordController.text;
 
-  final response = await AuthService.login(email, password);
+    final response = await AuthService.login(email, password);
 
-  if (response['success']) {
-    // Extract user data
-    final userData = response['data']['user'];
+    if (response['success']) {
+      // Extract user data
+      final userData = response['data']['user'];
 
-    // Store user details in SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', userData['id']);
-    await prefs.setString('user_email', userData['email']);
-    await prefs.setString('user_name', userData['name']);
-    await prefs.setString('user_phone', userData['phone'] ?? "");
+      // Store user details in SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_id', userData['id']);
+      await prefs.setString('user_email', userData['email']);
+      await prefs.setString('user_name', userData['name']);
+      await prefs.setString('user_phone', userData['phone'] ?? "");
 
-    print('Login successful: ${response['data']['msg']}');
+      // Get the username
+      final username = userData['name'];
 
-    // Navigate to PrivacySettingsPage
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => PrivacySettingsPage()),
-    );
-  } else {
-    // Login failed
-    print('Login failed: ${response['message']}');
+      // Initialize chat services for this user
+      ChatServiceManager().initializeForUser(username);
 
-    // Show error message using a SnackBar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(response['message']),
-        backgroundColor: Color(0xFF1EBBD7),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+      print('Login successful: ${response['data']['msg']}');
+
+      // Navigate to PrivacySettingsPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PrivacySettingsPage()),
+      );
+    } else {
+      // Login failed
+      print('Login failed: ${response['message']}');
+
+      // Show error message using a SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response['message']),
+          backgroundColor: Color(0xFF1EBBD7),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
 
 
   @override
