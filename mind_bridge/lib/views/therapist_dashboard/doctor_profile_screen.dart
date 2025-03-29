@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../therapist_dashboard/therapist_service.dart';
 import '../therapist_dashboard/booking_screen.dart';
+import '../therapist_dashboard/appointment_provider.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
   final String therapistId;
@@ -381,7 +383,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                       ),
                                       const SizedBox(height: 30),
 
-                                      // Direct Appointment Button
+                                      // Direct Appointment Button - UPDATED WITH PROVIDER
                                       GestureDetector(
                                         onTap: () {
                                           // Currently hardcoded user info - in a real app, you'd get this from auth
@@ -389,16 +391,25 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                           final userEmail = "user@example.com";
                                           final userName = "John Doe";
 
+                                          // Access the AppointmentProvider and navigate to BookingScreen
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  BookingScreen(
-                                                therapistId: _therapist.id,
-                                                therapistName: _therapist.name,
-                                                userId: userId,
-                                                userEmail: userEmail,
-                                                userName: userName,
+                                                  ChangeNotifierProvider.value(
+                                                // Use the existing provider instance
+                                                value: Provider.of<
+                                                        AppointmentProvider>(
+                                                    context,
+                                                    listen: false),
+                                                child: BookingScreen(
+                                                  therapistId: _therapist.id,
+                                                  therapistName:
+                                                      _therapist.name,
+                                                  userId: userId,
+                                                  userEmail: userEmail,
+                                                  userName: userName,
+                                                ),
                                               ),
                                             ),
                                           );
