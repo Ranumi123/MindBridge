@@ -40,7 +40,9 @@ async function createUser(userData) {
     emergencyContacts: [],
     profile: {
       bio: '',
-      phone: ''
+      phone: '',
+      organization: userData.organization || '',
+      location: userData.location || ''
     },
     preferences: {
       enableNotifications: true,
@@ -49,6 +51,12 @@ async function createUser(userData) {
     privacySettings: {
       allowDataSharing: true,
       enableEncryption: true,
+    },
+    security: {
+      lastPasswordChanged: new Date(),
+      passwordResetToken: null,
+      passwordResetExpires: null,
+      lastLogin: new Date()
     },
     profilePicture: "https://via.placeholder.com/150"
   };
@@ -62,6 +70,16 @@ async function createUser(userData) {
     // If phone is direct property
     newUser.profile.phone = userData.phone;
     console.log("Setting phone from direct property:", userData.phone);
+  }
+  
+  // Set organization and location
+  if (userData.profile) {
+    if (userData.profile.organization) {
+      newUser.profile.organization = userData.profile.organization;
+    }
+    if (userData.profile.location) {
+      newUser.profile.location = userData.profile.location;
+    }
   }
   
   // Handle emergencyContacts
@@ -166,6 +184,33 @@ async function updateUser(userId, updateData) {
   }
 }
 
+async function updateUserProfile(userId, profileData) {
+  // Create update object with flattened profile fields
+  const updateFields = {};
+  
+  // Update only provided fields
+  if (profileData.name) updateFields.name = profileData.name;
+  if (profileData.email) updateFields.email = profileData.email;
+  
+  // Handle profile object fields
+  if (profileData.phone) updateFields['profile.phone'] = profileData.phone;
+  if (profileData.organization) updateFields['profile.organization'] = profileData.organization;
+  if (profileData.location) updateFields['profile.location'] = profileData.location;
+  if (profileData.bio) updateFields['profile.bio'] = profileData.bio;
+  
+  return updateUser(userId, updateFields);
+}
+
+async function updatePrivacySettings(userId, privacyData) {
+  const updateFields = {};
+  
+  if (privacyData.anonymousMode !== undefined) updateFields['preferences.anonymousMode'] = privacyData.anonymousMode;
+  if (privacyData.allowDataSharing !== undefined) updateFields['privacySettings.allowDataSharing'] = privacyData.allowDataSharing;
+  if (privacyData.enableEncryption !== undefined) updateFields['privacySettings.enableEncryption'] = privacyData.enableEncryption;
+  
+  return updateUser(userId, updateFields);
+}
+
 async function updateEmergencyContacts(userId, contacts) {
   return updateUser(userId, { emergencyContacts: contacts });
 }
@@ -214,6 +259,86 @@ async function updatePhone(userId, phone) {
   }
 }
 
+async function changePassword(userId, newPassword) {
+  // Hash the new password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+  // Update password and set last changed date
+  const updateFields = {
+    password: hashedPassword,
+    'security.lastPasswordChanged': new Date()
+  };
+  
+  return updateUser(userId, updateFields);
+}
+
+async function createPasswordResetToken(email) {
+  // Find user by email
+  const user = await findUserByEmail(email);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  
+  // Hash token before storing it
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  
+  // Set expiration (1 hour)
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 1);
+  
+  // Update user with token info
+  await updateUser(user._id, {
+    'security.passwordResetToken': hashedToken,
+    'security.passwordResetExpires': expiresAt
+  });
+  
+  // Return unhashed token to be sent via email
+  return resetToken;
+}
+
+async function resetPasswordWithToken(token, newPassword) {
+  // Hash the token
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+  
+  // Find user with valid token
+  const user = await usersCollection().findOne({
+    'security.passwordResetToken': hashedToken,
+    'security.passwordResetExpires': { $gt: new Date() }
+  });
+  
+  if (!user) {
+    throw new Error('Invalid or expired token');
+  }
+  
+  // Hash new password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+  // Update user
+  await updateUser(user._id, {
+    password: hashedPassword,
+    'security.passwordResetToken': null,
+    'security.passwordResetExpires': null,
+    'security.lastPasswordChanged': new Date()
+  });
+  
+  return true;
+}
+
+async function updateLastLogin(userId) {
+  return updateUser(userId, { 'security.lastLogin': new Date() });
+}
+
 // Add migration function to ensure all users have a userId
 async function migrateUsers() {
   const users = await usersCollection().find({ userId: { $exists: false } }).toArray();
@@ -237,15 +362,87 @@ async function migrateUsers() {
   return migratedCount;
 }
 
+// Add migration for new profile and security fields
+async function migrateUserStructure() {
+  // Add security and profile fields
+  const updates = [
+    // Add organization and location fields
+    {
+      filter: { 'profile.organization': { $exists: false } },
+      update: { $set: { 'profile.organization': '' } }
+    },
+    {
+      filter: { 'profile.location': { $exists: false } },
+      update: { $set: { 'profile.location': '' } }
+    },
+    // Add security fields
+    {
+      filter: { security: { $exists: false } },
+      update: {
+        $set: {
+          'security': {
+            'lastPasswordChanged': new Date(),
+            'passwordResetToken': null,
+            'passwordResetExpires': null,
+            'lastLogin': new Date()
+          }
+        }
+      }
+    },
+    // Add privacy settings if missing
+    {
+      filter: { privacySettings: { $exists: false } },
+      update: {
+        $set: {
+          'privacySettings': {
+            'allowDataSharing': true,
+            'enableEncryption': true
+          }
+        }
+      }
+    },
+    // Add preferences if missing
+    {
+      filter: { preferences: { $exists: false } },
+      update: {
+        $set: {
+          'preferences': {
+            'enableNotifications': true,
+            'anonymousMode': false
+          }
+        }
+      }
+    }
+  ];
+  
+  let totalUpdated = 0;
+  
+  for (const { filter, update } of updates) {
+    const result = await usersCollection().updateMany(filter, update);
+    totalUpdated += result.modifiedCount;
+    console.log(`Updated ${result.modifiedCount} users with ${JSON.stringify(update.$set)}`);
+  }
+  
+  console.log(`Structure migration completed: ${totalUpdated} total updates`);
+  return totalUpdated;
+}
+
 module.exports = {
   createUser,
   findUserById,
   findUserByEmail,
   verifyPassword,
   updateUser,
+  updateUserProfile,
+  updatePrivacySettings,
   updateEmergencyContacts,
   addEmergencyContact,
   updatePhone,
+  changePassword,
+  createPasswordResetToken,
+  resetPasswordWithToken,
+  updateLastLogin,
   generateUserId,
-  migrateUsers
+  migrateUsers,
+  migrateUserStructure
 };

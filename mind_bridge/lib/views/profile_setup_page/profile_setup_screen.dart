@@ -15,14 +15,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
-  bool enableNotifications = true;
-  bool anonymousMode = false;
-  bool allowDataSharing = true;
-  bool enableEncryption = true;
-  late TabController _tabController;
-
+class _ProfilePageState extends State<ProfilePage> {
   // User data and loading state
   Map<String, dynamic>? userData;
   bool isLoading = true;
@@ -32,85 +25,132 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-
     // Fetch user data when the page initializes
     _fetchUserData();
   }
 
   // Method to fetch user data
   Future<void> _fetchUserData() async {
-  try {
-    setState(() {
-      isLoading = true;
-    });
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-    // Retrieve user data from SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('user_id');
-    final userEmail = prefs.getString('user_email');
-    final userName = prefs.getString('user_name');
-    final userPhone = prefs.getString('user_phone');
+      // Retrieve user data from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('user_id');
+      final userEmail = prefs.getString('user_email');
+      final userName = prefs.getString('user_name');
+      final userPhone = prefs.getString('user_phone');
 
-    // Debug: Print stored user details
-    print("Stored User Details:");
-    print("ID: $userId");
-    print("Email: $userEmail");
-    print("Name: $userName");
-    print("Phone: $userPhone");
+      // Debug: Print stored user details
+      print("Stored User Details:");
+      print("ID: $userId");
+      print("Email: $userEmail");
+      print("Name: $userName");
+      print("Phone: $userPhone");
 
-    if (userId == null && userEmail == null) {
-      throw Exception('User not logged in');
-    }
+      if (userId == null && userEmail == null) {
+        throw Exception('User not logged in');
+      }
 
-    // Attempt to fetch user data from API
-    final response = await http.get(
-      Uri.parse('$apiBaseUrl/users/${userId ?? userEmail}'),
-      headers: {'Content-Type': 'application/json'},
-    );
+      // Attempt to fetch user data from API
+      final response = await http.get(
+        Uri.parse('$apiBaseUrl/users/${userId ?? userEmail}'),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-      // Debug: Print API response
-      print("API Response: $data");
+        // Debug: Print API response
+        print("API Response: $data");
+
+        setState(() {
+          userData = data;
+          isLoading = false;
+        });
+      } else {
+        print("API Request Failed - Status Code: ${response.statusCode}");
+
+        // Fallback to locally stored data if API request fails
+        setState(() {
+          userData = {
+            'id': userId,
+            'name': userName,
+            'email': userEmail,
+            'phone':
+                userPhone?.isNotEmpty == true ? userPhone : "Not specified",
+            'organization':
+                prefs.getString('user_organization') ?? "Not specified",
+            'location': prefs.getString('user_location') ?? "Not specified",
+          };
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
 
       setState(() {
-        userData = data;
         isLoading = false;
       });
-    } else {
-      print("API Request Failed - Status Code: ${response.statusCode}");
 
-      // Fallback to locally stored data if API request fails
-      setState(() {
-        userData = {
-          'id': userId,
-          'name': userName,
-          'email': userEmail,
-          'phone': userPhone?.isNotEmpty == true ? userPhone : "Not specified",
-        };
-        isLoading = false;
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load user data: $e')),
+      );
     }
-  } catch (e) {
-    print('Error fetching user data: $e');
-
-    setState(() {
-      isLoading = false;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to load user data: $e')),
-    );
   }
-}
 
+  // Method to edit account information
+  void _editAccountInfo() async {
+    // Show dialog to edit user information
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => AccountEditDialog(userData: userData),
+    );
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    if (result != null) {
+      try {
+        // Update local state first for immediate feedback
+        setState(() {
+          userData = {...?userData, ...result};
+        });
+
+        // Save to SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_name', result['name'] ?? '');
+        await prefs.setString('user_email', result['email'] ?? '');
+        await prefs.setString('user_phone', result['phone'] ?? '');
+        await prefs.setString(
+            'user_organization', result['organization'] ?? '');
+        await prefs.setString('user_location', result['location'] ?? '');
+
+        // Optionally update to backend
+        final userId = prefs.getString('user_id');
+        if (userId != null) {
+          final response = await http.put(
+            Uri.parse('$apiBaseUrl/users/$userId'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(result),
+          );
+
+          if (response.statusCode != 200) {
+            print("API Update Failed - Status Code: ${response.statusCode}");
+            // Show warning that changes are only stored locally
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text(
+                      'Changes saved locally only. Will sync when online.')),
+            );
+          }
+        }
+      } catch (e) {
+        print('Error updating user data: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update user data: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -283,7 +323,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     const SizedBox(height: 10),
                                     OutlinedButton(
                                       onPressed: () {
-                                        // Edit profile
+                                        _editAccountInfo();
                                       },
                                       style: OutlinedButton.styleFrom(
                                         side: const BorderSide(
@@ -350,7 +390,7 @@ class _ProfilePageState extends State<ProfilePage>
 
                           const SizedBox(height: 30),
 
-                          // Tabs for Settings
+                          // Account Settings Section
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -364,89 +404,70 @@ class _ProfilePageState extends State<ProfilePage>
                               ],
                             ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TabBar(
-                                  controller: _tabController,
-                                  indicator: const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Color(0xFF39B0E5),
-                                        width: 2,
-                                      ),
+                                Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Text(
+                                    'Account Settings',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey.shade800,
                                     ),
                                   ),
-                                  labelColor: const Color(0xFF39B0E5),
-                                  unselectedLabelColor: Colors.grey.shade600,
-                                  labelStyle: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                                  tabs: const [
-                                    Tab(text: 'Account'),
-                                    Tab(text: 'Notifications'),
-                                  ],
                                 ),
-                                SizedBox(
-                                  height:
-                                      280, // Fixed height for the tab content
-                                  child: TabBarView(
-                                    controller: _tabController,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     children: [
-                                      // Account Tab
-                                      _buildSettingsTab([
-                                        _buildPreferenceItem(
-                                          'Account Information',
-                                          'View and edit your personal details',
-                                          Icons.person_outline,
-                                          onTap: () {},
+                                      _buildPreferenceItem(
+                                        'Account Information',
+                                        'View and edit your personal details',
+                                        Icons.person_outline,
+                                        trailing: const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 16,
+                                          color: Color(0xFF39B0E5),
                                         ),
-                                        _buildPreferenceItem(
-                                          'Password & Security',
-                                          'Manage your password and security options',
-                                          Icons.lock_outline,
-                                          onTap: () {},
+                                        onTap: () {
+                                          _editAccountInfo();
+                                        },
+                                      ),
+                                      _buildPreferenceItem(
+                                        'Password & Security',
+                                        'Manage your password and security options',
+                                        Icons.lock_outline,
+                                        trailing: const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 16,
+                                          color: Color(0xFF39B0E5),
                                         ),
-                                      ]),
-
-                                      // Notifications Tab
-                                      _buildSettingsTab([
-                                        _buildPreferenceSwitch(
-                                          'Enable Notifications',
-                                          'Receive alerts about new features',
-                                          Icons.notifications_outlined,
-                                          enableNotifications,
-                                          (newValue) {
-                                            setState(() {
-                                              enableNotifications = newValue;
-                                            });
-                                          },
+                                        onTap: () {
+                                          _showPasswordSecurityDialog();
+                                        },
+                                      ),
+                                      _buildPreferenceItem(
+                                        'Privacy Settings',
+                                        'Manage your privacy preferences',
+                                        Icons.security_outlined,
+                                        trailing: const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 16,
+                                          color: Color(0xFF39B0E5),
                                         ),
-                                        _buildPreferenceItem(
-                                          'Push Notifications',
-                                          'Manage mobile push notification preferences',
-                                          Icons.mobile_friendly_outlined,
-                                          trailing: const Icon(
-                                            Icons.arrow_forward_ios,
-                                            size: 16,
-                                            color: Color(0xFF39B0E5),
-                                          ),
-                                          onTap: () {},
-                                        ),
-                                        _buildPreferenceItem(
-                                          'Do Not Disturb',
-                                          'Set quiet hours for notifications',
-                                          Icons.do_not_disturb_on_outlined,
-                                          trailing: const Icon(
-                                            Icons.arrow_forward_ios,
-                                            size: 16,
-                                            color: Color(0xFF39B0E5),
-                                          ),
-                                          onTap: () {},
-                                        ),
-                                      ]),
+                                        onTap: () {
+                                          _showPrivacySettingsDialog();
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
+                                const SizedBox(height: 15),
                               ],
                             ),
                           ),
@@ -488,6 +509,294 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  // Method to show password and security dialog
+  void _showPasswordSecurityDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Password & Security',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDialogOption(
+              'Change Password',
+              Icons.lock_reset_outlined,
+              () {
+                Navigator.pop(context);
+                _showChangePasswordDialog();
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildDialogOption(
+              'Two-Factor Authentication',
+              Icons.security_outlined,
+              () {
+                Navigator.pop(context);
+                // Show 2FA setup dialog
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildDialogOption(
+              'Login History',
+              Icons.history_outlined,
+              () {
+                Navigator.pop(context);
+                // Show login history
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Close',
+              style: GoogleFonts.poppins(
+                color: const Color(0xFF39B0E5),
+              ),
+            ),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+    );
+  }
+
+  // Method to show privacy settings dialog
+  void _showPrivacySettingsDialog() {
+    bool anonymousMode = false;
+    bool allowDataSharing = true;
+    bool enableEncryption = true;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(
+            'Privacy Settings',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SwitchListTile(
+                title: Text(
+                  'Anonymous Mode',
+                  style: GoogleFonts.poppins(fontSize: 14),
+                ),
+                subtitle: Text(
+                  'Hide your profile from other users',
+                  style: GoogleFonts.poppins(fontSize: 12),
+                ),
+                value: anonymousMode,
+                onChanged: (value) {
+                  setState(() {
+                    anonymousMode = value;
+                  });
+                },
+                activeColor: const Color(0xFF39B0E5),
+              ),
+              SwitchListTile(
+                title: Text(
+                  'Data Sharing',
+                  style: GoogleFonts.poppins(fontSize: 14),
+                ),
+                subtitle: Text(
+                  'Allow anonymous data collection for app improvement',
+                  style: GoogleFonts.poppins(fontSize: 12),
+                ),
+                value: allowDataSharing,
+                onChanged: (value) {
+                  setState(() {
+                    allowDataSharing = value;
+                  });
+                },
+                activeColor: const Color(0xFF39B0E5),
+              ),
+              SwitchListTile(
+                title: Text(
+                  'End-to-End Encryption',
+                  style: GoogleFonts.poppins(fontSize: 14),
+                ),
+                subtitle: Text(
+                  'Enable encryption for all your data',
+                  style: GoogleFonts.poppins(fontSize: 12),
+                ),
+                value: enableEncryption,
+                onChanged: (value) {
+                  setState(() {
+                    enableEncryption = value;
+                  });
+                },
+                activeColor: const Color(0xFF39B0E5),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.poppins(
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save privacy settings
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Save',
+                style: GoogleFonts.poppins(
+                  color: const Color(0xFF39B0E5),
+                ),
+              ),
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Method to show change password dialog
+  void _showChangePasswordDialog() {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Change Password',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: currentPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Current Password',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: newPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'New Password',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: confirmPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Confirm New Password',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              // Validate and change password
+              if (newPasswordController.text !=
+                  confirmPasswordController.text) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Passwords do not match')),
+                );
+                return;
+              }
+
+              // Handle password change logic
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Password changed successfully')),
+              );
+            },
+            child: Text(
+              'Change',
+              style: GoogleFonts.poppins(
+                color: const Color(0xFF39B0E5),
+              ),
+            ),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDialogOption(String title, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: const Color(0xFF39B0E5),
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -565,17 +874,6 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  Widget _buildSettingsTab(List<Widget> children) {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        children: children,
-      ),
-    );
-  }
-
   Widget _buildPreferenceItem(
     String title,
     String subtitle,
@@ -625,56 +923,151 @@ class _ProfilePageState extends State<ProfilePage>
       ),
     );
   }
+}
 
-  Widget _buildPreferenceSwitch(
-    String title,
-    String subtitle,
-    IconData icon,
-    bool value,
-    Function(bool) onChanged,
-  ) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: Colors.grey.shade200),
+// Dialog to edit account information
+class AccountEditDialog extends StatefulWidget {
+  final Map<String, dynamic>? userData;
+
+  const AccountEditDialog({Key? key, this.userData}) : super(key: key);
+
+  @override
+  _AccountEditDialogState createState() => _AccountEditDialogState();
+}
+
+class _AccountEditDialogState extends State<AccountEditDialog> {
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+  late TextEditingController organizationController;
+  late TextEditingController locationController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController =
+        TextEditingController(text: widget.userData?['name'] ?? '');
+    emailController =
+        TextEditingController(text: widget.userData?['email'] ?? '');
+    phoneController =
+        TextEditingController(text: widget.userData?['phone'] ?? '');
+    organizationController =
+        TextEditingController(text: widget.userData?['organization'] ?? '');
+    locationController =
+        TextEditingController(text: widget.userData?['location'] ?? '');
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    organizationController.dispose();
+    locationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        'Edit Account Information',
+        style: GoogleFonts.poppins(
+          fontWeight: FontWeight.bold,
+        ),
       ),
-      child: SwitchListTile(
-        title: Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey.shade800,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: phoneController,
+              decoration: InputDecoration(
+                labelText: 'Phone',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: organizationController,
+              decoration: InputDecoration(
+                labelText: 'Organization',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: locationController,
+              decoration: InputDecoration(
+                labelText: 'Location',
+                labelStyle: GoogleFonts.poppins(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            'Cancel',
+            style: GoogleFonts.poppins(
+              color: Colors.grey.shade600,
+            ),
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: Colors.grey.shade600,
+        TextButton(
+          onPressed: () {
+            final updatedData = {
+              'name': nameController.text,
+              'email': emailController.text,
+              'phone': phoneController.text,
+              'organization': organizationController.text,
+              'location': locationController.text,
+            };
+            Navigator.pop(context, updatedData);
+          },
+          child: Text(
+            'Save',
+            style: GoogleFonts.poppins(
+              color: const Color(0xFF39B0E5),
+            ),
           ),
         ),
-        secondary: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF39B0E5).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: const Color(0xFF39B0E5),
-            size: 20,
-          ),
-        ),
-        value: value,
-        onChanged: onChanged,
-        activeColor: const Color(0xFF39B0E5),
-        activeTrackColor: const Color(0xFF39B0E5).withOpacity(0.2),
-        inactiveTrackColor: Colors.grey.shade300,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
       ),
     );
   }
